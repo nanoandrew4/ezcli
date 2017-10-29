@@ -1,6 +1,6 @@
 package ezcli.modules.ezcli_core.util;
 
-import ezcli.Ezcli;
+import ezcli.modules.ezcli_core.Ezcli;
 
 public class Util {
 

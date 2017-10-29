@@ -72,7 +72,7 @@ public class Input {
      * <p>On Unix this method switches the console back to echo mode.
      * read() leaves the console in non-echo mode.
      */
-    public static void resetConsoleMode() throws IOException {
+    private static void resetConsoleMode() throws IOException {
         if (isWindows) {
             resetConsoleModeWindows();
         } else {
@@ -81,17 +81,13 @@ public class Input {
     }
 
     private static void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                shutdownHook();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(Input::shutdownHook));
     }
 
     private static void shutdownHook() {
         try {
             resetConsoleMode();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -117,16 +113,16 @@ public class Input {
         setConsoleMode(consoleHandle, originalConsoleMode & ~Kernel32Defs.ENABLE_PROCESSED_INPUT);
         // ENABLE_PROCESSED_INPUT must remain off to prevent Ctrl-C from beeing processed by the system
         // while the program is not within getwch().
-        if (!wait && msvcrt._kbhit() == 0) {
+        if (!wait && msvcrt.kbhit() == 0) {
             return -2;
         }                                         // no key available
         return getwch();
     }
 
     private static int getwch() {
-        int c = msvcrt._getwch();
+        int c = msvcrt.getwch();
         if (c == 0 || c == 0xE0) {                              // Function key or arrow key
-            c = msvcrt._getwch();
+            c = msvcrt.getwch();
             if (c >= 0 && c <= 0x18FF) {
                 return 0xE000 + c;
             }                              // construct key code in private Unicode range
@@ -142,8 +138,8 @@ public class Input {
         if (initDone) {
             return;
         }
-        msvcrt = (Msvcrt) Native.loadLibrary("msvcrt", Msvcrt.class);
-        kernel32 = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class);
+        msvcrt = Native.loadLibrary("msvcrt", Msvcrt.class);
+        kernel32 = Native.loadLibrary("kernel32", Kernel32.class);
         try {
             consoleHandle = getStdInputHandle();
             originalConsoleMode = getConsoleMode(consoleHandle);
@@ -158,7 +154,7 @@ public class Input {
     }
 
     private static Pointer getStdInputHandle() throws IOException {
-        Pointer handle = kernel32.GetStdHandle(Kernel32Defs.STD_INPUT_HANDLE);
+        Pointer handle = kernel32.getStdHandle(Kernel32Defs.STD_INPUT_HANDLE);
         if (Pointer.nativeValue(handle) == 0 || Pointer.nativeValue(handle) == Kernel32Defs.INVALID_HANDLE_VALUE) {
             throw new IOException("GetStdHandle(STD_INPUT_HANDLE) failed.");
         }
@@ -167,7 +163,7 @@ public class Input {
 
     private static int getConsoleMode(Pointer handle) throws IOException {
         IntByReference mode = new IntByReference();
-        int rc = kernel32.GetConsoleMode(handle, mode);
+        int rc = kernel32.getConsoleMode(handle, mode);
         if (rc == 0) {
             throw new IOException("GetConsoleMode() failed.");
         }
@@ -175,7 +171,7 @@ public class Input {
     }
 
     private static void setConsoleMode(Pointer handle, int mode) throws IOException {
-        int rc = kernel32.SetConsoleMode(handle, mode);
+        int rc = kernel32.setConsoleMode(handle, mode);
         if (rc == 0) {
             throw new IOException("SetConsoleMode() failed.");
         }
@@ -189,10 +185,10 @@ public class Input {
         consoleModeAltered = false;
     }
 
-    private static interface Msvcrt extends Library {
-        int _kbhit();
+    private interface Msvcrt extends Library {
+        int kbhit();
 
-        int _getwch();
+        int getwch();
 
         int getwchar();
     }
@@ -201,17 +197,14 @@ public class Input {
         static final int STD_INPUT_HANDLE = -10;
         static final long INVALID_HANDLE_VALUE = (Pointer.SIZE == 8) ? -1 : 0xFFFFFFFFL;
         static final int ENABLE_PROCESSED_INPUT = 0x0001;
-        static final int ENABLE_LINE_INPUT = 0x0002;
-        static final int ENABLE_ECHO_INPUT = 0x0004;
-        static final int ENABLE_WINDOW_INPUT = 0x0008;
     }
 
-    private static interface Kernel32 extends Library {
-        int GetConsoleMode(Pointer hConsoleHandle, IntByReference lpMode);
+    private interface Kernel32 extends Library {
+        int getConsoleMode(Pointer hConsoleHandle, IntByReference lpMode);
 
-        int SetConsoleMode(Pointer hConsoleHandle, int dwMode);
+        int setConsoleMode(Pointer hConsoleHandle, int dwMode);
 
-        Pointer GetStdHandle(int nStdHandle);
+        Pointer getStdHandle(int nStdHandle);
     }
 
 //--- Unix ---------------------------------------------------------------------
@@ -306,7 +299,7 @@ public class Input {
         if (initDone) {
             return;
         }
-        libc = (Libc) Native.loadLibrary("c", Libc.class);
+        libc = Native.loadLibrary("c", Libc.class);
         stdinIsConsole = libc.isatty(stdinFd) == 1;
         charsetDecoder = Charset.defaultCharset().newDecoder();
         if (stdinIsConsole) {
@@ -357,11 +350,11 @@ public class Input {
 
     private static class LibcDefs {
         // termios.h
-        static final int ISIG = 0000001;
-        static final int ICANON = 0000002;
-        static final int ECHO = 0000010;
-        static final int ECHONL = 0000100;
-        static final int TCSANOW = 0;
+        private static final int ISIG = 0000001;
+        private static final int ICANON = 0000002;
+        private static final int ECHO = 0000010;
+        private static final int ECHONL = 0000100;
+        private static final int TCSANOW = 0;
     }
 
     private static interface Libc extends Library {
@@ -373,5 +366,4 @@ public class Input {
         // unistd.h
         int isatty(int fd);
     }
-
 }

@@ -1,6 +1,6 @@
 package ezcli.modules.ezcli_core.term;
 
-import ezcli.Ezcli;
+import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.util.Util;
 
@@ -11,20 +11,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class TermInputProcessor extends InputHandler{
+/**
+ * Input processor for terminal module.
+ *
+ * @see Terminal
+ * @see TermKeyProcessor
+ * @see TermArrowKeyProcessor
+ */
+public class TermInputProcessor extends InputHandler {
 
     // List of files for tab rotation and printing options
-    static LinkedList<String> fileNames = new LinkedList<>();
+    private static LinkedList<String> fileNames = new LinkedList<>();
 
-    static ArrayList<String> prevCommands = new ArrayList<>(); // stores all entered commands
+    private static ArrayList<String> prevCommands = new ArrayList<>(); // stores all entered commands
 
-    public static String command = "";
-    
+    private static String command = "";
+
     // Stores command while rotating through fileNames list
-    static String originalCommand = "";
+    private static String originalCommand = "";
 
     // Length of original input to be completed
-    static int startComplete = 0;
+    private static int startComplete = 0;
 
     // Stops autocomplete from reprinting the text it completed if tab is pressed consecutively at the end of a complete file name
     static boolean lockTab = false;
@@ -44,13 +51,52 @@ public class TermInputProcessor extends InputHandler{
         KeyHandler.init();
     }
 
+    static LinkedList<String> getFileNames() {
+        return fileNames;
+    }
+
+    static void setFileNames(LinkedList<String> fileNames) {
+        TermInputProcessor.fileNames = fileNames;
+    }
+
+    static ArrayList<String> getPrevCommands() {
+        return prevCommands;
+    }
+
+    static void setPrevCommands(ArrayList<String> prevCommands) {
+        TermInputProcessor.prevCommands = prevCommands;
+    }
+
+    static String getCommand() {
+        return command;
+    }
+
+    static void setCommand(String command) {
+        TermInputProcessor.command = command;
+    }
+
+    static String getOriginalCommand() {
+        return originalCommand;
+    }
+
+    static void setOriginalCommand(String originalCommand) {
+        TermInputProcessor.originalCommand = originalCommand;
+    }
+
+    static int getStartComplete() {
+        return startComplete;
+    }
+
+    static void setStartComplete(int startComplete) {
+        TermInputProcessor.startComplete = startComplete;
+    }
+
     /**
      * Calls appropriate method for handling
      * input read from the Input class, using
      * booleans in Ezcli class to determine
      * what OS the program is running on.
      * <br></br>
-     *
      */
     @Override
     public void process() {
@@ -71,9 +117,7 @@ public class TermInputProcessor extends InputHandler{
             ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(i));
             if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD)
                 keyHandler.process(input);
-        }
-
-        else if (Ezcli.isUnix) {
+        } else if (Ezcli.isUnix) {
             ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(i);
             if ((System.currentTimeMillis() - lastPress > 20 || ak != ArrowKeys.NONE) && i != 27)
                 keyHandler.process(input);
@@ -90,13 +134,15 @@ public class TermInputProcessor extends InputHandler{
      * @param currText file that is to be completed
      */
     static void fileAutocomplete(String currText) {
+        
+        String modText = currText;
 
         boolean newList = false;
         // whether command ends with slash or not
         boolean endsWithSlash = originalCommand.endsWith("/") ? originalCommand.endsWith("/") : command.endsWith("/");
 
         // split text at slashes to get path, so that relevant files can be autocompleted or displayed
-        String[] splitPath = currText.split("/");
+        String[] splitPath = modText.split("/");
         String path = "";
         if (splitPath.length > 0) {
             // re-create path to look in
@@ -111,19 +157,19 @@ public class TermInputProcessor extends InputHandler{
 
         // if not empty parameter or not directory
         if (!endsWithSlash && !command.endsWith(" "))
-            currText = splitPath[splitPath.length - 1];
+            modText = splitPath[splitPath.length - 1];
 
             // if ends with slash directory and list not yet cleared from previous tab, clear, block clear so tab rotation works and set
-            // currText to empty string, so that all files in the directory are output
+            // modText to empty string, so that all files in the directory are output
         else if (endsWithSlash && !blockClear) {
             fileNames.clear();
             blockClear = true;
-            currText = " ";
+            modText = " ";
         }
 
         // if command ends with empty space, output all files in path
         else if (command.endsWith(" "))
-            currText = " ";
+            modText = " ";
 
         // get all file names for comparison
         if (fileNames.size() == 0) {
@@ -134,19 +180,19 @@ public class TermInputProcessor extends InputHandler{
             originalCommand = command;
 
             // For autocomplete in tab rotation
-            startComplete = (endsWithSlash || currText.endsWith(" ")) ? 0 : currText.length();
+            startComplete = (endsWithSlash || modText.endsWith(" ")) ? 0 : modText.length();
 
             // add all files with matching names to list
             assert files != null;
             for (File f : files)
-                if (f.getName().startsWith(currText))
+                if (f.getName().startsWith(modText))
                     fileNames.add(f.getName());
 
         }
 
         if (fileNames.size() != 1) {
             // Clear line
-            if (fileNames.size() > 0 || currText.equals(" "))
+            if (fileNames.size() > 0 || " ".equals(modText))
                 Util.clearLine(command, true);
 
             // Print matching file names
@@ -180,7 +226,7 @@ public class TermInputProcessor extends InputHandler{
             }
 
             // If no input, just output all files and folders
-            if (currText.equals(" ")) {
+            if (" ".equals(modText)) {
                 if (newList) {
                     for (File f : files) {
                         System.out.print(f.getName() + " \t");
@@ -224,19 +270,12 @@ public class TermInputProcessor extends InputHandler{
                 end = " ";
 
             //System.out.println("\n" + Ezcli.currentDirectory + path + fileName);
-            command += fileName.substring(currText.length(), fileName.length()) + end;
-            System.out.print(fileName.substring(currText.length(), fileName.length()) + end);
+            command += fileName.substring(modText.length(), fileName.length()) + end;
+            System.out.print(fileName.substring(modText.length(), fileName.length()) + end);
 
             // Lock tab
             lockTab = true;
         }
-    }
-
-    /**
-     * @param currText command that is to be completed
-     */
-    static void commandAutocomplete(String currText) {
-        // TODO: autocomplete commands
     }
 }
 

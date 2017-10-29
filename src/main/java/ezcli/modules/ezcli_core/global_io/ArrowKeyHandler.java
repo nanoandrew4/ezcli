@@ -1,12 +1,16 @@
 package ezcli.modules.ezcli_core.global_io;
 
+/**
+ * Abstract class specifying how arrow keys should be handled.
+ * Each module must run its own implementation of this class.
+ */
 public abstract class ArrowKeyHandler {
 
-    public static int[] vals = new int[3]; // for use in detecting arrow presses on Unix
-    public static int pos = 0; // for use in detecting arrow presses on Unix
-    public static boolean resetArrowCheck = false; // for use in resetting detection of arrow presses on Unix
+    protected static int[] vals = new int[3]; // for use in detecting arrow presses on Unix
+    protected static int pos = 0; // for use in detecting arrow presses on Unix
+    private static boolean resetArrowCheck = false; // for use in resetting detection of arrow presses on Unix
     // last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
-    public static ArrowKeys lastArrowPress = ArrowKeys.NONE;
+    protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
 
     /**
      * Checks if last input was arrow key (only on Windows).
