@@ -44,12 +44,17 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>ezcli.Ezcli</mainClass>
+                                    <mainClass>ezcli.modules.ezcli_core.Ezcli</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.2.4</version>
             </plugin>
         </plugins>
     </build>
@@ -65,6 +70,13 @@
             <artifactId>jna</artifactId>
             <version>4.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

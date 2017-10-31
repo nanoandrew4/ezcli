@@ -21,7 +21,7 @@ public class TermKeyProcessor extends KeyHandler {
      * @param input last character input by user
      */
     @Override
-    public void process(char input) {
+    public void process(int input) {
 
         Keys key = getKey(input);
 
@@ -60,13 +60,12 @@ public class TermKeyProcessor extends KeyHandler {
     @Override
     public void newLineEvent() {
         boolean empty = Terminal.containsOnlySpaces(TermInputProcessor.getCommand());
-        //if (TermInputProcessor.command.length() > 0 && !empty)
-            Terminal.parse = true;
+        Terminal.parse = true;
 
         if (!empty)
             TermInputProcessor.getPrevCommands().add(TermInputProcessor.getCommand());
-        TermInputProcessor.commandListPosition = TermInputProcessor.getPrevCommands().size();
-        TermInputProcessor.currCommand = "";
+        TermArrowKeyProcessor.setCommandListPosition(TermInputProcessor.getPrevCommands().size());
+        TermArrowKeyProcessor.setCurrCommand("");
         System.out.println(); // new line
     }
 

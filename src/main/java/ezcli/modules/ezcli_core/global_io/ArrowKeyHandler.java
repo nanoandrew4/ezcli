@@ -6,9 +6,12 @@ package ezcli.modules.ezcli_core.global_io;
  */
 public abstract class ArrowKeyHandler {
 
-    protected static int[] vals = new int[3]; // for use in detecting arrow presses on Unix
-    protected static int pos = 0; // for use in detecting arrow presses on Unix
-    private static boolean resetArrowCheck = false; // for use in resetting detection of arrow presses on Unix
+    // stores the three values of the codes that Unix systems pass when an arrow key is pressed
+    protected static int[] vals = new int[3];
+
+    // specifies which of the three codes used in processing arrow keys in Unix the program should be expecting
+    protected static int pos = 0;
+
     // last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
     protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
 
@@ -53,31 +56,33 @@ public abstract class ArrowKeyHandler {
 	*/
     public static ArrowKeys arrowKeyCheckUnix(int i) {
 
-        if (resetArrowCheck) {
+        if (vals[2] > 64 && vals[2] < 69) {
+            // reset array and position tracker if key was previously returned
             vals = new int[3];
-            resetArrowCheck = false;
             pos = 0;
         }
 
         vals[pos++ % 3] = i;
 
-        if (vals[0] == 27 && vals[1] == 91 && !resetArrowCheck) {
+        if (vals[0] == 27 && vals[1] == 91) {
             switch (vals[2]) {
                 case 65:
-                    resetArrowCheck = true;
                     return ArrowKeys.UP;
                 case 66:
-                    resetArrowCheck = true;
                     return ArrowKeys.DOWN;
                 case 67:
-                    resetArrowCheck = true;
                     return ArrowKeys.RIGHT;
                 case 68:
-                    resetArrowCheck = true;
                     return ArrowKeys.LEFT;
                 default:
                     return ArrowKeys.NONE;
             }
+        } else if ((vals[0] != 27 && vals[0] != 0) || (i != vals[0] && i == 91 && vals[0] != 0)) {
+            /*
+             * Resets vals array if either of first two positions don't align with expected pattern
+             */
+            vals = new int[3];
+            pos = 0;
         }
 
         return ArrowKeys.NONE;

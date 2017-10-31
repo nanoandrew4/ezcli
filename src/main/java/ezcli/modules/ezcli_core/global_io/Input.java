@@ -194,9 +194,9 @@ public class Input {
     }
 
     private static class Kernel32Defs {
-        static final int STD_INPUT_HANDLE = -10;
-        static final long INVALID_HANDLE_VALUE = (Pointer.SIZE == 8) ? -1 : 0xFFFFFFFFL;
-        static final int ENABLE_PROCESSED_INPUT = 0x0001;
+        private static final int STD_INPUT_HANDLE = -10;
+        private static final long INVALID_HANDLE_VALUE = (Pointer.SIZE == 8) ? -1 : 0xFFFFFFFFL;
+        private static final int ENABLE_PROCESSED_INPUT = 0x0001;
     }
 
     private interface Kernel32 extends Library {
@@ -357,7 +357,7 @@ public class Input {
         private static final int TCSANOW = 0;
     }
 
-    private static interface Libc extends Library {
+    private interface Libc extends Library {
         // termios.h
         int tcgetattr(int fd, Termios termios) throws LastErrorException;
 

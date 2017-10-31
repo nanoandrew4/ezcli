@@ -2,6 +2,7 @@ package ezcli.modules.ezcli_core.interactive;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.term.Terminal;
 
 /**
@@ -29,9 +30,9 @@ public class Interactive extends Module {
         System.out.print(Ezcli.prompt);
 
         while (!exit) {
-            inputProcessor.process();
+            inputProcessor.process(InputHandler.getKey());
             if (parse)
-                parse(MainInputProcessor.command);
+                parse(MainInputProcessor.getCommand());
         }
     }
 
@@ -53,11 +54,11 @@ public class Interactive extends Module {
                 return;
             default:
                 System.out.println("Module not found");
-                MainInputProcessor.command = "";
+                MainInputProcessor.setCommand("");
                 System.out.print(Ezcli.prompt);
                 return;
         }
-        MainInputProcessor.command = "";
+        MainInputProcessor.setCommand("");
         if (!"h".equals(command))
             System.out.println("Back in interactive mode");
         System.out.print(Ezcli.prompt);

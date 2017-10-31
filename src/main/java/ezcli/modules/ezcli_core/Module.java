@@ -6,8 +6,6 @@ package ezcli.modules.ezcli_core;
  */
 public abstract class Module {
 
-    public Module() {}
-
     /**
      * Code to run for module. Should contain a while loop similar to that in the Interactive class,
      * in order to process input.

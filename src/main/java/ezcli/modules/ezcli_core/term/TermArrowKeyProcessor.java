@@ -13,44 +13,62 @@ import ezcli.modules.ezcli_core.util.Util;
 public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
     private static String originalCommand = ""; // stores previous getCommand() before it is modified
+    private static int commandListPosition = 0; // position on prevCommands list (used to iterate through it)
+
+    private static String currCommand = ""; // stores current TermInputProcessor.command when iterating through prevCommands
+
+    protected static void setCurrCommand(String currCommand) {
+        TermArrowKeyProcessor.currCommand = currCommand;
+    }
+
+    protected static void setCommandListPosition(int commandListPosition) {
+        TermArrowKeyProcessor.commandListPosition = commandListPosition;
+    }
 
     /**
      * Processes arrow keys presses.
-     * <br></br>
      *
      * @param ak arrow key pressed (if any)
      * @return arrow key pressed
      */
     @Override
     public ArrowKeys process(ArrowKeys ak) {
-        if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD) {
-            if (TermInputProcessor.commandListPosition == TermInputProcessor.getPrevCommands().size() && lastArrowPress == ArrowKeys.NONE)
-                TermInputProcessor.currCommand = TermInputProcessor.getCommand();
 
-            if (ak == ArrowKeys.UP && TermInputProcessor.commandListPosition > 0) {
+        if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD) { // process up, down, left and right arrow keys
+            if (commandListPosition == TermInputProcessor.getPrevCommands().size() && lastArrowPress == ArrowKeys.NONE)
+                // saves currently typed command before moving through the list of previously typed commands
+                currCommand = TermInputProcessor.getCommand();
+
+            if (ak == ArrowKeys.UP && commandListPosition > 0) { // move through the list towards first typed command
                 lastArrowPress = ak;
                 Util.clearLine(TermInputProcessor.getCommand(), true);
 
-                if (TermInputProcessor.commandListPosition > TermInputProcessor.getPrevCommands().size())
-                    TermInputProcessor.commandListPosition = TermInputProcessor.getPrevCommands().size();
+                if (commandListPosition > TermInputProcessor.getPrevCommands().size()) // prevent array out of bounds
+                    commandListPosition = TermInputProcessor.getPrevCommands().size();
 
-                System.out.print(Ezcli.prompt + TermInputProcessor.getPrevCommands().get(--TermInputProcessor.commandListPosition));
-                TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(TermInputProcessor.commandListPosition));
+                // print previous command and set the command variable to it
+                System.out.print(Ezcli.prompt + TermInputProcessor.getPrevCommands().get(--commandListPosition));
+                TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(commandListPosition));
 
-            } else if (ak == ArrowKeys.DOWN && TermInputProcessor.commandListPosition < TermInputProcessor.getPrevCommands().size() - 1) {
+            } else if (ak == ArrowKeys.DOWN && commandListPosition < TermInputProcessor.getPrevCommands().size() - 1) {
+                // move through list towards last typed element
+
                 lastArrowPress = ak;
                 Util.clearLine(TermInputProcessor.getCommand(), true);
 
-                System.out.print(Ezcli.prompt + TermInputProcessor.getPrevCommands().get(++TermInputProcessor.commandListPosition));
-                TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(TermInputProcessor.commandListPosition));
+                // print next command and set command variable to it
+                System.out.print(Ezcli.prompt + TermInputProcessor.getPrevCommands().get(++commandListPosition));
+                TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(commandListPosition));
 
-            } else if (ak == ArrowKeys.DOWN && TermInputProcessor.commandListPosition >= TermInputProcessor.getPrevCommands().size() - 1) {
+            } else if (ak == ArrowKeys.DOWN && commandListPosition >= TermInputProcessor.getPrevCommands().size() - 1) {
+                // print command that was stored before iteration through list began
+
                 lastArrowPress = ak;
                 Util.clearLine(TermInputProcessor.getCommand(), true);
-                TermInputProcessor.commandListPosition++;
+                commandListPosition++;
 
-                System.out.print(Ezcli.prompt + TermInputProcessor.currCommand);
-                TermInputProcessor.setCommand(TermInputProcessor.currCommand);
+                System.out.print(Ezcli.prompt + currCommand);
+                TermInputProcessor.setCommand(currCommand);
             }
             return ak;
         } else if (ak != ArrowKeys.MOD) {
@@ -63,9 +81,9 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             vals = new int[3];
             pos = 0;
             lastArrowPress = ArrowKeys.NONE;
-            if (TermInputProcessor.commandListPosition < TermInputProcessor.getPrevCommands().size() && TermInputProcessor.getPrevCommands().size() > 0) {
+            if (commandListPosition < TermInputProcessor.getPrevCommands().size() && TermInputProcessor.getPrevCommands().size() > 0) {
                 String tmp = TermInputProcessor.getCommand(); // save current getCommand()
-                int prevCMDPos = TermInputProcessor.commandListPosition;
+                int prevCMDPos = commandListPosition;
                 TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(prevCMDPos)); // set global getCommand() to one currently displayed
                 if (originalCommand.equals(""))
                     originalCommand = TermInputProcessor.getCommand();

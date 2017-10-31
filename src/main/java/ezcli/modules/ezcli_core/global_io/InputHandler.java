@@ -1,5 +1,7 @@
 package ezcli.modules.ezcli_core.global_io;
 
+import java.io.IOException;
+
 /**
  * Abstract class specifying how input should be handled.
  * Each module must run its own implementation of this class.
@@ -27,5 +29,15 @@ public abstract class InputHandler {
      * Code to run when processing input for module.
      * Can (and should) make use of keyHandler and/or arrowKeyHandler for input processing.
      */
-    public abstract void process();
+    public abstract void process(int input);
+
+    public static char getKey() {
+        try {
+            return (char)Input.read(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

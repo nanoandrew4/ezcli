@@ -3,6 +3,7 @@ package ezcli.modules.ezcli_core.term;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Input;
+import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Scanner;
  */
 public class Terminal extends Module {
 
-    static boolean parse;
+    protected static boolean parse;
     private static boolean exit;
 
     private TermInputProcessor inputProcessor;
@@ -30,7 +31,7 @@ public class Terminal extends Module {
         System.out.println("\nEntered terminal mode");
         System.out.print(Ezcli.prompt);
         while (!exit) {
-            inputProcessor.process();
+            inputProcessor.process(InputHandler.getKey());
             if (parse)
                 parse(TermInputProcessor.getCommand());
         }
@@ -44,7 +45,7 @@ public class Terminal extends Module {
         if ("exit".equals(command)) {
             exit = true;
             return;
-        } else if (command.equals("") || containsOnlySpaces(command) || "t-help".equals(command)) {
+        } else if ("".equals(command) || containsOnlySpaces(command) || "t-help".equals(command)) {
             if ("t-help".equals(command))
                 help();
             TermInputProcessor.setCommand("");
@@ -60,6 +61,9 @@ public class Terminal extends Module {
             System.out.println("Parsing command failed, enter \"t-help\" for help using module.");
         }
 
+        /*
+         * While system program is running, print output and listen for signals to cancel or force quit
+         */
         if (p != null) {
             Scanner in = new Scanner(p.getInputStream());
             String input;
@@ -85,7 +89,7 @@ public class Terminal extends Module {
      * @param s string to check
      * @return true if s is composed of only spaces, false if there is a character in it
      */
-    static boolean containsOnlySpaces(String s) {
+    protected static boolean containsOnlySpaces(String s) {
         for (int i = 0; i < s.length(); i++)
             if (s.charAt(i) != ' ')
                 return false;

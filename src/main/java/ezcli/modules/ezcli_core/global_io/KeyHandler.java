@@ -13,28 +13,32 @@ public abstract class KeyHandler {
     // stores all key integer values and maps them to the values in Keys enum
     private static HashMap<Integer, Keys> keymap = new HashMap<>();
 
+    public static HashMap<Integer, Keys> getKeymap() {
+        return keymap;
+    }
+
     /**
      * Processes all input by relegating it to abstract methods.
      *
      * @param input ASCII key code representing key pressed
      */
-    public void process(char input) {
+    public void process(int input) {
         Keys key = getKey(input);
         // Back Space
         if (key == Keys.BCKSP)
             backspaceEvent();
 
-            // Tab
+        // Tab
         else if (key == Keys.TAB)
             tabEvent();
 
-            // Enter, or new line
+        // Enter, or new line
         else if (key == Keys.NWLN)
             newLineEvent();
 
-            // Character input
+        // Character input
         else if (input > 31 && input < 127)
-            charEvent(input);
+            charEvent((char)input);
 
         signalCatch(input);
     }
@@ -47,7 +51,7 @@ public abstract class KeyHandler {
      * @param input ASCII key code value of key pressed
      * @return true if process should be cancelled, false if no signals were caught
      */
-    public static boolean signalCatch(char input) {
+    public static boolean signalCatch(int input) {
         if (input == 3) // Ctrl+C
             return true;
         if (input == 26) { // Ctrl+Z -> force quit program

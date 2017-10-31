@@ -5,7 +5,6 @@ import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -42,53 +41,57 @@ public class TermInputProcessor extends InputHandler {
     // for use in detecting arrow presses on Unix, see comment block near usage in Process()
     private static long lastPress = System.currentTimeMillis();
 
-    static int commandListPosition = 0; // position on prevCommands list (used to iterate through it)
-
-    static String currCommand = ""; // stores current TermInputProcessor.command when iterating through prevCommands
-
     TermInputProcessor() {
         super(new TermKeyProcessor(), new TermArrowKeyProcessor());
         KeyHandler.init();
     }
 
-    static LinkedList<String> getFileNames() {
+    protected static LinkedList<String> getFileNames() {
         return fileNames;
     }
 
-    static void setFileNames(LinkedList<String> fileNames) {
+    protected static void setFileNames(LinkedList<String> fileNames) {
         TermInputProcessor.fileNames = fileNames;
     }
 
-    static ArrayList<String> getPrevCommands() {
+    protected static ArrayList<String> getPrevCommands() {
         return prevCommands;
     }
 
-    static void setPrevCommands(ArrayList<String> prevCommands) {
+    protected static void setPrevCommands(ArrayList<String> prevCommands) {
         TermInputProcessor.prevCommands = prevCommands;
     }
 
-    static String getCommand() {
+    protected static String getCommand() {
         return command;
     }
 
-    static void setCommand(String command) {
+    protected static void setCommand(String command) {
         TermInputProcessor.command = command;
     }
 
-    static String getOriginalCommand() {
+    protected static String getOriginalCommand() {
         return originalCommand;
     }
 
-    static void setOriginalCommand(String originalCommand) {
+    protected static void setOriginalCommand(String originalCommand) {
         TermInputProcessor.originalCommand = originalCommand;
     }
 
-    static int getStartComplete() {
+    protected static int getStartComplete() {
         return startComplete;
     }
 
-    static void setStartComplete(int startComplete) {
+    protected static void setStartComplete(int startComplete) {
         TermInputProcessor.startComplete = startComplete;
+    }
+
+    public KeyHandler getKeyHandler() {
+        return keyHandler;
+    }
+
+    public ArrowKeyHandler getArrowKeyHandler() {
+        return arrowKeyHandler;
     }
 
     /**
@@ -99,27 +102,19 @@ public class TermInputProcessor extends InputHandler {
      * <br></br>
      */
     @Override
-    public void process() {
-
-        char input = 0;
-        int i = 0;
-
-        try {
-            i = Input.read(true);
-            input = (char) i;
-        } catch (IOException e) {
-            System.out.println("Error parsing input");
-        }
+    public void process(int input) {
 
         // process input for Windows systems
         if (Ezcli.isWin) {
             // if returns anything but ArrowKeys.NONE or ArrowKeys.MOD check keys
-            ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(i));
+            ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
             if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD)
                 keyHandler.process(input);
         } else if (Ezcli.isUnix) {
-            ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(i);
-            if ((System.currentTimeMillis() - lastPress > 20 || ak != ArrowKeys.NONE) && i != 27)
+            ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input);
+            if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD)
+                arrowKeyHandler.process(ak);
+            if (System.currentTimeMillis() - lastPress > 10 && input != 27)
                 keyHandler.process(input);
         }
 
@@ -269,7 +264,6 @@ public class TermInputProcessor extends InputHandler {
             else if (Files.isRegularFile(Paths.get(Ezcli.currDir + path + fileName)))
                 end = " ";
 
-            //System.out.println("\n" + Ezcli.currentDirectory + path + fileName);
             command += fileName.substring(modText.length(), fileName.length()) + end;
             System.out.print(fileName.substring(modText.length(), fileName.length()) + end);
 

@@ -13,23 +13,24 @@ public class MainKeyProcessor extends KeyHandler {
     private char lastInput = 0;
 
     @Override
-    public void process(char input) {
+    public void process(int input) {
 
         /*
          * Prevents arrow key char values from being processed or printed in Unix systems.
          * This can occur due to the way arrow keys are processed by the application on Unix systems.
          * See ArrowKeyHandler.arrowKeyCheckUnix() for more info
          */
-        if (System.currentTimeMillis() - lastPress < 20) {
+        if (System.currentTimeMillis() - lastPress < 10) {
             if (lastInput == 'A') {
                 System.out.println("\b \b");
-                MainInputProcessor.command = MainInputProcessor.command.substring(0, MainInputProcessor.command.length() - 1);
+                MainInputProcessor.setCommand(
+                        MainInputProcessor.getCommand().substring(0, MainInputProcessor.getCommand().length() - 1));
             }
             return;
         }
 
         lastPress = System.currentTimeMillis();
-        lastInput = input;
+        lastInput = (char)input;
 
         super.process(input);
     }
@@ -46,7 +47,7 @@ public class MainKeyProcessor extends KeyHandler {
 
     @Override
     public void charEvent(char input) {
-        MainInputProcessor.command += input;
+        MainInputProcessor.setCommand(MainInputProcessor.getCommand() + input);
         Interactive.parse = true;
         System.out.print(input);
     }
