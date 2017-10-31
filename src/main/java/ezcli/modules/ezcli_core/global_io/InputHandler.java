@@ -1,5 +1,7 @@
 package ezcli.modules.ezcli_core.global_io;
 
+import ezcli.modules.ezcli_core.global_io.Input.Input;
+
 import java.io.IOException;
 
 /**
@@ -33,7 +35,7 @@ public abstract class InputHandler {
 
     public static char getKey() {
         try {
-            return (char)Input.read(true);
+            return (char) Input.read(true);
         } catch (IOException e) {
             e.printStackTrace();
         }

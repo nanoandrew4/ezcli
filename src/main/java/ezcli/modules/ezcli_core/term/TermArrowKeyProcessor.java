@@ -85,7 +85,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
                 String tmp = TermInputProcessor.getCommand(); // save current getCommand()
                 int prevCMDPos = commandListPosition;
                 TermInputProcessor.setCommand(TermInputProcessor.getPrevCommands().get(prevCMDPos)); // set global getCommand() to one currently displayed
-                if (originalCommand.equals(""))
+                if ("".equals(originalCommand))
                     originalCommand = TermInputProcessor.getCommand();
                 //TermInputProcessor.process(key, ArrowKeys.MOD, input); // process current input and apply on currently displayed getCommand()
                 if (TermInputProcessor.getCommand().equals("")) { // if Keys.NWLN was input, set getCommand() to tmp to avoid blank lines in list

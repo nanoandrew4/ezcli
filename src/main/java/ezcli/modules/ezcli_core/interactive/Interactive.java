@@ -16,7 +16,7 @@ public class Interactive extends Module {
 
     private MainInputProcessor inputProcessor; // processes input in interactive mode
 
-    static boolean parse;
+    protected static boolean parse;
     private boolean exit;
 
     public Interactive() {
@@ -39,7 +39,6 @@ public class Interactive extends Module {
     @Override
     public void parse(String command) {
         parse = false;
-        System.out.println();
 
         switch (command) {
             case "t": // terminal
@@ -50,7 +49,7 @@ public class Interactive extends Module {
                 break;
             case "b": // exit
                 exit = true;
-                System.out.println("Exiting application");
+                System.out.println("\nExiting application");
                 return;
             default:
                 System.out.println("Module not found");

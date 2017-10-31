@@ -2,7 +2,7 @@ package ezcli.modules.ezcli_core.term;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.global_io.Input;
+import ezcli.modules.ezcli_core.global_io.Input.Input;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
@@ -40,7 +40,6 @@ public class Terminal extends Module {
     @Override
     public void parse(String command) {
         parse = false;
-        System.out.println();
 
         if ("exit".equals(command)) {
             exit = true;

@@ -27,7 +27,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [ ] Implement getting system commands help.
   * [ ] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
   * [ ] Clean up file autocomplete method and implement unit tests for it.
-  * [ ] Clean up Input class.
+  * [x] Clean up Input class.
 
 ---
 
