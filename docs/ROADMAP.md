@@ -9,14 +9,36 @@ Some definitions of terms used in this document:
 
 ### Features warranting new minor release
 
-Completion of an top level element on this list warrants a new minor release. All new features since last minor release will be published alongside the new key feature.
+Completion of an top level element on this list warrants a new minor release. When a top level element in the v1.0.0 list is achieved, a new issue will be created with the remaining minor features and fixes needed before a new minor release, so they can be worked on.
 
+*Goals for v0.1.0:*
+* [ ] Interactive module.
+  * [x] Accessibility to terminal module.
+  * [x] Help output.
+  * [ ] Remove spaces preceding command (if any exist)
+  * [ ] Review classes for undocumented code, and clean up and optimize if possible.
+  * [ ] Implement touring method.
+* [ ] Terminal module.
+  * [ ] Implement previous command modification.
+  * [ ] Add harsher unit testing.
+  * [ ] Review classes for undocumented code, clean up and optimize if possible.
+  * [ ] Implement touring method.
+  * [ ] Improve responsiveness of Ctrl+C and other signals.
+  * [ ] Implement getting system commands help.
+  * [ ] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
+  * [ ] Clean up file autocomplete method and implement unit tests for it.
+  * [ ] Clean up Input class.
+
+---
+
+ 
 *Goals for v1.0.0 (in no particular order):*
-* [ ] Key parser.
-  * [ ] Perform specific actions depending on program module currently active (file explorer, text edit, reuse, etc)
-  * [ ] Allow user to drop to command prompt with single key-press while in "interactive" mode.
-  * [ ] Allow user to return to "interactive" mode for continued use of the program.
-  * [ ] Print help for each module that is developed.
+* [x] Key parser.
+  * [x] Perform specific actions depending on program module currently active (file explorer, text edit, reuse, etc)
+  * [x] Allow user to drop to command prompt with single key-press while in "interactive" mode.
+  * [x] Allow user to return to "interactive" mode for continued use of the program.
+  * [x] Print help for each module that is developed.
+  * [ ] v0.1.0 goals.
 * [ ] Text based file explorer.
   * [ ] Rename, create and delete files.
   * [ ] Open files with default program assigned by OS, or with an included module such as the text editor.
@@ -39,4 +61,5 @@ Completion of an top level element on this list warrants a new minor release. Al
 * [ ] Program help (will not be checked until release).
   * [ ] Include help method for each module.
   * [ ] Module that tours the program and shows the user how to use the basics of each module included, interactively.
+* [ ] Implement own raw input processing class to replace Input, if possible.
 
