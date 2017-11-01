@@ -2,7 +2,7 @@ package ezcli.modules.ezcli_core.term;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.global_io.Input.Input;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
@@ -14,14 +14,18 @@ import java.util.Scanner;
  */
 public class Terminal extends Module {
 
-    protected static boolean parse;
-    private static boolean exit;
+    protected boolean parse;
+    private boolean exit;
 
     private TermInputProcessor inputProcessor;
 
     public Terminal() {
         super();
-        inputProcessor = new TermInputProcessor();
+        inputProcessor = new TermInputProcessor(this);
+    }
+
+    public TermInputProcessor getInputProcessor() {
+        return inputProcessor;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class Terminal extends Module {
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
             if (parse)
-                parse(TermInputProcessor.getCommand());
+                parse(inputProcessor.getCommand());
         }
     }
 
@@ -41,13 +45,15 @@ public class Terminal extends Module {
     public void parse(String command) {
         parse = false;
 
+        command = removePrecedingSpaces(command); // removes blank space before command if any exists
+
         if ("exit".equals(command)) {
             exit = true;
             return;
         } else if ("".equals(command) || containsOnlySpaces(command) || "t-help".equals(command)) {
             if ("t-help".equals(command))
                 help();
-            TermInputProcessor.setCommand("");
+            inputProcessor.setCommand("");
             System.out.print(Ezcli.prompt);
             return;
         }
@@ -78,8 +84,27 @@ public class Terminal extends Module {
             p.destroy();
         }
 
-        TermInputProcessor.setCommand("");
+        inputProcessor.setCommand("");
         System.out.print(Ezcli.prompt);
+    }
+
+    /**
+     * Removes blank space before command if any exists.
+     *
+     * @param command Command to parse
+     * @return Command without white space
+     */
+    protected static String removePrecedingSpaces(String command) {
+        int pos = -1;
+        for (int i = 0; i < command.length(); i++) {
+            if (command.charAt(i) == ' ')
+                pos++;
+            else
+                break;
+        }
+        if (pos != -1)
+            return command.substring(pos + 1);
+        return command;
     }
 
     /**

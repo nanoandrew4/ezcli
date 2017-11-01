@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.global_io.Input;
+package ezcli.modules.ezcli_core.global_io.input;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -7,7 +7,7 @@ import com.sun.jna.ptr.IntByReference;
 
 import java.io.IOException;
 
-import static ezcli.modules.ezcli_core.global_io.Input.Input.*;
+import static ezcli.modules.ezcli_core.global_io.input.Input.*;
 
 public class WinInput {
     //--- Windows ------------------------------------------------------------------

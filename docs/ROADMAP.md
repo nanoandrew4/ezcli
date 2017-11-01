@@ -13,12 +13,14 @@ Completion of an top level element on this list warrants a new minor release. Wh
 
 *Goals for v0.1.0:*
 * [ ] Interactive module.
+  * [ ] Removed all static.
   * [x] Accessibility to terminal module.
   * [x] Help output.
-  * [ ] Remove spaces preceding command (if any exist)
+  * [x] Remove spaces preceding command (if any exist)
   * [ ] Review classes for undocumented code, and clean up and optimize if possible.
   * [ ] Implement touring method.
 * [ ] Terminal module.
+  * [x] Removed all static.
   * [ ] Implement previous command modification.
   * [ ] Add harsher unit testing.
   * [ ] Review classes for undocumented code, clean up and optimize if possible.

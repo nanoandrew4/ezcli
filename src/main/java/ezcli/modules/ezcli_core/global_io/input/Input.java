@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.global_io.Input;
+package ezcli.modules.ezcli_core.global_io.input;
 
 // Copyright 2015 Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland
 // www.source-code.biz, www.inventec.ch/chdh

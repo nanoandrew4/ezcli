@@ -4,7 +4,7 @@ import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 /**
- * Input processor for interactive module.
+ * input processor for interactive module.
  *
  * @see Interactive
  * @see MainKeyProcessor
@@ -23,7 +23,7 @@ public class MainInputProcessor extends InputHandler {
 
     MainInputProcessor() {
         super(new MainKeyProcessor(), null);
-        KeyHandler.init();
+        KeyHandler.initKeysMap();
     }
 
     @Override

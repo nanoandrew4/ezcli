@@ -2,6 +2,7 @@ package ezcli.modules.ezcli_core.term;
 
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
+import ezcli.modules.ezcli_core.util.FileAutocomplete;
 
 /**
  * Processes key presses (except arrow keys) for Terminal module.
@@ -10,10 +11,16 @@ import ezcli.modules.ezcli_core.global_io.Keys;
  */
 public class TermKeyProcessor extends KeyHandler {
 
-    private boolean clearFilesList = true;
+    private Terminal terminal;
+    private TermInputProcessor inputProcessor;
+
+    TermKeyProcessor(Terminal terminal, TermInputProcessor inputProcessor) {
+        this.terminal = terminal;
+        this.inputProcessor = inputProcessor;
+    }
 
     /**
-     * Processes input provided by Input class,
+     * Processes input provided by input class,
      * and operates based on the input it receives,
      * using the character value passed by the process() method.
      * <br></br>
@@ -25,60 +32,52 @@ public class TermKeyProcessor extends KeyHandler {
 
         Keys key = getKey(input);
 
-        clearFilesList = true;
-
         // reset if input is not tab
         if (key != Keys.TAB) {
-            TermInputProcessor.lockTab = false;
-            TermInputProcessor.blockClear = false;
+            inputProcessor.setLockTab(false);
+            inputProcessor.setBlockClear(false);
+            FileAutocomplete.resetVars();
         }
 
         super.process(input);
-
-        // clear TermInputProcessor.fileNames list and reset TermInputProcessor.originalCommand string
-        if (TermInputProcessor.getFileNames().size() > 0 && clearFilesList) {
-            TermInputProcessor.getFileNames().clear();
-            TermInputProcessor.setOriginalCommand("");
-        }
     }
 
     @Override
     public void tabEvent() {
-        clearFilesList = false;
 
         // Split into sections
-        String[] commandArr = TermInputProcessor.getCommand().split(" ");
+        String[] commandArr = inputProcessor.getCommand().split(" ");
 
         // Get last element
-        String currText = commandArr[commandArr.length - 1] + (TermInputProcessor.getCommand().endsWith(" ") ? " " : "");
+        String currText = commandArr[commandArr.length - 1] + (inputProcessor.getCommand().endsWith(" ") ? " " : "");
 
         // If more than one element, autocomplete file
-        if (commandArr.length > 1 || TermInputProcessor.getCommand().endsWith(" "))
-            TermInputProcessor.fileAutocomplete(currText);
+        if (commandArr.length > 1 || inputProcessor.getCommand().endsWith(" "))
+            inputProcessor.fileAutocomplete(currText);
     }
 
     @Override
     public void newLineEvent() {
-        boolean empty = Terminal.containsOnlySpaces(TermInputProcessor.getCommand());
-        Terminal.parse = true;
+        boolean empty = Terminal.containsOnlySpaces(inputProcessor.getCommand());
+        terminal.parse = true;
 
         if (!empty)
-            TermInputProcessor.getPrevCommands().add(TermInputProcessor.getCommand());
-        TermArrowKeyProcessor.setCommandListPosition(TermInputProcessor.getPrevCommands().size());
-        TermArrowKeyProcessor.setCurrCommand("");
+            inputProcessor.getPrevCommands().add(inputProcessor.getCommand());
+        inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.getPrevCommands().size());
+        inputProcessor.getArrowKeyProcessor().setCurrCommand("");
         System.out.println(); // new line
     }
 
     @Override
     public void charEvent(char input) {
         System.out.print(input);
-        TermInputProcessor.setCommand(TermInputProcessor.getCommand() + input);
+        inputProcessor.setCommand(inputProcessor.getCommand() + input);
     }
 
     @Override
     public void backspaceEvent() {
-        if (TermInputProcessor.getCommand().length() > 0) {
-            TermInputProcessor.setCommand(TermInputProcessor.getCommand().substring(0, TermInputProcessor.getCommand().length() - 1));
+        if (inputProcessor.getCommand().length() > 0) {
+            inputProcessor.setCommand(inputProcessor.getCommand().substring(0, inputProcessor.getCommand().length() - 1));
 
             // Delete char, add white space and move back again
             System.out.print("\b \b");

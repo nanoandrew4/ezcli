@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.global_io.Input;
+package ezcli.modules.ezcli_core.global_io.input;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Library;
@@ -15,7 +15,7 @@ import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 import java.util.List;
 
-import static ezcli.modules.ezcli_core.global_io.Input.Input.*;
+import static ezcli.modules.ezcli_core.global_io.input.Input.*;
 
 public class UnixInput {
     //--- Unix ---------------------------------------------------------------------

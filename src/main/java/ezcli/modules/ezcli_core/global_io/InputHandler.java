@@ -1,8 +1,7 @@
 package ezcli.modules.ezcli_core.global_io;
 
-import ezcli.modules.ezcli_core.global_io.Input.Input;
-
 import java.io.IOException;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 
 /**
  * Abstract class specifying how input should be handled.
