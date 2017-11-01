@@ -17,7 +17,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Accessibility to terminal module.
   * [x] Help output.
   * [x] Remove spaces preceding command (if any exist)
-  * [ ] Review classes for undocumented code, and clean up and optimize if possible.
+  * [x] Review classes for undocumented code, and clean up and optimize if possible.
   * [ ] Implement touring method.
 * [ ] Terminal module.
   * [x] Removed all static.
