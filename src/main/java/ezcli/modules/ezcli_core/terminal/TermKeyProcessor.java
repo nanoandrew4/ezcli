@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.term;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
@@ -11,11 +11,9 @@ import ezcli.modules.ezcli_core.util.FileAutocomplete;
  */
 public class TermKeyProcessor extends KeyHandler {
 
-    private Terminal terminal;
     private TermInputProcessor inputProcessor;
 
-    TermKeyProcessor(Terminal terminal, TermInputProcessor inputProcessor) {
-        this.terminal = terminal;
+    TermKeyProcessor(TermInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
     }
 
@@ -42,6 +40,8 @@ public class TermKeyProcessor extends KeyHandler {
         super.process(input);
     }
 
+
+
     @Override
     public void tabEvent() {
 
@@ -59,13 +59,12 @@ public class TermKeyProcessor extends KeyHandler {
     @Override
     public void newLineEvent() {
         boolean empty = Terminal.containsOnlySpaces(inputProcessor.getCommand());
-        terminal.parse = true;
 
         if (!empty)
             inputProcessor.getPrevCommands().add(inputProcessor.getCommand());
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.getPrevCommands().size());
         inputProcessor.getArrowKeyProcessor().setCurrCommand("");
-        System.out.println(); // new line
+        inputProcessor.parse();
     }
 
     @Override

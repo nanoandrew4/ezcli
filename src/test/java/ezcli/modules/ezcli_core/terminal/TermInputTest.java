@@ -1,6 +1,6 @@
-package ezcli.modules.ezcli_core.term;
+package ezcli.modules.ezcli_core.terminal;
 
-import org.apache.commons.lang3.SystemUtils;
+import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
@@ -28,7 +28,8 @@ public class TermInputTest {
      */
     @Test
     public void keyTest() {
-        Terminal terminal = new Terminal();
+        Ezcli.setOS();
+        Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
         TermKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
 
@@ -68,7 +69,7 @@ public class TermInputTest {
      */
     @Test
     public void arrowKeyTest() {
-        Terminal terminal = new Terminal();
+        Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
         TermArrowKeyProcessor akProcessor = inputProcessor.getArrowKeyProcessor();
 
@@ -121,7 +122,8 @@ public class TermInputTest {
      */
     @Test
     public void combinedTest() {
-        Terminal terminal = new Terminal();
+        Ezcli.setOS();
+        Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
 
         // reset variables that might have been modified elsewhere needed for clean test
@@ -129,7 +131,7 @@ public class TermInputTest {
         inputProcessor.getPrevCommands().clear();
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(0);
 
-        boolean isWin = SystemUtils.IS_OS_WINDOWS;
+        boolean isWin = System.getProperty("os.name").toLowerCase().contains("windows");
         sleep();
 
         inputProcessor.process('h'); sleep();
@@ -153,7 +155,7 @@ public class TermInputTest {
         inputProcessor.process('s'); sleep();
         inputProcessor.process('s'); sleep();
         inputProcessor.getKeyHandler().newLineEvent(); sleep(); // simulate newline
-        terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
+        //terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
@@ -201,7 +203,7 @@ public class TermInputTest {
         inputProcessor.getKeyHandler().backspaceEvent(); // now command should equal "te"
         assertEquals("te", inputProcessor.getCommand());
         inputProcessor.getKeyHandler().newLineEvent(); // simulate newline
-        terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
+        //terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
 
         assertEquals(3, inputProcessor.getPrevCommands().size());
         assertEquals("te", inputProcessor.getPrevCommands().get(2));
@@ -216,7 +218,8 @@ public class TermInputTest {
     public void attemptToBreak() {
         // reset variables that might have been modified elsewhere needed for clean test
 
-        TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal());
+        Ezcli.setOS();
+        TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal("t"));
         TermKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
         inputProcessor.process(Integer.MAX_VALUE);
         inputProcessor.process(Integer.MIN_VALUE);

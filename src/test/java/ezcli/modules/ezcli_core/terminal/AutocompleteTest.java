@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.term;
+package ezcli.modules.ezcli_core.terminal;
 
 import org.junit.Test;
 

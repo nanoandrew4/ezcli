@@ -1,7 +1,6 @@
 package ezcli.modules.ezcli_core.global_io;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.Module;
 
 import java.util.HashMap;
 

@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import static org.junit.Assert.*;
-import static ezcli.modules.ezcli_core.interactive.MainInputProcessor.getCommand;
 
 public class MainKeyTest {
 
@@ -23,29 +22,29 @@ public class MainKeyTest {
     @Test
     public void testInput() {
         Interactive interactive = new Interactive();
-        MainInputProcessor inputProcessor = new MainInputProcessor();
+        MainInputProcessor inputProcessor = interactive.getInputProcessor();
 
         sleep();
 
         inputProcessor.process('a');
-        assertEquals("a", getCommand());
-        interactive.parse(getCommand()); sleep();
+        assertEquals("a", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process('\t');
-        assertEquals("", getCommand());
-        interactive.parse(getCommand()); sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process('\n');
-        assertEquals("", getCommand());
-        interactive.parse(getCommand()); sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process((char)1);
-        assertEquals("", getCommand());
-        interactive.parse(getCommand()); sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process((char) 127);
-        assertEquals("", getCommand());
-        interactive.parse(getCommand()); sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
     }
 
     /*

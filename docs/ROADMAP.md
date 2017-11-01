@@ -13,7 +13,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
 
 *Goals for v0.1.0:*
 * [ ] Interactive module.
-  * [ ] Removed all static.
+  * [x] Removed all static.
   * [x] Accessibility to terminal module.
   * [x] Help output.
   * [x] Remove spaces preceding command (if any exist)

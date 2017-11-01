@@ -13,6 +13,16 @@ public abstract class InputHandler {
     protected KeyHandler keyHandler;
 
     /**
+     * Create key handler object with null arrow key handler and key handler.
+     * Only call this constructor if you plan to manually assign the handlers
+     * straight after this constructor returns.
+     */
+    public InputHandler() {
+        arrowKeyHandler = null;
+        keyHandler = null;
+    }
+
+    /**
      * Set KeyHandler and ArrowKeyHandler for module.
      * <br></br><br></br>
      * Classes extending KeyHandler and ArrowKeyHandler should be written, and passed through this function,

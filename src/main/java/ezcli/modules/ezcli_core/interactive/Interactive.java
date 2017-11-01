@@ -3,7 +3,6 @@ package ezcli.modules.ezcli_core.interactive;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
-import ezcli.modules.ezcli_core.term.Terminal;
 
 /**
  * Interactive module. Entry point for program, and module used to reach all others.
@@ -12,17 +11,17 @@ import ezcli.modules.ezcli_core.term.Terminal;
  */
 public class Interactive extends Module {
 
-    private Terminal term; // terminal
-
     private MainInputProcessor inputProcessor; // processes input in interactive mode
 
-    protected static boolean parse;
+    protected boolean parse;
     private boolean exit;
 
     public Interactive() {
-        super();
-        inputProcessor = new MainInputProcessor();
-        term = new Terminal();
+        inputProcessor = new MainInputProcessor(this);
+    }
+
+    protected MainInputProcessor getInputProcessor() {
+        return inputProcessor;
     }
 
     @Override
@@ -32,7 +31,7 @@ public class Interactive extends Module {
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
             if (parse)
-                parse(MainInputProcessor.getCommand());
+                parse(inputProcessor.getCommand());
         }
     }
 
@@ -41,9 +40,6 @@ public class Interactive extends Module {
         parse = false;
 
         switch (command) {
-            case "t": // terminal
-                term.run();
-                break;
             case "h": // help
                 help();
                 break;
@@ -51,13 +47,17 @@ public class Interactive extends Module {
                 exit = true;
                 System.out.println("\nExiting application");
                 return;
-            default:
-                System.out.println("Module not found");
-                MainInputProcessor.setCommand("");
-                System.out.print(Ezcli.prompt);
-                return;
+            default: // pass to hashmap in Module
+                Module m = Module.moduleMap.get(command);
+                if (m == null) {
+                    System.out.println("\nModule not found");
+                    inputProcessor.setCommand("");
+                    System.out.print(Ezcli.prompt);
+                    return;
+                } else
+                    m.run();
         }
-        MainInputProcessor.setCommand("");
+        inputProcessor.setCommand("");
         if (!"h".equals(command))
             System.out.println("Back in interactive mode");
         System.out.print(Ezcli.prompt);
@@ -65,6 +65,7 @@ public class Interactive extends Module {
 
     @Override
     public void help() {
+        System.out.println("ezcli version: " + Ezcli.VERSION + "\n");
         System.out.println("Enter \"t\" to enter terminal mode");
         System.out.println("Enter \"h\" to display this menu");
         System.out.println("Enter \"b\" to exit the program");

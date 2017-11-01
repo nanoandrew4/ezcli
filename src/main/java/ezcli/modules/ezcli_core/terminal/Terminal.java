@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.term;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
@@ -14,17 +14,16 @@ import java.util.Scanner;
  */
 public class Terminal extends Module {
 
-    protected boolean parse;
     private boolean exit;
 
     private TermInputProcessor inputProcessor;
 
-    public Terminal() {
-        super();
+    public Terminal(String mapWith) {
+        init(this, mapWith);
         inputProcessor = new TermInputProcessor(this);
     }
 
-    public TermInputProcessor getInputProcessor() {
+    protected TermInputProcessor getInputProcessor() {
         return inputProcessor;
     }
 
@@ -36,16 +35,14 @@ public class Terminal extends Module {
         System.out.print(Ezcli.prompt);
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
-            if (parse)
-                parse(inputProcessor.getCommand());
         }
     }
 
     @Override
-    public void parse(String command) {
-        parse = false;
+    public void parse(String rawCommand) {
+        System.out.println();
 
-        command = removePrecedingSpaces(command); // removes blank space before command if any exists
+        String command = removePrecedingSpaces(rawCommand); // removes blank space before command if any exists
 
         if ("exit".equals(command)) {
             exit = true;

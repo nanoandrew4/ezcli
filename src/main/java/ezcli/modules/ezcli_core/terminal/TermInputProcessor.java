@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.term;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 public class TermInputProcessor extends InputHandler {
 
-
     private ArrayList<String> prevCommands = new ArrayList<>(); // stores all entered commands
 
     private String command = "";
@@ -29,18 +28,21 @@ public class TermInputProcessor extends InputHandler {
     // for use in detecting arrow presses on Unix, see comment block near usage in Process()
     private long lastPress = System.currentTimeMillis();
 
+    private Terminal terminal;
+
     TermInputProcessor(Terminal terminal) {
-        super(null, null); // pass null because cannot pass "this" before super() is called
-        keyHandler = new TermKeyProcessor(terminal, this); // create straight after, passing "this"
+        super(); // pass null because cannot pass "this" before super() is called
+        this.terminal = terminal;
+        keyHandler = new TermKeyProcessor(this); // create straight after, passing "this"
         arrowKeyHandler = new TermArrowKeyProcessor(this); // create straight after, passing "this"
         KeyHandler.initKeysMap();
     }
 
-    public TermKeyProcessor getKeyProcessor() {
+    protected TermKeyProcessor getKeyProcessor() {
         return (TermKeyProcessor) keyHandler;
     }
 
-    public TermArrowKeyProcessor getArrowKeyProcessor() {
+    protected TermArrowKeyProcessor getArrowKeyProcessor() {
         return (TermArrowKeyProcessor) arrowKeyHandler;
     }
 
@@ -101,6 +103,10 @@ public class TermInputProcessor extends InputHandler {
         }
 
         lastPress = System.currentTimeMillis();
+    }
+
+    protected void parse() {
+        terminal.parse(command);
     }
 
     protected void fileAutocomplete(String currText) {
