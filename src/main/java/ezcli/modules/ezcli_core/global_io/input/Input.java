@@ -45,8 +45,14 @@ public class Input {
         if (isWindows) {
             return WinInput.readWindows(wait);
         } else {
-            return UnixInput.readUnix(wait);
+            try {
+                return UnixInput.readUnix(wait);
+            } catch (Exception e) {
+                System.err.println("Error reading input");
+            }
         }
+
+        return -1;
     }
 
     /**
@@ -61,7 +67,11 @@ public class Input {
         if (isWindows) {
             WinInput.resetConsoleModeWindows();
         } else {
-            UnixInput.resetConsoleModeUnix();
+            try {
+                UnixInput.resetConsoleModeUnix();
+            } catch (Exception e) {
+                System.err.println("Error resetting console mode");
+            }
         }
     }
 

@@ -53,8 +53,8 @@ public class MainKeyProcessor extends KeyHandler {
     @Override
     public void charEvent(char input) {
         inputProcessor.setCommand(inputProcessor.getCommand() + input);
-        inputProcessor.parse();
         System.out.print(input);
+        inputProcessor.parse();
     }
 
     @Override

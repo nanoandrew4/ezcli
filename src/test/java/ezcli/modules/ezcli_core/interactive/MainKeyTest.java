@@ -1,5 +1,6 @@
 package ezcli.modules.ezcli_core.interactive;
 
+import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,30 +22,31 @@ public class MainKeyTest {
 
     @Test
     public void testInput() {
+        Ezcli.setOS();
         Interactive interactive = new Interactive();
         MainInputProcessor inputProcessor = interactive.getInputProcessor();
 
         sleep();
 
         inputProcessor.process('a');
-        assertEquals("a", inputProcessor.getCommand());
-        interactive.parse(inputProcessor.getCommand()); sleep();
+        assertEquals("a", inputProcessor.getWasCommand());
+        interactive.parse(inputProcessor.getWasCommand()); sleep();
 
         inputProcessor.process('\t');
-        assertEquals("", inputProcessor.getCommand());
-        interactive.parse(inputProcessor.getCommand()); sleep();
+        assertEquals("", inputProcessor.getWasCommand());
+        interactive.parse(inputProcessor.getWasCommand()); sleep();
 
         inputProcessor.process('\n');
-        assertEquals("", inputProcessor.getCommand());
-        interactive.parse(inputProcessor.getCommand()); sleep();
+        assertEquals("", inputProcessor.getWasCommand());
+        interactive.parse(inputProcessor.getWasCommand()); sleep();
 
         inputProcessor.process((char)1);
-        assertEquals("", inputProcessor.getCommand());
-        interactive.parse(inputProcessor.getCommand()); sleep();
+        assertEquals("", inputProcessor.getWasCommand());
+        interactive.parse(inputProcessor.getWasCommand()); sleep();
 
         inputProcessor.process((char) 127);
-        assertEquals("", inputProcessor.getCommand());
-        interactive.parse(inputProcessor.getCommand()); sleep();
+        assertEquals("", inputProcessor.getWasCommand());
+        interactive.parse(inputProcessor.getWasCommand()); sleep();
     }
 
     /*

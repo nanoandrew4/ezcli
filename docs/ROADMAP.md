@@ -13,6 +13,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
 
 *Goals for v0.1.0:*
 * [ ] Interactive module.
+  * [ ] Test on Windows.
   * [x] Removed all static.
   * [x] Accessibility to terminal module.
   * [x] Help output.
@@ -20,14 +21,14 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Review classes for undocumented code, and clean up and optimize if possible.
   * [ ] Implement touring method.
 * [ ] Terminal module.
+  * [ ] Test on Windows.
   * [x] Removed all static.
-  * [ ] Implement previous command modification.
+  * [x] Implement previous command modification.
   * [ ] Add harsher unit testing.
   * [ ] Review classes for undocumented code, clean up and optimize if possible.
   * [ ] Implement touring method.
-  * [ ] Improve responsiveness of Ctrl+C and other signals.
   * [ ] Implement getting system commands help.
-  * [ ] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
+  * [x] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
   * [ ] Clean up file autocomplete method and implement unit tests for it.
   * [x] Clean up Input class.
 

@@ -13,7 +13,6 @@ public class Interactive extends Module {
 
     private MainInputProcessor inputProcessor; // processes input in interactive mode
 
-    protected boolean parse;
     private boolean exit;
 
     public Interactive() {
@@ -30,14 +29,12 @@ public class Interactive extends Module {
 
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
-            if (parse)
-                parse(inputProcessor.getCommand());
         }
     }
 
     @Override
     public void parse(String command) {
-        parse = false;
+        System.out.println();
 
         switch (command) {
             case "h": // help
@@ -45,18 +42,19 @@ public class Interactive extends Module {
                 break;
             case "b": // exit
                 exit = true;
-                System.out.println("\nExiting application");
+                System.out.println("Exiting application");
                 return;
             default: // pass to hashmap in Module
                 Module m = Module.moduleMap.get(command);
                 if (m == null) {
-                    System.out.println("\nModule not found");
+                    System.out.println("Module not found");
                     inputProcessor.setCommand("");
                     System.out.print(Ezcli.prompt);
                     return;
                 } else
                     m.run();
         }
+
         inputProcessor.setCommand("");
         if (!"h".equals(command))
             System.out.println("Back in interactive mode");

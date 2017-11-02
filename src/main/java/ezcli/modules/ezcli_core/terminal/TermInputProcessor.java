@@ -15,6 +15,8 @@ import java.util.ArrayList;
  */
 public class TermInputProcessor extends InputHandler {
 
+    private Terminal terminal;
+
     private ArrayList<String> prevCommands = new ArrayList<>(); // stores all entered commands
 
     private String command = "";
@@ -28,7 +30,7 @@ public class TermInputProcessor extends InputHandler {
     // for use in detecting arrow presses on Unix, see comment block near usage in Process()
     private long lastPress = System.currentTimeMillis();
 
-    private Terminal terminal;
+    private int cursorPos = 0;
 
     TermInputProcessor(Terminal terminal) {
         super(); // pass null because cannot pass "this" before super() is called
@@ -78,12 +80,27 @@ public class TermInputProcessor extends InputHandler {
         this.blockClear = blockClear;
     }
 
+    protected void increaseCursorPos(){
+        cursorPos++;
+    }
+
+    protected void decreaseCursorPos(){
+        cursorPos--;
+    }
+
+    protected int getCursorPos() {
+        return cursorPos;
+    }
+
+    protected void setCursorPos(int cursorPos) {
+        this.cursorPos = cursorPos;
+    }
+
     /**
      * Calls appropriate method for handling
      * input read from the input class, using
      * booleans in Ezcli class to determine
      * what OS the program is running on.
-     * <br></br>
      */
     @Override
     public void process(int input) {
@@ -92,11 +109,13 @@ public class TermInputProcessor extends InputHandler {
         if (Ezcli.isWin) {
             // If returns anything but ArrowKeys.NONE or ArrowKeys.MOD check keys
             ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
-            if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD)
+            if (ak != ArrowKeys.NONE)
+                arrowKeyHandler.process(ak);
+            if (ak != ArrowKeys.NONE)
                 keyHandler.process(input);
         } else if (Ezcli.isUnix) {
             ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input);
-            if (ak != ArrowKeys.NONE && ak != ArrowKeys.MOD)
+            if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
             if (System.currentTimeMillis() - lastPress > 10 && input != 27)
                 keyHandler.process(input);
@@ -105,10 +124,26 @@ public class TermInputProcessor extends InputHandler {
         lastPress = System.currentTimeMillis();
     }
 
+    /**
+     * Sends command to terminal class for parsing, source is the newlineEvent in the key processor
+     */
     protected void parse() {
         terminal.parse(command);
     }
 
+    /**
+     * Moves the cursor from the end of the command to where it should be (if the user is using arrow keys)
+     * Usually only used after modifying 'command'
+     */
+    protected void moveToCursorPos() {
+        for (int i = command.length(); i > cursorPos; i--)
+            System.out.print("\b");
+    }
+
+    /**
+     * WIP
+     * @param currText Text to autocomplete
+     */
     protected void fileAutocomplete(String currText) {
         if (!FileAutocomplete.isAvailable()) // if file autocompleting is currently in use, do not start new process
             return;

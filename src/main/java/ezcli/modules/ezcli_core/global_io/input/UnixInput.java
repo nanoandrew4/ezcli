@@ -32,7 +32,7 @@ public class UnixInput {
     private static Termios rawTermios;
     private static Termios intermediateTermios;
 
-    protected static int readUnix(boolean wait) throws IOException {
+    protected static int readUnix(boolean wait) throws Exception {
         initUnix();
         if (!stdinIsConsole) {                                  // STDIN is not a console
             return readSingleCharFromByteStream(System.in);
@@ -49,12 +49,12 @@ public class UnixInput {
         }
     }   // reset some console attributes
 
-    private static Termios getTerminalAttrs(int fd) throws IOException {
+    private static Termios getTerminalAttrs(int fd) throws Exception {
         Termios termios = new Termios();
         try {
             int rc = libc.tcgetattr(fd, termios);
             if (rc != 0) {
-                throw new RuntimeException("tcgetattr() failed.");
+                throw new Exception("tcgetattr() failed.");
             }
         } catch (LastErrorException e) {
             throw new IOException("tcgetattr() failed.", e);
@@ -62,11 +62,11 @@ public class UnixInput {
         return termios;
     }
 
-    private static void setTerminalAttrs(int fd, Termios termios) throws IOException {
+    private static void setTerminalAttrs(int fd, Termios termios) throws Exception {
         try {
             int rc = libc.tcsetattr(fd, LibcDefs.TCSANOW, termios);
             if (rc != 0) {
-                throw new RuntimeException("tcsetattr() failed.");
+                throw new Exception("tcsetattr() failed.");
             }
         } catch (LastErrorException e) {
             throw new IOException("tcsetattr() failed.", e);
@@ -106,7 +106,7 @@ public class UnixInput {
         return out.get(0);
     }
 
-    private static synchronized void initUnix() throws IOException {
+    private static synchronized void initUnix() throws Exception {
         if (initDone) {
             return;
         }
@@ -125,7 +125,7 @@ public class UnixInput {
         initDone = true;
     }
 
-    protected static void resetConsoleModeUnix() throws IOException {
+    protected static void resetConsoleModeUnix() throws Exception {
         if (!initDone || !stdinIsConsole || !consoleModeAltered) {
             return;
         }

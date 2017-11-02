@@ -31,7 +31,7 @@ public class Terminal extends Module {
     public void run() {
         exit = false;
 
-        System.out.println("\nEntered terminal mode");
+        System.out.println("Entered terminal mode");
         System.out.print(Ezcli.prompt);
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
@@ -42,9 +42,11 @@ public class Terminal extends Module {
     public void parse(String rawCommand) {
         System.out.println();
 
-        String command = removePrecedingSpaces(rawCommand); // removes blank space before command if any exists
+        String command = removeSpaces(rawCommand); // removes blank space before and after command if any exists
 
         if ("exit".equals(command)) {
+            inputProcessor.setCursorPos(0);
+            inputProcessor.setCommand("");
             exit = true;
             return;
         } else if ("".equals(command) || containsOnlySpaces(command) || "t-help".equals(command)) {
@@ -86,22 +88,29 @@ public class Terminal extends Module {
     }
 
     /**
-     * Removes blank space before command if any exists.
+     * Removes blank space before and after command if any exists.
      *
      * @param command Command to parse
      * @return Command without white space
      */
-    protected static String removePrecedingSpaces(String command) {
-        int pos = -1;
+    protected static String removeSpaces(String command) {
+
+        int fpos = 0;
         for (int i = 0; i < command.length(); i++) {
             if (command.charAt(i) == ' ')
-                pos++;
+                fpos++;
             else
                 break;
         }
-        if (pos != -1)
-            return command.substring(pos + 1);
-        return command;
+        int bpos = command.length() > 0 ? command.length() : 0;
+        for (int i = command.length() - 1; i > 0; i--) {
+            if (command.charAt(i) == ' ')
+                bpos--;
+            else
+                break;
+        }
+
+        return command.substring(fpos, bpos);
     }
 
     /**

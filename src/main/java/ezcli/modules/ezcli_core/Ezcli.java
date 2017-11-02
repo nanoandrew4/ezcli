@@ -32,7 +32,7 @@ public class Ezcli {
 
         if (os.contains("windows"))
             isWin = true;
-        else if (os.equals("linux") || os.equals("mac") || os.equals("sunos") || os.equals("freebsd"))
+        else if ("linux".equals(os) || os.contains("mac") || "sunos".equals(os) || "freebsd".equals(os))
             isUnix = true;
     }
 

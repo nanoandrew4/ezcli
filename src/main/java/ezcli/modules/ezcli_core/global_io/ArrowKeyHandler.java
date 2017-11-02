@@ -90,4 +90,11 @@ public abstract class ArrowKeyHandler {
 
     public abstract ArrowKeys process(ArrowKeys ak);
 
+    protected abstract void processUp();
+
+    protected abstract void processDown();
+
+    protected abstract void processLeft();
+
+    protected abstract void processRight();
 }

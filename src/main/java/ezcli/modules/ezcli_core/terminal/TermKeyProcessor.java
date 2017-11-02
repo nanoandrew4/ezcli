@@ -1,8 +1,10 @@
 package ezcli.modules.ezcli_core.terminal;
 
+import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.ezcli_core.util.FileAutocomplete;
+import ezcli.modules.ezcli_core.util.Util;
 
 /**
  * Processes key presses (except arrow keys) for Terminal module.
@@ -40,10 +42,10 @@ public class TermKeyProcessor extends KeyHandler {
         super.process(input);
     }
 
-
-
     @Override
     public void tabEvent() {
+
+        //TODO: ADJUST CURSORPOS TO POSITION AFTER TAB
 
         // Split into sections
         String[] commandArr = inputProcessor.getCommand().split(" ");
@@ -64,22 +66,37 @@ public class TermKeyProcessor extends KeyHandler {
             inputProcessor.getPrevCommands().add(inputProcessor.getCommand());
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.getPrevCommands().size());
         inputProcessor.getArrowKeyProcessor().setCurrCommand("");
+        inputProcessor.setCursorPos(0);
         inputProcessor.parse();
     }
 
     @Override
     public void charEvent(char input) {
-        System.out.print(input);
-        inputProcessor.setCommand(inputProcessor.getCommand() + input);
+        if (inputProcessor.getCursorPos() == inputProcessor.getCommand().length()) {
+            System.out.print(input);
+            inputProcessor.setCommand(inputProcessor.getCommand() + input);
+        } else {
+            Util.clearLine(inputProcessor.getCommand(), true);
+            inputProcessor.setCommand(new StringBuilder(inputProcessor.getCommand()).insert(inputProcessor.getCursorPos(), input).toString());
+            System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+        }
+        inputProcessor.increaseCursorPos();
+        inputProcessor.moveToCursorPos();
     }
 
     @Override
     public void backspaceEvent() {
-        if (inputProcessor.getCommand().length() > 0) {
-            inputProcessor.setCommand(inputProcessor.getCommand().substring(0, inputProcessor.getCommand().length() - 1));
+        if (inputProcessor.getCommand().length() > 0 && inputProcessor.getCursorPos() > 0) {
+            int charToDelete = inputProcessor.getCursorPos();
+            Util.clearLine(inputProcessor.getCommand(), true);
+            inputProcessor.setCommand(
+                    inputProcessor.getCommand().substring(0, charToDelete - 1) +
+                            (charToDelete < inputProcessor.getCommand().length() ? inputProcessor.getCommand().substring(charToDelete) : ""));
 
             // Delete char, add white space and move back again
-            System.out.print("\b \b");
+            System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+            inputProcessor.decreaseCursorPos();
+            inputProcessor.moveToCursorPos();
         }
     }
 }

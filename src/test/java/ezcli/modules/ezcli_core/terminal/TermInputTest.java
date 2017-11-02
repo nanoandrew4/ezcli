@@ -139,7 +139,6 @@ public class TermInputTest {
         inputProcessor.process('l'); sleep();
         inputProcessor.process('p'); sleep();
         inputProcessor.getKeyHandler().newLineEvent(); // simulate newline
-        terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
 
         assertEquals(1, inputProcessor.getPrevCommands().size());
         assertEquals("help", inputProcessor.getPrevCommands().get(0));
@@ -155,7 +154,6 @@ public class TermInputTest {
         inputProcessor.process('s'); sleep();
         inputProcessor.process('s'); sleep();
         inputProcessor.getKeyHandler().newLineEvent(); sleep(); // simulate newline
-        //terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
@@ -199,14 +197,14 @@ public class TermInputTest {
             simUnixUpArrow(inputProcessor); // leaves command equaling "tess"
         }
 
+        inputProcessor.getArrowKeyProcessor().processLeft(); // move cursor one character to the left
         inputProcessor.getKeyHandler().backspaceEvent(); // simulate backspace
         inputProcessor.getKeyHandler().backspaceEvent(); // now command should equal "te"
-        assertEquals("te", inputProcessor.getCommand());
+        assertEquals("ts", inputProcessor.getCommand());
         inputProcessor.getKeyHandler().newLineEvent(); // simulate newline
-        //terminal.parse(inputProcessor.getCommand()); // parse command (so command will be cleared)
 
         assertEquals(3, inputProcessor.getPrevCommands().size());
-        assertEquals("te", inputProcessor.getPrevCommands().get(2));
+        assertEquals("ts", inputProcessor.getPrevCommands().get(2));
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
         assertEquals("help", inputProcessor.getPrevCommands().get(0));
     }
