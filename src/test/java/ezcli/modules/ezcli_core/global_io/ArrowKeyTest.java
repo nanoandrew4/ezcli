@@ -5,11 +5,11 @@ import static org.junit.Assert.*;
 
 public class ArrowKeyTest {
 
+    /*
+     * Tests that processing of arrow key codes on Windows systems work
+     */
     @Test
     public void testWinArrowHandling() {
-        /*
-         * Test that processing of arrow keys on Windows systems work
-         */
         assertEquals(ArrowKeys.UP, ArrowKeyHandler.arrowKeyCheckWindows(57416));
         assertEquals(ArrowKeys.DOWN, ArrowKeyHandler.arrowKeyCheckWindows(57424));
         assertEquals(ArrowKeys.LEFT, ArrowKeyHandler.arrowKeyCheckWindows(57419));
@@ -18,15 +18,15 @@ public class ArrowKeyTest {
         assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckWindows(10000));
     }
 
+    /*
+     * Tests that processing of arrow key codes on Unix systems work
+     */
     @Test
     public void testUnixArrowHandling() {
-        /*
-         * Test that processing of arrow keys on Unix systems work
-         */
 
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(1000));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(-22));
 
         // test up arrow key
         assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
@@ -39,8 +39,8 @@ public class ArrowKeyTest {
         assertEquals(ArrowKeys.DOWN, ArrowKeyHandler.arrowKeyCheckUnix(66));
 
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(22));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(Integer.MIN_VALUE));
 
         // test right arrow key
         assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
@@ -48,9 +48,9 @@ public class ArrowKeyTest {
         assertEquals(ArrowKeys.RIGHT, ArrowKeyHandler.arrowKeyCheckUnix(67));
 
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix((int)(Math.random() * 100)));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(-1));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(1));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(Integer.MAX_VALUE));
 
         // test left arrow key
         assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));

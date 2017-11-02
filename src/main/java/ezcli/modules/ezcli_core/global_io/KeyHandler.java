@@ -46,7 +46,7 @@ public abstract class KeyHandler {
     /**
      * Catches system signals, such as Ctrl+C.
      * Useful for running while waiting for some process to finish, so user can cancel if they wish.
-     * For use in above use case, loop while process is not done and pass Input.read(false) to this method.
+     * For use in above use case, loop while process is not done and pass input.read(false) to this method.
      *
      * @param input ASCII key code value of key pressed
      * @return true if process should be cancelled, false if no signals were caught
@@ -64,7 +64,7 @@ public abstract class KeyHandler {
     /**
      * Loads all integer values of keys to HashMap.
      */
-    public static void init() {
+    public static void initKeysMap() {
         if (Ezcli.isWin) {
             keymap.put(8, Keys.BCKSP); // win backspace
             keymap.put(9, Keys.TAB); // win tab

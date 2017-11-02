@@ -1,6 +1,7 @@
 package ezcli.modules.ezcli_core.global_io;
 
 import java.io.IOException;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 
 /**
  * Abstract class specifying how input should be handled.
@@ -10,6 +11,16 @@ public abstract class InputHandler {
 
     protected ArrowKeyHandler arrowKeyHandler;
     protected KeyHandler keyHandler;
+
+    /**
+     * Create key handler object with null arrow key handler and key handler.
+     * Only call this constructor if you plan to manually assign the handlers
+     * straight after this constructor returns.
+     */
+    public InputHandler() {
+        arrowKeyHandler = null;
+        keyHandler = null;
+    }
 
     /**
      * Set KeyHandler and ArrowKeyHandler for module.
@@ -33,7 +44,7 @@ public abstract class InputHandler {
 
     public static char getKey() {
         try {
-            return (char)Input.read(true);
+            return (char) Input.read(true);
         } catch (IOException e) {
             e.printStackTrace();
         }

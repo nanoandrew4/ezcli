@@ -12,6 +12,12 @@ public class MainKeyProcessor extends KeyHandler {
     private long lastPress = System.currentTimeMillis();
     private char lastInput = 0;
 
+    private MainInputProcessor inputProcessor;
+
+    MainKeyProcessor(MainInputProcessor inputProcessor) {
+        this.inputProcessor = inputProcessor;
+    }
+
     @Override
     public void process(int input) {
 
@@ -23,8 +29,7 @@ public class MainKeyProcessor extends KeyHandler {
         if (System.currentTimeMillis() - lastPress < 10) {
             if (lastInput == 'A') {
                 System.out.println("\b \b");
-                MainInputProcessor.setCommand(
-                        MainInputProcessor.getCommand().substring(0, MainInputProcessor.getCommand().length() - 1));
+                inputProcessor.setCommand(inputProcessor.getCommand().substring(0, inputProcessor.getCommand().length() - 1)); // remove last char
             }
             return;
         }
@@ -47,8 +52,8 @@ public class MainKeyProcessor extends KeyHandler {
 
     @Override
     public void charEvent(char input) {
-        MainInputProcessor.setCommand(MainInputProcessor.getCommand() + input);
-        Interactive.parse = true;
+        inputProcessor.setCommand(inputProcessor.getCommand() + input);
+        inputProcessor.parse();
         System.out.print(input);
     }
 

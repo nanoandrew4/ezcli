@@ -1,43 +1,50 @@
 package ezcli.modules.ezcli_core.interactive;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import static org.junit.Assert.*;
-import static ezcli.modules.ezcli_core.interactive.MainInputProcessor.getCommand;
 
 public class MainKeyTest {
+
+    @BeforeClass
+    public static void disableOutput() {
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                // no output
+            }
+        }));
+    }
 
     @Test
     public void testInput() {
         Interactive interactive = new Interactive();
-        MainInputProcessor inputProcessor = new MainInputProcessor();
+        MainInputProcessor inputProcessor = interactive.getInputProcessor();
 
         sleep();
 
         inputProcessor.process('a');
-        assertEquals("a", getCommand());
-        interactive.parse(getCommand());
-        sleep();
+        assertEquals("a", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process('\t');
-        assertEquals("", getCommand());
-        interactive.parse(getCommand());
-        sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process('\n');
-        assertEquals("", getCommand());
-        interactive.parse(getCommand());
-        sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process((char)1);
-        assertEquals("", getCommand());
-        interactive.parse(getCommand());
-        sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
 
         inputProcessor.process((char) 127);
-        assertEquals("", getCommand());
-        interactive.parse(getCommand());
-        sleep();
+        assertEquals("", inputProcessor.getCommand());
+        interactive.parse(inputProcessor.getCommand()); sleep();
     }
 
     /*
@@ -45,7 +52,7 @@ public class MainKeyTest {
      */
     private void sleep() {
         try {
-            Thread.sleep(30);
+            Thread.sleep(11);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

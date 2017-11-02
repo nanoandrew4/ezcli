@@ -13,12 +13,14 @@ Completion of an top level element on this list warrants a new minor release. Wh
 
 *Goals for v0.1.0:*
 * [ ] Interactive module.
+  * [x] Removed all static.
   * [x] Accessibility to terminal module.
   * [x] Help output.
-  * [ ] Remove spaces preceding command (if any exist)
+  * [x] Remove spaces preceding command (if any exist)
   * [ ] Review classes for undocumented code, and clean up and optimize if possible.
   * [ ] Implement touring method.
 * [ ] Terminal module.
+  * [x] Removed all static.
   * [ ] Implement previous command modification.
   * [ ] Add harsher unit testing.
   * [ ] Review classes for undocumented code, clean up and optimize if possible.
@@ -27,7 +29,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [ ] Implement getting system commands help.
   * [ ] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
   * [ ] Clean up file autocomplete method and implement unit tests for it.
-  * [ ] Clean up Input class.
+  * [x] Clean up Input class.
 
 ---
 
