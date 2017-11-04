@@ -51,14 +51,14 @@ public abstract class KeyHandler {
      * @param input ASCII key code value of key pressed
      * @return true if process should be cancelled, false if no signals were caught
      */
-    public static boolean signalCatch(int input) {
+    public static Command signalCatch(int input) {
         if (input == 3) // Ctrl+C
-            return true;
+            return Command.CTRLC;
         if (input == 26) { // Ctrl+Z -> force quit program
             System.out.println();
-            System.exit(2);
+            return Command.CTRLZ;
         }
-        return false;
+        return Command.NONE;
     }
 
     /**

@@ -1,5 +1,10 @@
 package ezcli.modules.ezcli_core;
 
+import ezcli.modules.ezcli_core.global_io.Command;
+import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.input.Input;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,7 +18,14 @@ public abstract class Module {
     public static ArrayList<Module> modules = new ArrayList<>();
 
     // hashmap that maps a string to a module, which when typed in the interactive module, will run the module the string is mapped to
-    public static HashMap<String, Module> moduleMap = new HashMap<>();
+    protected static HashMap<String, Module> moduleMap = new HashMap<>();
+    protected static HashMap<Module, String> moduleNameMap = new HashMap<>();
+
+    protected String moduleName;
+
+    public Module(String moduleName) {
+        this.moduleName = moduleName;
+    }
 
     /**
      * Quasi-constructor. Initializes the class and adds the module to a list of modules.
@@ -24,6 +36,7 @@ public abstract class Module {
     protected void init(Module module, String mapWith) {
         modules.add(module);
         moduleMap.put(mapWith, module);
+        moduleNameMap.put(module, mapWith);
     }
 
     /**
@@ -48,5 +61,19 @@ public abstract class Module {
      * Code to run when touring program
      */
     public abstract void tour();
+
+    protected Command sleep(double s) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < s * 1000) {
+            try {
+                Command c = KeyHandler.signalCatch(Input.read(false));
+                if (c != Command.NONE)
+                    return c;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Command.NONE;
+    }
 
 }

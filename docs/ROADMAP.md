@@ -19,14 +19,14 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Help output.
   * [x] Remove spaces preceding command (if any exist)
   * [x] Review classes for undocumented code, and clean up and optimize if possible.
-  * [ ] Implement touring method.
+  * [x] Implement touring method.
 * [ ] Terminal module.
   * [ ] Test on Windows.
   * [x] Removed all static.
   * [x] Implement previous command modification.
   * [ ] Add harsher unit testing.
   * [ ] Review classes for undocumented code, clean up and optimize if possible.
-  * [ ] Implement touring method.
+  * [x] Implement touring method.
   * [ ] Implement getting system commands help.
   * [x] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
   * [ ] Clean up file autocomplete method and implement unit tests for it.

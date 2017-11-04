@@ -2,11 +2,13 @@ package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -19,6 +21,7 @@ public class Terminal extends Module {
     private TermInputProcessor inputProcessor;
 
     public Terminal(String mapWith) {
+        super("Terminal");
         init(this, mapWith);
         inputProcessor = new TermInputProcessor(this);
     }
@@ -70,15 +73,19 @@ public class Terminal extends Module {
          */
         if (p != null) {
             Scanner in = new Scanner(p.getInputStream());
-            String input;
-            while (p.isAlive() && (input = in.nextLine()) != null) {
-                System.out.println(input);
-                try {
-                    if (KeyHandler.signalCatch((char)Input.read(false)))
-                        break;
-                } catch (IOException e) {
-                    e.printStackTrace();
+            String input = "";
+            try {
+                while (p.isAlive() || (input = in.next()) != null) {
+                    System.out.println(input);
+                    try {
+                        if (KeyHandler.signalCatch((char) Input.read(false)) != Command.NONE)
+                            break;
+                    } catch (IOException e) {
+                        System.out.println("Error occurred while running command: " + command);
+                    }
                 }
+            } catch (NoSuchElementException ignored) {
+
             }
             p.destroy();
         }
@@ -135,6 +142,26 @@ public class Terminal extends Module {
 
     @Override
     public void tour() {
-        // to be implemented
+        System.out.println("This is the " + moduleName + " module.");
+        System.out.println("This module deals directly with your system terminal.");
+        System.out.println("Anything input here, with the exception of the commands");
+        System.out.println("\"exit\" and \"t-help\" will be passed directly to the system.");
+        if (sleep(3) != Command.NONE) return;
+
+        System.out.println("For example, lets pass \"dir\"");
+        if (sleep(1.2) != Command.NONE) return;
+        inputProcessor.process('d');
+        if (sleep(0.7) != Command.NONE) return;
+        inputProcessor.process('i');
+        if (sleep(0.7) != Command.NONE) return;
+        inputProcessor.process('r');
+        if (sleep(1.2) != Command.NONE) return;
+        inputProcessor.getKeyHandler().newLineEvent();
+
+        System.out.println("\n\n");
+
+        System.out.println("That should have printed your working directory!");
+        System.out.println("We will now be exiting this module, please wait.\n\n");
+        sleep(5);
     }
 }

@@ -3,7 +3,6 @@ package ezcli.modules.ezcli_core.terminal;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
-import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.util.Util;
 
 /**
@@ -50,6 +49,8 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
                     processLeft(); break;
                 case RIGHT:
                     processRight(); break;
+                default:
+                    return ak; // should never run
             }
         }
         return ak;
@@ -59,6 +60,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     protected void processUp() {
         prevCommandIterator(ArrowKeys.UP);
         inputProcessor.setCursorPos(inputProcessor.getCommand().length());
+        //System.out.write(new byte[]{27, 91, 65}); // sample code for future use
     }
 
     @Override
