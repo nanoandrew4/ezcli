@@ -12,7 +12,7 @@ public class FileAutocomplete {
 
     private static File[] files;
     private static LinkedList<String> fileNames;
-    private static String command, originalCommand, currText, path;
+    private static String command = "", originalCommand = "", currText = "", path = "";
     private static boolean blockClear, lockTab, endsWithSlash, newList;
     private static int startComplete;
 
