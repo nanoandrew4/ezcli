@@ -141,20 +141,21 @@ public class TermInputProcessor extends InputHandler {
     }
 
     /**
-     * WIP
-     * @param currText Text to autocomplete
+     *
      */
-    protected void fileAutocomplete(String currText) {
+    protected void fileAutocomplete() {
         if (!FileAutocomplete.isAvailable()) // if file autocompleting is currently in use, do not start new process
             return;
 
         // Autocomplete
-        FileAutocomplete.init(command, currText, blockClear, lockTab);
+        FileAutocomplete.init(command, blockClear, lockTab);
 
         // Get variables from autocomplete method
         command = FileAutocomplete.getCommand();
         blockClear = FileAutocomplete.isBlockClear();
         lockTab = FileAutocomplete.isLockTab();
+
+        setCursorPos(command.length());
     }
 }
 

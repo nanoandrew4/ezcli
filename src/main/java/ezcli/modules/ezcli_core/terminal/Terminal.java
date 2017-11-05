@@ -8,6 +8,7 @@ import ezcli.modules.ezcli_core.global_io.InputHandler;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -60,34 +61,28 @@ public class Terminal extends Module {
             return;
         }
 
-        Runtime r = Runtime.getRuntime();
-        Process p = null;
+        ProcessBuilder pb;
+        Process p = null; // system command to run
         try {
-            p = r.exec(command);
+            pb = new ProcessBuilder(command);
+            pb.inheritIO(); // make program and process share IO
+            p = pb.start(); // start process
         } catch (IOException | IllegalArgumentException e) {
-            System.out.println("Parsing command failed, enter \"t-help\" for help using module.");
+            System.out.println("Parsing command \"" + command + "\" failed, enter \"t-help\" for help using module.");
         }
 
         /*
-         * While system program is running, print output and listen for signals to cancel or force quit
+         * While system program is running, sleep.
          */
         if (p != null) {
-            Scanner in = new Scanner(p.getInputStream());
-            String input = "";
-            try {
-                while (p.isAlive() || (input = in.next()) != null) {
-                    System.out.println(input);
-                    try {
-                        if (KeyHandler.signalCatch((char) Input.read(false)) != Command.NONE)
-                            break;
-                    } catch (IOException e) {
-                        System.out.println("Error occurred while running command: " + command);
-                    }
+            while (p.isAlive()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (NoSuchElementException ignored) {
-
             }
-            p.destroy();
+            p.destroy(); // destroy once done
         }
 
         inputProcessor.setCommand("");

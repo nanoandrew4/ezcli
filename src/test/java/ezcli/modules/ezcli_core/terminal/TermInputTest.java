@@ -110,15 +110,26 @@ public class TermInputTest {
         akProcessor.process(ArrowKeys.DOWN);
         assertEquals("ce", inputProcessor.getCommand()); sleep();
 
-        akProcessor.process(ArrowKeys.DOWN);
-        assertEquals("", inputProcessor.getCommand()); sleep();
+        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
+        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
+        inputProcessor.getKeyHandler().process('a'); sleep();
+        assertEquals("ae", inputProcessor.getCommand());
+
+        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
+        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
+        inputProcessor.getKeyHandler().process('z'); sleep();
+        assertEquals("zae", inputProcessor.getCommand());
+        inputProcessor.getArrowKeyProcessor().processRight(); sleep();
+        inputProcessor.getArrowKeyProcessor().processRight(); sleep();
+        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
+        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
+        assertEquals("z", inputProcessor.getCommand()); sleep();
 
         inputProcessor.getPrevCommands().clear();
     }
 
     /*
      * Tests both key handling and arrow key handling for terminal module.
-     * TODO: TEST TABS WITH MOCK FILE STRUCTURE
      */
     @Test
     public void combinedTest() {
