@@ -48,14 +48,10 @@ public class TermKeyProcessor extends KeyHandler {
         //TODO: ADJUST CURSORPOS TO POSITION AFTER TAB
 
         // Split into sections
-        String[] commandArr = inputProcessor.getCommand().split(" ");
-
-        // Get last element
-        String currText = commandArr[commandArr.length - 1] + (inputProcessor.getCommand().endsWith(" ") ? " " : "");
 
         // If more than one element, autocomplete file
-        if (commandArr.length > 1 || inputProcessor.getCommand().endsWith(" "))
-            inputProcessor.fileAutocomplete(currText);
+        if (inputProcessor.getCommand().length() > 0 || inputProcessor.getCommand().endsWith(" "))
+            inputProcessor.fileAutocomplete();
     }
 
     @Override

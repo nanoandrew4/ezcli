@@ -4,6 +4,7 @@ import ezcli.modules.ezcli_core.Ezcli;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
@@ -15,7 +16,7 @@ public class FileAutocomplete {
     private static boolean blockClear, lockTab, endsWithSlash, newList;
     private static int startComplete;
 
-    private static boolean available;
+    private static boolean available = true;
 
     public static boolean isAvailable() {
         return available;
@@ -37,25 +38,46 @@ public class FileAutocomplete {
      * Sets all variables needed for attempting to autocomplete a file or directory name, and then runs the algorithm.
      *
      * @param command Command with complete path to autocomplete (not necessarily the same as currText)
-     * @param currText File or directory name to autocomplete (determined by splitting command by "/")
      * @param blockClear True if method should not delete the file names currently stored, which enables tab rotation
      * @param lockTab Whether the tab key should be processed or not
      */
-    public static void init(String command, String currText, boolean blockClear, boolean lockTab) {
+    public static void init(String command, boolean blockClear, boolean lockTab) {
         // set to unavailable until this operation is complete
         available = false;
 
         // set variables needed to do autocomplete
         FileAutocomplete.command = command;
-        FileAutocomplete.currText = currText;
+        String[] commandArr = command.split(" "); // split command
+        FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // get portion of command to autocomplete
         FileAutocomplete.blockClear = blockClear;
         FileAutocomplete.lockTab = lockTab;
+
+        FileAutocomplete.fileNames = new LinkedList<>();
 
         // autocomplete
         fileAutocomplete();
 
         // set to available
         available = true;
+    }
+
+    public static void setCommand(String command) {
+        FileAutocomplete.command = command;
+
+        String[] commandArr = command.split(" "); // split command
+        FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // get portion of command to autocomplete
+    }
+
+    public static void setCurrText(String currText) {
+        FileAutocomplete.currText = currText;
+    }
+
+    public static void setBlockClear(boolean blockClear) {
+        FileAutocomplete.blockClear = blockClear;
+    }
+
+    public static void setLockTab(boolean lockTab) {
+        FileAutocomplete.lockTab = lockTab;
     }
 
     public static void resetVars() {
@@ -70,6 +92,7 @@ public class FileAutocomplete {
         endsWithSlash = false;
         newList = false;
         startComplete = 0;
+
     }
 
     /**
@@ -153,18 +176,24 @@ public class FileAutocomplete {
      *
      * @return Path found
      */
-    private static String getPath() {
-        endsWithSlash = originalCommand.endsWith("/") ? originalCommand.endsWith("/") : command.endsWith("/");
+    public static String getPath() {
+        boolean startsWithSlash = originalCommand.startsWith("/") || currText.startsWith("/");
+        endsWithSlash = originalCommand.endsWith("/") || currText.endsWith("/");
 
         // Split text at slashes to get path, so that relevant files can be autocompleted or displayed
         String[] splitPath = currText.split("/");
         String path = "";
         if (splitPath.length > 0) {
-            // Re-create path to look in
-            for (int i = 0; (i < (splitPath.length - 1) && !endsWithSlash) || (i < splitPath.length && endsWithSlash); i++)
-                path += "/" + splitPath[i];
-            path += "/";
+            // Re-create path to look in, starting at 0 if text does not start with "/", and at 1 if it does (prevents duplicate "/")
+            for (int i = startsWithSlash ? 1 : 0; (i < (splitPath.length - 1) && !endsWithSlash) || (i < splitPath.length && endsWithSlash); i++)
+                path += (i > 0 ? "/" : "") + splitPath[i]; // don't make "username/" in to "/username/"
+
+            if (!"".equals(path)) // if text passed is just "" do not add a "/"
+                path += "/";
         }
+
+        if (startsWithSlash && "".equals(path)) // if path is just "/" return just that (which is top level dir)
+            path = "/";
 
         return path;
     }
@@ -178,12 +207,14 @@ public class FileAutocomplete {
         String fileName = fileNames.getFirst();
         String end = "";
 
+        Path p = path.startsWith("/") ? Paths.get(path + fileName) : Paths.get(Ezcli.currDir + path + fileName);
+
         // If auto-completing directory, add slash at end
-        if (Files.isDirectory(Paths.get(Ezcli.currDir + path + fileName)))
+        if (Files.isDirectory(p))
             end = "/";
 
             // If auto-completing a file, add space at end
-        else if (Files.isRegularFile(Paths.get(Ezcli.currDir + path + fileName)))
+        else if (Files.isRegularFile(p))
             end = " ";
 
         // Append autocompleted text to command variable and print autocompleted string
