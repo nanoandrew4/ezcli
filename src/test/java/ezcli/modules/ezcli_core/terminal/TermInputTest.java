@@ -111,18 +111,18 @@ public class TermInputTest {
         assertEquals("ce", inputProcessor.getCommand()); sleep();
 
         inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
-        inputProcessor.getKeyHandler().process('a'); sleep();
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
+        inputProcessor.getKeyProcessor().process('a'); sleep();
         assertEquals("ae", inputProcessor.getCommand());
 
         inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
         inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
-        inputProcessor.getKeyHandler().process('z'); sleep();
+        inputProcessor.getKeyProcessor().process('z'); sleep();
         assertEquals("zae", inputProcessor.getCommand());
         inputProcessor.getArrowKeyProcessor().processRight(); sleep();
         inputProcessor.getArrowKeyProcessor().processRight(); sleep();
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep();
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
         assertEquals("z", inputProcessor.getCommand()); sleep();
 
         inputProcessor.getPrevCommands().clear();
@@ -149,22 +149,22 @@ public class TermInputTest {
         inputProcessor.process('e'); sleep();
         inputProcessor.process('l'); sleep();
         inputProcessor.process('p'); sleep();
-        inputProcessor.getKeyHandler().newLineEvent(); // simulate newline
+        inputProcessor.getKeyProcessor().newLineEvent(); // simulate newline
 
         assertEquals(1, inputProcessor.getPrevCommands().size());
         assertEquals("help", inputProcessor.getPrevCommands().get(0));
         assertEquals("", inputProcessor.getCommand());
 
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep(); // simulate backspace
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
         inputProcessor.process('t'); sleep();
         inputProcessor.process('e'); sleep();
         inputProcessor.process('s'); sleep();
         inputProcessor.process('t'); sleep();
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.getKeyHandler().backspaceEvent(); sleep(); // simulate backspace
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
+        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
         inputProcessor.process('s'); sleep();
         inputProcessor.process('s'); sleep();
-        inputProcessor.getKeyHandler().newLineEvent(); sleep(); // simulate newline
+        inputProcessor.getKeyProcessor().newLineEvent(); sleep(); // simulate newline
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
@@ -209,10 +209,10 @@ public class TermInputTest {
         }
 
         inputProcessor.getArrowKeyProcessor().processLeft(); // move cursor one character to the left
-        inputProcessor.getKeyHandler().backspaceEvent(); // simulate backspace
-        inputProcessor.getKeyHandler().backspaceEvent(); // now command should equal "te"
+        inputProcessor.getKeyProcessor().backspaceEvent(); // simulate backspace
+        inputProcessor.getKeyProcessor().backspaceEvent(); // now command should equal "te"
         assertEquals("ts", inputProcessor.getCommand());
-        inputProcessor.getKeyHandler().newLineEvent(); // simulate newline
+        inputProcessor.getKeyProcessor().newLineEvent(); // simulate newline
 
         assertEquals(3, inputProcessor.getPrevCommands().size());
         assertEquals("ts", inputProcessor.getPrevCommands().get(2));

@@ -11,7 +11,7 @@ public class Ezcli {
     public static final String VERSION = "0.1.0";
     public static String prompt = "   \b\b\b>> ";
 
-    public static String currDir = System.getProperty("user.dir");
+    public static String currDir = System.getProperty("user.dir") + "/";
 
     public static boolean isWin;
     public static boolean isUnix;

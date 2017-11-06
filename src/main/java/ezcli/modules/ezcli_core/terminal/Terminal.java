@@ -3,14 +3,9 @@ package ezcli.modules.ezcli_core.terminal;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * Terminal module. Used to interact with system, as if you were running commands on your system terminal.
@@ -27,7 +22,7 @@ public class Terminal extends Module {
         inputProcessor = new TermInputProcessor(this);
     }
 
-    protected TermInputProcessor getInputProcessor() {
+    public TermInputProcessor getInputProcessor() {
         return inputProcessor;
     }
 
@@ -151,7 +146,7 @@ public class Terminal extends Module {
         if (sleep(0.7) != Command.NONE) return;
         inputProcessor.process('r');
         if (sleep(1.2) != Command.NONE) return;
-        inputProcessor.getKeyHandler().newLineEvent();
+        inputProcessor.getKeyProcessor().newLineEvent();
 
         System.out.println("\n\n");
 

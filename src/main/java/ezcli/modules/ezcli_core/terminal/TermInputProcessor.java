@@ -7,7 +7,7 @@ import ezcli.modules.ezcli_core.util.FileAutocomplete;
 import java.util.ArrayList;
 
 /**
- * input processor for terminal module.
+ * Input processor for terminal module.
  *
  * @see Terminal
  * @see TermKeyProcessor
@@ -17,7 +17,8 @@ public class TermInputProcessor extends InputHandler {
 
     private Terminal terminal;
 
-    private ArrayList<String> prevCommands = new ArrayList<>(); // stores all entered commands
+    // Stores all entered commands
+    private ArrayList<String> prevCommands = new ArrayList<>();
 
     private String command = "";
 
@@ -26,6 +27,9 @@ public class TermInputProcessor extends InputHandler {
 
     // Stops autocomplete from constantly erasing fileNames list when searching sub-directories
     private boolean blockClear = false;
+
+    // For resetting all variables in FileAutocomplete once a key press other than a tab is registered
+    private boolean resetVars = false;
 
     // for use in detecting arrow presses on Unix, see comment block near usage in Process()
     private long lastPress = System.currentTimeMillis();
@@ -40,11 +44,11 @@ public class TermInputProcessor extends InputHandler {
         KeyHandler.initKeysMap();
     }
 
-    protected TermKeyProcessor getKeyProcessor() {
+    public TermKeyProcessor getKeyProcessor() {
         return (TermKeyProcessor) keyHandler;
     }
 
-    protected TermArrowKeyProcessor getArrowKeyProcessor() {
+    public TermArrowKeyProcessor getArrowKeyProcessor() {
         return (TermArrowKeyProcessor) arrowKeyHandler;
     }
 
@@ -56,20 +60,12 @@ public class TermInputProcessor extends InputHandler {
         this.prevCommands = prevCommands;
     }
 
-    protected String getCommand() {
+    public String getCommand() {
         return command;
     }
 
-    protected void setCommand(String command) {
+    public void setCommand(String command) {
         this.command = command;
-    }
-
-    protected KeyHandler getKeyHandler() {
-        return keyHandler;
-    }
-
-    public ArrowKeyHandler getArrowKeyHandler() {
-        return arrowKeyHandler;
     }
 
     protected void setLockTab(boolean lockTab) {
@@ -80,11 +76,19 @@ public class TermInputProcessor extends InputHandler {
         this.blockClear = blockClear;
     }
 
-    protected void increaseCursorPos(){
+    protected boolean isResetVars() {
+        return resetVars;
+    }
+
+    protected void setResetVars(boolean resetVars) {
+        this.resetVars = resetVars;
+    }
+
+    protected void increaseCursorPos() {
         cursorPos++;
     }
 
-    protected void decreaseCursorPos(){
+    protected void decreaseCursorPos() {
         cursorPos--;
     }
 
@@ -141,20 +145,33 @@ public class TermInputProcessor extends InputHandler {
     }
 
     /**
-     *
+     * Handles interaction with FileAutocomplete class.
      */
     protected void fileAutocomplete() {
         if (!FileAutocomplete.isAvailable()) // if file autocompleting is currently in use, do not start new process
             return;
 
         // Autocomplete
-        FileAutocomplete.init(command, blockClear, lockTab);
+        if ("".equals(FileAutocomplete.getCommand()))
+            FileAutocomplete.init(command, blockClear, lockTab);
+        else
+            FileAutocomplete.fileAutocomplete();
 
         // Get variables from autocomplete method
         command = FileAutocomplete.getCommand();
+
+        /*
+         * If requested by FileAutocomplete class or input handler, reset variables in FileAutocomplete
+         * and initialize a new instance with the newly autocompleted command (in case the user tabs again)
+         */
+        if (FileAutocomplete.isResetVars() || resetVars) {
+            FileAutocomplete.resetVars();
+            FileAutocomplete.init(command, blockClear, lockTab);
+        }
+
+        // Get variables and set cursor position
         blockClear = FileAutocomplete.isBlockClear();
         lockTab = FileAutocomplete.isLockTab();
-
         setCursorPos(command.length());
     }
 }

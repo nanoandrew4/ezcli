@@ -8,12 +8,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
+/**
+ * Class that autocompletes filenames.
+ */
 public class FileAutocomplete {
 
     private static File[] files;
-    private static LinkedList<String> fileNames;
+    private static LinkedList<String> fileNames = new LinkedList<>();
     private static String command = "", originalCommand = "", currText = "", path = "";
-    private static boolean blockClear, lockTab, endsWithSlash, newList;
+    private static boolean blockClear, lockTab, resetVars, endsWithSlash, newList;
     private static int startComplete;
 
     private static boolean available = true;
@@ -34,6 +37,16 @@ public class FileAutocomplete {
         return lockTab;
     }
 
+    public static boolean isResetVars() {
+        return resetVars;
+    }
+
+    public static void setForTesting(File[] files, LinkedList<String> fileNames) {
+        FileAutocomplete.files = files;
+        FileAutocomplete.fileNames = fileNames;
+        blockClear = true;
+    }
+
     /**
      * Sets all variables needed for attempting to autocomplete a file or directory name, and then runs the algorithm.
      *
@@ -42,65 +55,64 @@ public class FileAutocomplete {
      * @param lockTab Whether the tab key should be processed or not
      */
     public static void init(String command, boolean blockClear, boolean lockTab) {
-        // set to unavailable until this operation is complete
+        // Set to unavailable until this operation is complete
         available = false;
+        resetVars = false;
 
-        // set variables needed to do autocomplete
+        // Set variables needed to do autocomplete
         FileAutocomplete.command = command;
-        String[] commandArr = command.split(" "); // split command
-        FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // get portion of command to autocomplete
         FileAutocomplete.blockClear = blockClear;
         FileAutocomplete.lockTab = lockTab;
 
-        FileAutocomplete.fileNames = new LinkedList<>();
+        if ("".equals(command))
+            FileAutocomplete.command = " ";
 
-        // autocomplete
+        // Stores original command so that command does not keep adding to itself
+        originalCommand = command;
+
+        // Autocomplete
         fileAutocomplete();
 
-        // set to available
+        // Set to available
         available = true;
     }
 
     public static void setCommand(String command) {
         FileAutocomplete.command = command;
 
-        String[] commandArr = command.split(" "); // split command
-        FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // get portion of command to autocomplete
+        String[] commandArr = command.split(" "); // Split command
+        FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // Get portion of command to autocomplete
     }
 
     public static void setCurrText(String currText) {
         FileAutocomplete.currText = currText;
     }
 
-    public static void setBlockClear(boolean blockClear) {
-        FileAutocomplete.blockClear = blockClear;
-    }
-
-    public static void setLockTab(boolean lockTab) {
-        FileAutocomplete.lockTab = lockTab;
-    }
-
     public static void resetVars() {
         files = null;
-        fileNames = null;
+        fileNames = new LinkedList<>();
         command = "";
         originalCommand = "";
         currText = "";
         path = "";
         blockClear = false;
         lockTab = false;
+        resetVars = false;
         endsWithSlash = false;
         newList = false;
         startComplete = 0;
-
     }
 
     /**
      * Using a string of text representing what has been typed presently,
      * displays all files that match the current input.
-     *
      */
     public static void fileAutocomplete() {
+
+        // Split command
+        String[] commandArr = originalCommand.split(" ");
+        // Get portion of command to autocomplete
+        FileAutocomplete.currText = originalCommand.endsWith(" ") ? " " : commandArr[commandArr.length - 1];
 
         // Whether a new list of files should be created or not
         newList = false;
@@ -108,17 +120,23 @@ public class FileAutocomplete {
         // Whether command ends with slash or not
         endsWithSlash = originalCommand.endsWith("/") ? originalCommand.endsWith("/") : command.endsWith("/");
 
-        startComplete = 0; // where to start autocompleting in string command
+        startComplete = 0; // Where to start autocompleting in string command
 
-        path = getPath(); // path to directory in which to find files to complete with
+        path = getPath(); // Path to directory in which to find files to complete with
 
         // Get directory at path, and files inside the directory
-        File currFolder = new File(Ezcli.currDir + path);
+        Path p = path.startsWith("/") ? Paths.get(path) : Paths.get(Ezcli.currDir + path);
+        File currFolder = p.toFile();
         files = currFolder.listFiles();
 
         // If not empty parameter or not directory
         if (!endsWithSlash && !command.endsWith(" "))
             currText = currText.split("/")[currText.split("/").length - 1];
+
+        /*
+         * From this point onwards currText becomes the text to complete, without any path.
+         * Example: currText before would be "/home/username/someDir/te", now it is "te".
+         */
 
         // If ends with slash directory and list not yet cleared from previous tab, clear, block clear so tab rotation works and set
         // modText to empty string, so that all files in the directory are output
@@ -127,10 +145,6 @@ public class FileAutocomplete {
             blockClear = true;
             currText = " ";
         }
-
-        // If command ends with empty space, output all files in path
-        else if (command.endsWith(" "))
-            printAllContents();
 
         if (fileNames.size() == 0) {
             newList = true; // For tab rotation, true means no tab rotation, false means rotate through list
@@ -158,9 +172,6 @@ public class FileAutocomplete {
      */
     private static void populateFileNames() {
 
-        // Stores original command so that command does not keep adding to itself
-        originalCommand = command;
-
         // For autocomplete in tab rotation
         startComplete = (endsWithSlash || currText.endsWith(" ")) ? 0 : currText.length();
 
@@ -176,7 +187,7 @@ public class FileAutocomplete {
      *
      * @return Path found
      */
-    public static String getPath() {
+    protected static String getPath() {
         boolean startsWithSlash = originalCommand.startsWith("/") || currText.startsWith("/");
         endsWithSlash = originalCommand.endsWith("/") || currText.endsWith("/");
 
@@ -186,13 +197,13 @@ public class FileAutocomplete {
         if (splitPath.length > 0) {
             // Re-create path to look in, starting at 0 if text does not start with "/", and at 1 if it does (prevents duplicate "/")
             for (int i = startsWithSlash ? 1 : 0; (i < (splitPath.length - 1) && !endsWithSlash) || (i < splitPath.length && endsWithSlash); i++)
-                path += (i > 0 ? "/" : "") + splitPath[i]; // don't make "username/" in to "/username/"
+                path += (i > 0 ? "/" : "") + splitPath[i]; // Don't make "username/" in to "/username/"
 
-            if (!"".equals(path)) // if text passed is just "" do not add a "/"
+            if (!"".equals(path)) // If text passed is just "" do not add a "/"
                 path += "/";
         }
 
-        if (startsWithSlash && "".equals(path)) // if path is just "/" return just that (which is top level dir)
+        if (startsWithSlash && "".equals(path)) // If path is just "/" return just that (which is top level dir)
             path = "/";
 
         return path;
@@ -213,7 +224,7 @@ public class FileAutocomplete {
         if (Files.isDirectory(p))
             end = "/";
 
-            // If auto-completing a file, add space at end
+        // If auto-completing a file, add space at end
         else if (Files.isRegularFile(p))
             end = " ";
 
@@ -223,6 +234,9 @@ public class FileAutocomplete {
 
         // Lock tab
         lockTab = true;
+
+        // Notify caller class that variables can be reset now, since autocomplete is done
+        resetVars = true;
     }
 
     /**
@@ -266,6 +280,7 @@ public class FileAutocomplete {
      * characters to the end of the command variable.
      */
     private static void fileNamesIterator() {
+
         // Clear line
         if (fileNames.size() > 0 || " ".equals(currText))
             Util.clearLine(command, true);
@@ -275,7 +290,7 @@ public class FileAutocomplete {
             for (String s : fileNames)
                 System.out.print(s + "\t");
 
-            // rotate
+        // Rotate
         else if (!lockTab || endsWithSlash) {
             Util.clearLine(command, true); // Clear current line in terminal
 

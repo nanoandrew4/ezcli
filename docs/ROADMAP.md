@@ -22,14 +22,14 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Implement touring method.
 * [ ] Terminal module.
   * [ ] Test on Windows.
+  * [ ] Implement changing directory, since system apparently does not take care of that.
   * [x] Removed all static.
   * [x] Implement previous command modification.
   * [ ] Add harsher unit testing.
   * [ ] Review classes for undocumented code, clean up and optimize if possible.
   * [x] Implement touring method.
-  * [ ] Implement getting system commands help.
   * [x] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
-  * [ ] Clean up file autocomplete method and implement unit tests for it.
+  * [x] Clean up file autocomplete method and implement unit tests for it.
   * [x] Clean up Input class.
 
 ---

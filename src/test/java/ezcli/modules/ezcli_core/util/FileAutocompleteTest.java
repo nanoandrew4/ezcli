@@ -1,11 +1,31 @@
 package ezcli.modules.ezcli_core.util;
 
+import ezcli.modules.ezcli_core.terminal.TermInputProcessor;
+import ezcli.modules.ezcli_core.terminal.Terminal;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.LinkedList;
 
 import static org.junit.Assert.*;
 
 public class FileAutocompleteTest {
 
+    @BeforeClass
+    public static void disableOutput() {
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                // no output
+            }
+        }));
+    }
+
+    /*
+     * Tests the getPath() method in FileAutocomplete
+     */
     @Test
     public void getPathTest() {
         FileAutocomplete.setCurrText("/home/username/fishingsim2k17/baz");
