@@ -45,24 +45,22 @@ public class TermKeyProcessor extends KeyHandler {
     @Override
     public void tabEvent() {
 
-        //TODO: ADJUST CURSORPOS TO POSITION AFTER TAB
-
-        // Split into sections
-
-        // If more than one element, autocomplete file
-        if (inputProcessor.getCommand().length() > 0 || inputProcessor.getCommand().endsWith(" "))
-            inputProcessor.fileAutocomplete();
+        // Autocomplete
+        inputProcessor.fileAutocomplete();
+        inputProcessor.setResetVars(false);
     }
 
     @Override
     public void newLineEvent() {
         boolean empty = Terminal.containsOnlySpaces(inputProcessor.getCommand());
 
-        if (!empty)
+        if ((!empty && inputProcessor.getPrevCommands().size() == 0) || (!empty &&
+                !inputProcessor.getPrevCommands().get(inputProcessor.getPrevCommands().size() - 1).equals(inputProcessor.getCommand())))
             inputProcessor.getPrevCommands().add(inputProcessor.getCommand());
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.getPrevCommands().size());
         inputProcessor.getArrowKeyProcessor().setCurrCommand("");
         inputProcessor.setCursorPos(0);
+        inputProcessor.setResetVars(true);
         inputProcessor.parse();
     }
 
@@ -78,6 +76,7 @@ public class TermKeyProcessor extends KeyHandler {
         }
         inputProcessor.increaseCursorPos();
         inputProcessor.moveToCursorPos();
+        inputProcessor.setResetVars(true);
     }
 
     @Override
@@ -93,6 +92,7 @@ public class TermKeyProcessor extends KeyHandler {
             System.out.print(Ezcli.prompt + inputProcessor.getCommand());
             inputProcessor.decreaseCursorPos();
             inputProcessor.moveToCursorPos();
+            inputProcessor.setResetVars(true);
         }
     }
 }
