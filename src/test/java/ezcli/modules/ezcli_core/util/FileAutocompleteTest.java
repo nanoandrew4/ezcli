@@ -1,14 +1,10 @@
 package ezcli.modules.ezcli_core.util;
 
-import ezcli.modules.ezcli_core.terminal.TermInputProcessor;
-import ezcli.modules.ezcli_core.terminal.Terminal;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.LinkedList;
 
 import static org.junit.Assert.*;
 
