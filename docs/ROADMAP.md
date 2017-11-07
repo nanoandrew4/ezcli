@@ -22,7 +22,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Implement touring method.
 * [ ] Terminal module.
   * [ ] Test on Windows.
-  * [ ] Implement changing directory, since system apparently does not take care of that.
+  * [x] Implement changing directory, since system apparently does not take care of that.
   * [x] Removed all static.
   * [x] Implement previous command modification.
   * [ ] Add harsher unit testing.
