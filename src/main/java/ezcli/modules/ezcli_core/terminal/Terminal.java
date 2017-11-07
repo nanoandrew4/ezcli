@@ -41,53 +41,57 @@ public class Terminal extends Module {
 
     @Override
     public void parse(String rawCommand) {
+
+        String[] split = rawCommand.split("&&");
+
         System.out.println();
 
-        String command = removeSpaces(rawCommand); // removes blank space before and after command if any exists
+        for (String command : split) {
 
-        if (rawCommand.startsWith("cd")) {
-            changeDir(command);
-            System.out.print(Ezcli.prompt);
-            inputProcessor.setCommand("");
-            return;
-        }
+            command = removeSpaces(command); // removes blank space before and after command if any exists
 
-        if ("exit".equals(command)) {
-            inputProcessor.setCursorPos(0);
-            inputProcessor.setCommand("");
-            exit = true;
-            return;
-        } else if ("".equals(command) || containsOnlySpaces(command) || "t-help".equals(command)) {
-            if ("t-help".equals(command))
-                help();
-            inputProcessor.setCommand("");
-            System.out.print(Ezcli.prompt);
-            return;
-        }
+            if (command.startsWith("cd")) {
+                changeDir(command);
+                continue;
+            }
 
-        ProcessBuilder pb;
-        Process p = null; // system command to run
-        try {
-            pb = new ProcessBuilder(command);
-            pb.inheritIO(); // make program and process share IO
-            pb.directory(new File(Ezcli.currDir));
-            p = pb.start(); // start process
-        } catch (IOException | IllegalArgumentException e) {
-            System.out.println("Parsing command \"" + command + "\" failed, enter \"t-help\" for help using module.");
-        }
+            if ("exit".equals(command)) {
+                inputProcessor.setCursorPos(0);
+                inputProcessor.setCommand("");
+                exit = true;
+                return;
+            } else if ("".equals(command) || containsOnlySpaces(command) || "help".equals(command)) {
+                if ("help".equals(command))
+                    help();
+                inputProcessor.setCommand("");
+                System.out.print(Ezcli.prompt);
+                return;
+            }
+
+            ProcessBuilder pb;
+            Process p = null; // system command to run
+            try {
+                pb = new ProcessBuilder(command);
+                pb.inheritIO(); // make program and process share IO
+                pb.directory(new File(Ezcli.currDir));
+                p = pb.start(); // start process
+            } catch (IOException | IllegalArgumentException e) {
+                System.out.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
+            }
 
         /*
          * While system program is running, sleep.
          */
-        if (p != null) {
-            while (p.isAlive()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            if (p != null) {
+                while (p.isAlive()) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+                p.destroy(); // destroy once done
             }
-            p.destroy(); // destroy once done
         }
 
         inputProcessor.setCommand("");
@@ -128,7 +132,7 @@ public class Terminal extends Module {
             else if (dirChange.startsWith("~") && dirChange.length() > 1)
                 f = Paths.get(Ezcli.userHomeDir + dirChange.substring(1)).toFile();
             // "cd ~"
-            else if (dirChange.equals("~"))
+            else if ("~".equals(dirChange))
                 f = Paths.get(Ezcli.userHomeDir).toFile();
             // "cd example/src/morexamples/"
             else
@@ -187,6 +191,7 @@ public class Terminal extends Module {
     public void help() {
         System.out.println("This module interacts directly with the system.");
         System.out.println("All input will be passed to the system when a \nnewline character is detected (enter key pressed)");
+        System.out.println("To change directory, enter: \"cd [somedir]\".");
         System.out.println("To return to Interactive module, enter \"exit\".");
     }
 

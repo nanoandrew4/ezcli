@@ -78,7 +78,7 @@ public class FileAutocomplete {
         FileAutocomplete.currText = command.endsWith(" ") ? "" : commandArr[commandArr.length - 1]; // Get portion of command to autocomplete
     }
 
-    public static void setCurrText(String currText) {
+    protected static void setCurrText(String currText) {
         FileAutocomplete.currText = currText;
     }
 
@@ -123,11 +123,12 @@ public class FileAutocomplete {
         File currFolder = p.toFile();
         files = currFolder.listFiles();
 
+        // Do not continue if the path passed was invalid, and nothing exists there
         if (files == null)
             return;
 
         // If not empty parameter or not directory
-        if (!endsWithSlash && !command.endsWith(" "))
+        if ((!endsWithSlash && !currText.startsWith("~")) && !command.endsWith(" "))
             currText = currText.split("/")[currText.split("/").length - 1];
 
         /*
@@ -137,7 +138,7 @@ public class FileAutocomplete {
 
         // If ends with slash directory and list not yet cleared from previous tab, clear, block clear so tab rotation works and set
         // modText to empty string, so that all files in the directory are output
-        else if (endsWithSlash && !blockClear) {
+        else if ((endsWithSlash || currText.startsWith("~")) && !blockClear) {
             fileNames.clear();
             blockClear = true;
             currText = " ";
@@ -155,11 +156,7 @@ public class FileAutocomplete {
              * with each tab key press
              */
 
-            // If no input, just output all files and folders
-            if (" ".equals(currText))
-                printAllContents(); // also deals with tab rotation when searching without prefix
-            else
-                fileNamesIterator();
+            fileNamesIterator();
 
         } else if (!lockTab) {
             autocomplete();
@@ -190,15 +187,23 @@ public class FileAutocomplete {
         boolean startsWithSlash = originalCommand.startsWith("/") || currText.startsWith("/");
         endsWithSlash = originalCommand.endsWith("/") || currText.endsWith("/");
 
+        String path = currText.startsWith("~") ? Ezcli.userHomeDir : "";
+
+        if (!"".equals(path)) {
+            currText = currText.substring(1);
+            if (currText.startsWith("/"))
+                currText = currText.substring(1);
+        }
+
         // Split text at slashes to get path, so that relevant files can be autocompleted or displayed
         String[] splitPath = currText.split("/");
-        String path = "";
+
         if (splitPath.length > 0) {
             // Re-create path to look in, starting at 0 if text does not start with "/", and at 1 if it does (prevents duplicate "/")
             for (int i = startsWithSlash ? 1 : 0; (i < (splitPath.length - 1) && !endsWithSlash) || (i < splitPath.length && endsWithSlash); i++)
                 path += (i > 0 ? "/" : "") + splitPath[i]; // Don't make "username/" in to "/username/"
 
-            if (!"".equals(path)) // If text passed is just "" do not add a "/"
+            if (!"".equals(path) && !"~".equals(currText)) // If text passed is just "" do not add a "/"
                 path += "/";
         }
 
@@ -236,38 +241,6 @@ public class FileAutocomplete {
 
         // Notify caller class that variables can be reset now, since autocomplete is done
         resetVars = true;
-    }
-
-    /**
-     * Prints all contents of a directory, should only happen in Terminal module
-     * when no input to autocomplete has been given.
-     */
-    private static void printAllContents() {
-        if (newList) {
-            for (File f : files) {
-                System.out.print(f.getName() + " \t");
-                fileNames.add(f.getName());
-            }
-            // Improve readability
-            System.out.println("\n");
-
-            // Re-output command after clearing lines and printing all contents
-            System.out.print(Ezcli.prompt + command);
-        } else if (!lockTab) {
-            Util.clearLine(command, true);
-
-            // Get first file or dir name
-            String currFile = fileNames.pollFirst();
-
-            // Autocomplete with first file or dir name
-            command = originalCommand + currFile.substring(startComplete, currFile.length());
-
-            // Print to screen
-            System.out.print(Ezcli.prompt + command);
-
-            // Add file or dir name at end of list
-            fileNames.add(currFile);
-        }
     }
 
     /**

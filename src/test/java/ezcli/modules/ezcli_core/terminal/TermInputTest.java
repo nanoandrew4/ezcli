@@ -21,6 +21,27 @@ public class TermInputTest {
         }));
     }
 
+    @Test
+    public void getCommandToCompleteTest() {
+        Ezcli.setOS();
+        Terminal terminal = new Terminal("t");
+        TermInputProcessor inputProcessor = terminal.getInputProcessor();
+
+        assertEquals("command", inputProcessor.getCommandToComplete("command"));
+
+        inputProcessor.setCursorPos(18);
+        assertEquals("another", inputProcessor.getCommandToComplete("command && anothercommand"));
+
+        inputProcessor.setCursorPos(16);
+        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c && d"));
+
+        inputProcessor.setCursorPos(16);
+        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c && d && e"));
+
+        inputProcessor.setCursorPos(15);
+        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c &&d && e"));
+    }
+
     /*
      * No testing can be done on file autocomplete since it will fail on different systems.
      * Changing this test will require modification of all other tests in this class.

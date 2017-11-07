@@ -5,6 +5,7 @@ import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.util.FileAutocomplete;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Input processor for terminal module.
@@ -44,20 +45,16 @@ public class TermInputProcessor extends InputHandler {
         KeyHandler.initKeysMap();
     }
 
-    public TermKeyProcessor getKeyProcessor() {
+    protected TermKeyProcessor getKeyProcessor() {
         return (TermKeyProcessor) keyHandler;
     }
 
-    public TermArrowKeyProcessor getArrowKeyProcessor() {
+    protected TermArrowKeyProcessor getArrowKeyProcessor() {
         return (TermArrowKeyProcessor) arrowKeyHandler;
     }
 
     protected ArrayList<String> getPrevCommands() {
         return prevCommands;
-    }
-
-    protected void setPrevCommands(ArrayList<String> prevCommands) {
-        this.prevCommands = prevCommands;
     }
 
     public String getCommand() {
@@ -74,10 +71,6 @@ public class TermInputProcessor extends InputHandler {
 
     protected void setBlockClear(boolean blockClear) {
         this.blockClear = blockClear;
-    }
-
-    protected boolean isResetVars() {
-        return resetVars;
     }
 
     protected void setResetVars(boolean resetVars) {
@@ -166,13 +159,37 @@ public class TermInputProcessor extends InputHandler {
          */
         if (FileAutocomplete.isResetVars() || resetVars) {
             FileAutocomplete.resetVars();
-            FileAutocomplete.init(command, blockClear, lockTab);
+            FileAutocomplete.init(command, false, false);
         }
 
         // Get variables and set cursor position
         blockClear = FileAutocomplete.isBlockClear();
         lockTab = FileAutocomplete.isLockTab();
         setCursorPos(command.length());
+    }
+
+    public String getCommandToComplete(String command) {
+
+        if (!command.contains("&&"))
+            return command;
+
+        LinkedList<Integer> ampPos = new LinkedList<>();
+        for (int i = 0; i < command.length() - 1; i++)
+            if (command.substring(i, i + 2).equals("&&"))
+                ampPos.add(i);
+
+        String commandToComplete = "";
+
+        for (int i = 0; i < ampPos.size(); i++) {
+            if (ampPos.get(i) > cursorPos)
+                commandToComplete = command.substring(ampPos.get(i - 1) + 2, cursorPos);
+            else if (i + 1 == ampPos.size())
+                commandToComplete = command.substring(ampPos.get(i) + 2, cursorPos);
+        }
+
+        commandToComplete = Terminal.removeSpaces(commandToComplete);
+
+        return commandToComplete;
     }
 }
 
