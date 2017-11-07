@@ -41,12 +41,6 @@ public class FileAutocomplete {
         return resetVars;
     }
 
-    public static void setForTesting(File[] files, LinkedList<String> fileNames) {
-        FileAutocomplete.files = files;
-        FileAutocomplete.fileNames = fileNames;
-        blockClear = true;
-    }
-
     /**
      * Sets all variables needed for attempting to autocomplete a file or directory name, and then runs the algorithm.
      *
@@ -129,6 +123,9 @@ public class FileAutocomplete {
         File currFolder = p.toFile();
         files = currFolder.listFiles();
 
+        if (files == null)
+            return;
+
         // If not empty parameter or not directory
         if (!endsWithSlash && !command.endsWith(" "))
             currText = currText.split("/")[currText.split("/").length - 1];
@@ -153,14 +150,16 @@ public class FileAutocomplete {
 
         if (fileNames.size() != 1) {
 
-            /* Method that first prints all matching files and directories, and then iterates through them
+            /*
+             * Method that first prints all matching files and directories, and then iterates through them
              * with each tab key press
              */
-            fileNamesIterator();
 
             // If no input, just output all files and folders
             if (" ".equals(currText))
-                printAllContents();
+                printAllContents(); // also deals with tab rotation when searching without prefix
+            else
+                fileNamesIterator();
 
         } else if (!lockTab) {
             autocomplete();
@@ -173,12 +172,12 @@ public class FileAutocomplete {
     private static void populateFileNames() {
 
         // For autocomplete in tab rotation
-        startComplete = (endsWithSlash || currText.endsWith(" ")) ? 0 : currText.length();
+        startComplete = (endsWithSlash || currText.endsWith(" ")) ? 0 : currText.endsWith(" ") ? 0 : currText.length();
 
         // Add all files with matching names to list
         assert files != null;
         for (File f : files)
-            if (f.getName().startsWith(currText))
+            if (f.getName().startsWith(currText) || " ".equals(currText))
                 fileNames.add(f.getName());
     }
 
@@ -229,8 +228,8 @@ public class FileAutocomplete {
             end = " ";
 
         // Append autocompleted text to command variable and print autocompleted string
-        command += fileName.substring(currText.length(), fileName.length()) + end;
-        System.out.print(fileName.substring(currText.length(), fileName.length()) + end);
+        command += fileName.substring(startComplete, fileName.length()) + end;
+        System.out.print(fileName.substring(startComplete, fileName.length()) + end);
 
         // Lock tab
         lockTab = true;

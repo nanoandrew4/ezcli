@@ -5,7 +5,9 @@ import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * Terminal module. Used to interact with system, as if you were running commands on your system terminal.
@@ -22,7 +24,7 @@ public class Terminal extends Module {
         inputProcessor = new TermInputProcessor(this);
     }
 
-    public TermInputProcessor getInputProcessor() {
+    protected TermInputProcessor getInputProcessor() {
         return inputProcessor;
     }
 
@@ -43,6 +45,13 @@ public class Terminal extends Module {
 
         String command = removeSpaces(rawCommand); // removes blank space before and after command if any exists
 
+        if (rawCommand.startsWith("cd")) {
+            changeDir(command);
+            System.out.print(Ezcli.prompt);
+            inputProcessor.setCommand("");
+            return;
+        }
+
         if ("exit".equals(command)) {
             inputProcessor.setCursorPos(0);
             inputProcessor.setCommand("");
@@ -61,6 +70,7 @@ public class Terminal extends Module {
         try {
             pb = new ProcessBuilder(command);
             pb.inheritIO(); // make program and process share IO
+            pb.directory(new File(Ezcli.currDir));
             p = pb.start(); // start process
         } catch (IOException | IllegalArgumentException e) {
             System.out.println("Parsing command \"" + command + "\" failed, enter \"t-help\" for help using module.");
@@ -82,6 +92,56 @@ public class Terminal extends Module {
 
         inputProcessor.setCommand("");
         System.out.print(Ezcli.prompt);
+    }
+
+    /**
+     * Changes the terminals directory, since the system does not interpret chdir commands. Attempts to emulate the "cd"
+     * command.
+     *
+     * @param command chdir command
+     */
+    private void changeDir(String command) {
+        String[] chdirSplit = command.split(" ");
+        if (chdirSplit.length != 2 || !"cd".equals(chdirSplit[0])) {
+            System.out.println("Invalid chdir command passed.");
+        } else {
+            String dirChange = chdirSplit[1];
+            String currDir = Ezcli.currDir;
+            File f;
+
+            // "cd .."
+            if ("..".equals(dirChange) && !"/".equals(Ezcli.currDir)) {
+                String[] dirSplit = Ezcli.currDir.split("/");
+                String newPath = "";
+                for (int i = 0; i < dirSplit.length - 1; i++)
+                    newPath += dirSplit[i] + "/";
+
+                System.setProperty("user.dir", newPath);
+                Ezcli.currDir = newPath;
+                return;
+            }
+
+            // "cd /home/username/example/"
+            if (dirChange.startsWith("/"))
+                f = Paths.get(dirChange).toFile();
+            // "cd ~/example/"
+            else if (dirChange.startsWith("~") && dirChange.length() > 1)
+                f = Paths.get(Ezcli.userHomeDir + dirChange.substring(1)).toFile();
+            // "cd ~"
+            else if (dirChange.equals("~"))
+                f = Paths.get(Ezcli.userHomeDir).toFile();
+            // "cd example/src/morexamples/"
+            else
+                f = Paths.get(currDir + dirChange).toFile();
+
+            // If destination directory exists, teleport there
+            if (f.exists() && f.isDirectory()) {
+                System.setProperty("user.dir", f.getAbsolutePath());
+                Ezcli.currDir = f.getAbsolutePath();
+            } else {
+                System.out.println("Invalid chdir, please make sure you typed it correctly and that the folder exists");
+            }
+        }
     }
 
     /**

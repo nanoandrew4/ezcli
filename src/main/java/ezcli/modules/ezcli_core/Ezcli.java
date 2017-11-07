@@ -12,11 +12,13 @@ public class Ezcli {
     public static String prompt = "   \b\b\b>> ";
 
     public static String currDir = System.getProperty("user.dir") + "/";
+    public static String userHomeDir = System.getProperty("user.home") + "/";
 
     public static boolean isWin;
     public static boolean isUnix;
 
     public static void main(String[] args) {
+
         setOS();
 
         initModules();
