@@ -6,6 +6,8 @@ import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.ezcli_core.util.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
 
+import java.util.ArrayList;
+
 /**
  * Processes key presses (except arrow keys) for Terminal module.
  *
@@ -23,7 +25,6 @@ public class TermKeyProcessor extends KeyHandler {
      * Processes input provided by input class,
      * and operates based on the input it receives,
      * using the character value passed by the process() method.
-     * <br></br>
      *
      * @param input last character input by user
      */
@@ -54,10 +55,13 @@ public class TermKeyProcessor extends KeyHandler {
     public void newLineEvent() {
         boolean empty = Terminal.containsOnlySpaces(inputProcessor.getCommand());
 
-        if ((!empty && inputProcessor.getPrevCommands().size() == 0) || (!empty &&
-                !inputProcessor.getPrevCommands().get(inputProcessor.getPrevCommands().size() - 1).equals(inputProcessor.getCommand())))
-            inputProcessor.getPrevCommands().add(inputProcessor.getCommand());
-        inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.getPrevCommands().size());
+        String command = inputProcessor.getCommand();
+        ArrayList<String> prevCommands = inputProcessor.getPrevCommands();
+
+        if (!empty)
+            prevCommands.add(command);
+
+        inputProcessor.getArrowKeyProcessor().setCommandListPosition(prevCommands.size());
         inputProcessor.getArrowKeyProcessor().setCurrCommand("");
         inputProcessor.setCursorPos(0);
         inputProcessor.setResetVars(true);
@@ -66,14 +70,18 @@ public class TermKeyProcessor extends KeyHandler {
 
     @Override
     public void charEvent(char input) {
+        String command = inputProcessor.getCommand();
+        int cursorPos = inputProcessor.getCursorPos();
+
         if (inputProcessor.getCursorPos() == inputProcessor.getCommand().length()) {
             System.out.print(input);
             inputProcessor.setCommand(inputProcessor.getCommand() + input);
         } else {
             Util.clearLine(inputProcessor.getCommand(), true);
-            inputProcessor.setCommand(new StringBuilder(inputProcessor.getCommand()).insert(inputProcessor.getCursorPos(), input).toString());
+            inputProcessor.setCommand(new StringBuilder(command).insert(cursorPos, input).toString());
             System.out.print(Ezcli.prompt + inputProcessor.getCommand());
         }
+
         inputProcessor.increaseCursorPos();
         inputProcessor.moveToCursorPos();
         inputProcessor.setResetVars(true);
@@ -82,14 +90,14 @@ public class TermKeyProcessor extends KeyHandler {
     @Override
     public void backspaceEvent() {
         if (inputProcessor.getCommand().length() > 0 && inputProcessor.getCursorPos() > 0) {
-            int charToDelete = inputProcessor.getCursorPos();
-            Util.clearLine(inputProcessor.getCommand(), true);
-            inputProcessor.setCommand(
-                    inputProcessor.getCommand().substring(0, charToDelete - 1) +
-                            (charToDelete < inputProcessor.getCommand().length() ? inputProcessor.getCommand().substring(charToDelete) : ""));
+            int charToDelete = inputProcessor.getCursorPos() - 1;
+            String command = inputProcessor.getCommand();
 
-            // Delete char, add white space and move back again
+            Util.clearLine(inputProcessor.getCommand(), true);
+
+            inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
             System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+
             inputProcessor.decreaseCursorPos();
             inputProcessor.moveToCursorPos();
             inputProcessor.setResetVars(true);

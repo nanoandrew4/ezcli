@@ -13,7 +13,8 @@ public class MainKeyTest {
 
     @BeforeClass
     public static void disableOutput() {
-        System.setOut(new PrintStream(new OutputStream() {
+        if (!Ezcli.testOutput)
+            System.setOut(new PrintStream(new OutputStream() {
             public void write(int b) {
                 // no output
             }

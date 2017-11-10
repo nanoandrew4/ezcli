@@ -23,7 +23,7 @@ public class TermInputProcessor extends InputHandler {
 
     private String command = "";
 
-    // Stops autocomplete from reprinting the text it completed if tab is pressed consecutively at the end of a complete file name
+    // Stops autocomplete from reprinting command it completed if tab is pressed at the end of a complete file name
     private boolean lockTab = false;
 
     // Stops autocomplete from constantly erasing fileNames list when searching sub-directories
@@ -38,10 +38,10 @@ public class TermInputProcessor extends InputHandler {
     private int cursorPos = 0;
 
     TermInputProcessor(Terminal terminal) {
-        super(); // pass null because cannot pass "this" before super() is called
+        super();
         this.terminal = terminal;
-        keyHandler = new TermKeyProcessor(this); // create straight after, passing "this"
-        arrowKeyHandler = new TermArrowKeyProcessor(this); // create straight after, passing "this"
+        keyHandler = new TermKeyProcessor(this);
+        arrowKeyHandler = new TermArrowKeyProcessor(this);
         KeyHandler.initKeysMap();
     }
 
@@ -94,17 +94,12 @@ public class TermInputProcessor extends InputHandler {
     }
 
     /**
-     * Calls appropriate method for handling
-     * input read from the input class, using
-     * booleans in Ezcli class to determine
-     * what OS the program is running on.
+     * Calls appropriate method for handling input read from the input class.
      */
     @Override
     public void process(int input) {
 
-        // Process input for Windows systems
         if (Ezcli.isWin) {
-            // If returns anything but ArrowKeys.NONE or ArrowKeys.MOD check keys
             ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
@@ -138,29 +133,20 @@ public class TermInputProcessor extends InputHandler {
     }
 
     /**
-     * Handles interaction with FileAutocomplete class.
+     * Autocompletes desired file name similar to how terminals do it.
      */
     protected void fileAutocomplete() {
-        if (!FileAutocomplete.isAvailable()) // if file autocompleting is currently in use, do not start new process
-            return;
 
-        // Autocomplete
-        if ("".equals(FileAutocomplete.getCommand()))
-            FileAutocomplete.init(command, blockClear, lockTab);
-        else
+        if (FileAutocomplete.getFiles() == null) {
+            FileAutocomplete.init(disassembleCommand(command), blockClear, lockTab);
+            resetVars = false;
+        } else
             FileAutocomplete.fileAutocomplete();
 
-        // Get variables from autocomplete method
         command = FileAutocomplete.getCommand();
 
-        /*
-         * If requested by FileAutocomplete class or input handler, reset variables in FileAutocomplete
-         * and initialize a new instance with the newly autocompleted command (in case the user tabs again)
-         */
-        if (FileAutocomplete.isResetVars() || resetVars) {
+        if (FileAutocomplete.isResetVars() || resetVars)
             FileAutocomplete.resetVars();
-            FileAutocomplete.init(command, false, false);
-        }
 
         // Get variables and set cursor position
         blockClear = FileAutocomplete.isBlockClear();
@@ -168,28 +154,67 @@ public class TermInputProcessor extends InputHandler {
         setCursorPos(command.length());
     }
 
-    public String getCommandToComplete(String command) {
+    /**
+     * Splits a command into 3 parts for the autocomplete function to operate properly.
+     * <br></br><br></br>
+     * Elements 0 and 2 are the non-relevant part of the command to the autocomplete function
+     * and are used when stitching the autocompleted command back together.
+     * <br></br><br></br>
+     * Element 1 is the portion of the command that needs completing, and the one on which
+     * the autocomplete class will operate on.
+     *
+     * @param command Command to split
+     * @return Returns disassembled string, with non relevant info in elements 0 and 2, and the string to autocomplete
+     *         in element 1.
+     */
+    protected String[] disassembleCommand(String command) {
 
         if (!command.contains("&&"))
-            return command;
+            return new String[]{"", command, ""};
 
         LinkedList<Integer> ampPos = new LinkedList<>();
-        for (int i = 0; i < command.length() - 1; i++)
-            if (command.substring(i, i + 2).equals("&&"))
+        for (int i = 0; i < command.length() - 1; i++) {
+            if (command.substring(i, i + 2).equals("&&")) {
                 ampPos.add(i);
-
-        String commandToComplete = "";
-
-        for (int i = 0; i < ampPos.size(); i++) {
-            if (ampPos.get(i) > cursorPos)
-                commandToComplete = command.substring(ampPos.get(i - 1) + 2, cursorPos);
-            else if (i + 1 == ampPos.size())
-                commandToComplete = command.substring(ampPos.get(i) + 2, cursorPos);
+                if (cursorPos - i < 2 && cursorPos - i > 0)
+                    return new String[]{"", command, ""};
+            }
         }
 
-        commandToComplete = Terminal.removeSpaces(commandToComplete);
+        String[] splitCommand = new String[3];
 
-        return commandToComplete;
+        if (ampPos.size() > 1) {
+            for (int i = 0; i < ampPos.size(); i++) {
+                if (ampPos.get(i) > cursorPos) {
+                    splitCommand[0] = command.substring(0, ampPos.get(i - 1) + 2) + " ";
+                    splitCommand[1] = command.substring(ampPos.get(i - 1) + 2, cursorPos);
+                    splitCommand[2] = " " + command.substring(cursorPos, command.length());
+                } else if (i + 1 == ampPos.size()) {
+                    splitCommand[0] = command.substring(0, ampPos.get(i) + 2) + " ";
+                    splitCommand[1] = command.substring(ampPos.get(i) + 2, cursorPos);
+                    splitCommand[2] = " " + command.substring(cursorPos, command.length());
+                }
+            }
+        } else {
+            if (cursorPos > ampPos.get(0)) {
+                splitCommand[0] = command.substring(0, ampPos.get(0) + 2) + " ";
+                splitCommand[1] = command.substring(ampPos.get(0) + 2, cursorPos);
+                splitCommand[2] = command.substring(cursorPos, command.length());
+            } else if (cursorPos < ampPos.get(0)){
+                splitCommand[0] = "";
+                splitCommand[1] = command.substring(0, cursorPos);
+                splitCommand[2] = command.substring(cursorPos, command.length());
+            } else {
+                String[] split = command.split("&&");
+                splitCommand[0] = split[0];
+                splitCommand[1] = "";
+                splitCommand[2] = "&&" + split[1];
+            }
+        }
+
+        splitCommand[1] = Terminal.removeSpaces(splitCommand[1]);
+
+        return splitCommand;
     }
 }
 

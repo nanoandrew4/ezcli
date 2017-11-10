@@ -11,22 +11,23 @@ Some definitions of terms used in this document:
 
 Completion of an top level element on this list warrants a new minor release. When a top level element in the v1.0.0 list is achieved, a new issue will be created with the remaining minor features and fixes needed before a new minor release, so they can be worked on.
 
+*Note:* Because the v0.1.0 goals have been reached, the first release of the project will happen in the coming days. I will first take some time to review the documentation in depth, and possibly fix 
+minor issues if I notice any. As far as features go, v0.1.0 is ready for release, with just a bit of maintenance to do. 
+
 *Goals for v0.1.0:*
-* [ ] Interactive module.
-  * [ ] Test on Windows.
+* [x] Interactive module.
   * [x] Removed all static.
   * [x] Accessibility to terminal module.
   * [x] Help output.
   * [x] Remove spaces preceding command (if any exist)
   * [x] Review classes for undocumented code, and clean up and optimize if possible.
   * [x] Implement touring method.
-* [ ] Terminal module.
-  * [ ] Test on Windows.
+* [x] Terminal module.
   * [x] Implement changing directory, since system apparently does not take care of that.
   * [x] Removed all static.
   * [x] Implement previous command modification.
-  * [ ] Add harsher unit testing.
-  * [ ] Review classes for undocumented code, clean up and optimize if possible.
+  * [x] Add harsher unit testing.
+  * [x] Review classes for undocumented code, clean up and optimize if possible.
   * [x] Implement touring method.
   * [x] Throughout testing of arrow key processing, and compare to system terminal use of arrow keys.
   * [x] Clean up file autocomplete method and implement unit tests for it.
@@ -41,7 +42,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Allow user to drop to command prompt with single key-press while in "interactive" mode.
   * [x] Allow user to return to "interactive" mode for continued use of the program.
   * [x] Print help for each module that is developed.
-  * [ ] v0.1.0 goals.
+  * [x] v0.1.0 goals.
 * [ ] Text based file explorer.
   * [ ] Rename, create and delete files.
   * [ ] Open files with default program assigned by OS, or with an included module such as the text editor.
@@ -65,4 +66,4 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [ ] Include help method for each module.
   * [ ] Module that tours the program and shows the user how to use the basics of each module included, interactively.
 * [ ] Implement own raw input processing class to replace Input, if possible.
-
+* [ ] Windows support (:S)

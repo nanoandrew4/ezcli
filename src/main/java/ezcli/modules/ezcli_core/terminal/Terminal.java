@@ -48,7 +48,7 @@ public class Terminal extends Module {
 
         for (String command : split) {
 
-            command = removeSpaces(command); // removes blank space before and after command if any exists
+            command = removeSpaces(command);
 
             if (command.startsWith("cd")) {
                 changeDir(command);
@@ -69,19 +69,16 @@ public class Terminal extends Module {
             }
 
             ProcessBuilder pb;
-            Process p = null; // system command to run
+            Process p = null;
             try {
                 pb = new ProcessBuilder(command);
-                pb.inheritIO(); // make program and process share IO
+                pb.inheritIO(); // Make program and process share IO to allow user to interact with program
                 pb.directory(new File(Ezcli.currDir));
-                p = pb.start(); // start process
+                p = pb.start();
             } catch (IOException | IllegalArgumentException e) {
                 System.out.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
             }
 
-        /*
-         * While system program is running, sleep.
-         */
             if (p != null) {
                 while (p.isAlive()) {
                     try {
@@ -90,7 +87,7 @@ public class Terminal extends Module {
                         e.printStackTrace();
                     }
                 }
-                p.destroy(); // destroy once done
+                p.destroy();
             }
         }
 
@@ -99,8 +96,8 @@ public class Terminal extends Module {
     }
 
     /**
-     * Changes the terminals directory, since the system does not interpret chdir commands. Attempts to emulate the "cd"
-     * command.
+     * Changes the terminals directory, since the system does not interpret chdir commands.
+     * Attempts to emulate the "cd" command.
      *
      * @param command chdir command
      */
@@ -138,10 +135,9 @@ public class Terminal extends Module {
             else
                 f = Paths.get(currDir + dirChange).toFile();
 
-            // If destination directory exists, teleport there
             if (f.exists() && f.isDirectory()) {
                 System.setProperty("user.dir", f.getAbsolutePath());
-                Ezcli.currDir = f.getAbsolutePath();
+                Ezcli.currDir = f.getAbsolutePath() + "/";
             } else {
                 System.out.println("Invalid chdir, please make sure you typed it correctly and that the folder exists");
             }
@@ -190,7 +186,8 @@ public class Terminal extends Module {
     @Override
     public void help() {
         System.out.println("This module interacts directly with the system.");
-        System.out.println("All input will be passed to the system when a \nnewline character is detected (enter key pressed)");
+        System.out.println("All input will be passed to the system when a \n" +
+                "newline character is detected (enter key pressed)");
         System.out.println("To change directory, enter: \"cd [somedir]\".");
         System.out.println("To return to Interactive module, enter \"exit\".");
     }

@@ -14,32 +14,62 @@ public class TermInputTest {
 
     @BeforeClass
     public static void disableOutput() {
-        System.setOut(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                // no output
-            }
-        }));
+        if (!Ezcli.testOutput) {
+            System.setOut(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    // no output
+                }
+            }));
+        }
     }
 
     @Test
-    public void getCommandToCompleteTest() {
+    public void disassembleCommandTest() {
         Ezcli.setOS();
         Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
 
-        assertEquals("command", inputProcessor.getCommandToComplete("command"));
+        assertEquals("command", inputProcessor.disassembleCommand("command")[1]);
 
         inputProcessor.setCursorPos(18);
-        assertEquals("another", inputProcessor.getCommandToComplete("command && anothercommand"));
+        assertEquals("another", inputProcessor.disassembleCommand("command && anothercommand")[1]);
 
         inputProcessor.setCursorPos(16);
-        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c && d"));
+        assertEquals("d", inputProcessor.disassembleCommand("a && b && c && d")[1]);
 
         inputProcessor.setCursorPos(16);
-        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c && d && e"));
+        assertEquals("d", inputProcessor.disassembleCommand("a && b && c && d && e")[1]);
 
         inputProcessor.setCursorPos(15);
-        assertEquals("d", inputProcessor.getCommandToComplete("a && b && c &&d && e"));
+        assertEquals("d", inputProcessor.disassembleCommand("a && b && c &&d && e")[1]);
+
+        inputProcessor.setCursorPos(14);
+        String[] cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
+        assertEquals("", cmd[0]);
+        assertEquals("/home/username", cmd[1]);
+        assertEquals(" && /etc/", cmd[2]);
+
+        inputProcessor.setCursorPos(16);
+        cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
+        assertEquals("", cmd[0]);
+        assertEquals("/home/username && /etc/", cmd[1]);
+        assertEquals("", cmd[2]);
+
+        inputProcessor.setCursorPos(15);
+        cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
+        assertEquals("/home/username ", cmd[0]);
+        assertEquals("", cmd[1]);
+        assertEquals("&& /etc/", cmd[2]);
+
+        inputProcessor.setCursorPos(16);
+        cmd = inputProcessor.disassembleCommand("cd / && cd /home");
+        assertEquals("cd / && cd /home", cmd[0] + cmd[1] + cmd[2]);
+        assertEquals("cd / && ", cmd[0]);
+        assertEquals("cd /home", cmd[1]);
+        assertEquals("", cmd[2]);
     }
 
     /*
