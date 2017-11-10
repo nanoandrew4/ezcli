@@ -1,5 +1,6 @@
 package ezcli.modules.ezcli_core.util;
 
+import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -12,7 +13,8 @@ public class FileAutocompleteTest {
 
     @BeforeClass
     public static void disableOutput() {
-        System.setOut(new PrintStream(new OutputStream() {
+        if (!Ezcli.testOutput)
+            System.setOut(new PrintStream(new OutputStream() {
             public void write(int b) {
                 // no output
             }

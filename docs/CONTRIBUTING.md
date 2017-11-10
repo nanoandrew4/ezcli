@@ -20,7 +20,8 @@ See [semantic versioning](http://semver.org/). Releases in this project are to f
 ---
 For code style, see [Java Code Conventions](http://www.oracle.com/technetwork/java/codeconventions-150003.pdf). Sure, it is 20+ years old, but chances are if you develop in Java, you follow most of these conventions already. If you don't, it's not too late for you! It might seem like a hassle, but I can assure you it is well worth learning to write readable code. Your future co-developers (and current ones!) will appreciate it.
 
-Additionally, please frequently comment your code so that others can understand it. Even though it might be perfectly obvious to you, someone else might not see it that way. If you add a new class or method, add a JavaDoc block at the top with a description of what the class or method does, and what the relevant parameters are, as well as what it returns (for methods only) if applicable.
+Additionally, please write descriptive code. Do not overload it with comments, but try to make it so that it is easy to follow. Use descriptive class and variable names, keep the code simple, and use 
+comments where needed.
 
 Sample JavaDoc block:
 /**
