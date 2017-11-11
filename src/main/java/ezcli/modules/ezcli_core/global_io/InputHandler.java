@@ -24,7 +24,8 @@ public abstract class InputHandler {
 
     /**
      * Set KeyHandler and ArrowKeyHandler for module.
-     * <br></br><br></br>
+     * <br></br>
+     * <p>
      * Classes extending KeyHandler and ArrowKeyHandler should be written, and passed through this function,
      * so they can be later used to process input for this module.
      *
@@ -42,6 +43,10 @@ public abstract class InputHandler {
      */
     public abstract void process(int input);
 
+    /**
+     * Returns key char value of last key pressed.
+     * @return Char value of key pressed
+     */
     public static char getKey() {
         try {
             return (char) Input.read(true);

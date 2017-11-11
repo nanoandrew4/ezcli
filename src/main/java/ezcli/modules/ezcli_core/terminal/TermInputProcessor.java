@@ -32,7 +32,7 @@ public class TermInputProcessor extends InputHandler {
     // For resetting all variables in FileAutocomplete once a key press other than a tab is registered
     private boolean resetVars = false;
 
-    // for use in detecting arrow presses on Unix, see comment block near usage in Process()
+    // For use in detecting arrow presses on Unix, see comment block in ArrowKeyHandler
     private long lastPress = System.currentTimeMillis();
 
     private int cursorPos = 0;
@@ -40,8 +40,10 @@ public class TermInputProcessor extends InputHandler {
     TermInputProcessor(Terminal terminal) {
         super();
         this.terminal = terminal;
+
         keyHandler = new TermKeyProcessor(this);
         arrowKeyHandler = new TermArrowKeyProcessor(this);
+
         KeyHandler.initKeysMap();
     }
 
@@ -99,14 +101,16 @@ public class TermInputProcessor extends InputHandler {
     @Override
     public void process(int input) {
 
-        if (Ezcli.isWin) {
+        if (Ezcli.IS_WIN) {
             ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
+
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
             if (ak != ArrowKeys.NONE)
                 keyHandler.process(input);
-        } else if (Ezcli.isUnix) {
+        } else if (Ezcli.IS_UNIX) {
             ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input);
+
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
             if (System.currentTimeMillis() - lastPress > 10 && input != 27)
@@ -156,16 +160,16 @@ public class TermInputProcessor extends InputHandler {
 
     /**
      * Splits a command into 3 parts for the autocomplete function to operate properly.
-     * <br></br><br></br>
+     * <p>
      * Elements 0 and 2 are the non-relevant part of the command to the autocomplete function
      * and are used when stitching the autocompleted command back together.
-     * <br></br><br></br>
+     * <p>
      * Element 1 is the portion of the command that needs completing, and the one on which
      * the autocomplete class will operate on.
      *
      * @param command Command to split
      * @return Returns disassembled string, with non relevant info in elements 0 and 2, and the string to autocomplete
-     *         in element 1.
+     * in element 1
      */
     protected String[] disassembleCommand(String command) {
 
@@ -184,6 +188,7 @@ public class TermInputProcessor extends InputHandler {
         String[] splitCommand = new String[3];
 
         if (ampPos.size() > 1) {
+            // Deals with commands that have more than one &&
             for (int i = 0; i < ampPos.size(); i++) {
                 if (ampPos.get(i) > cursorPos) {
                     splitCommand[0] = command.substring(0, ampPos.get(i - 1) + 2) + " ";
@@ -196,11 +201,12 @@ public class TermInputProcessor extends InputHandler {
                 }
             }
         } else {
+            // Deals with commands that have exactly one &&
             if (cursorPos > ampPos.get(0)) {
                 splitCommand[0] = command.substring(0, ampPos.get(0) + 2) + " ";
                 splitCommand[1] = command.substring(ampPos.get(0) + 2, cursorPos);
                 splitCommand[2] = command.substring(cursorPos, command.length());
-            } else if (cursorPos < ampPos.get(0)){
+            } else if (cursorPos < ampPos.get(0)) {
                 splitCommand[0] = "";
                 splitCommand[1] = command.substring(0, cursorPos);
                 splitCommand[2] = command.substring(cursorPos, command.length());
@@ -212,6 +218,7 @@ public class TermInputProcessor extends InputHandler {
             }
         }
 
+        // Remove spaces so that autocomplete can work properly
         splitCommand[1] = Terminal.removeSpaces(splitCommand[1]);
 
         return splitCommand;

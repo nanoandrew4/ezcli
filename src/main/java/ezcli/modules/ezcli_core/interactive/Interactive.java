@@ -12,7 +12,8 @@ import ezcli.modules.ezcli_core.global_io.InputHandler;
  */
 public class Interactive extends Module {
 
-    private MainInputProcessor inputProcessor; // processes input in interactive mode
+    // Input processor for this module
+    private MainInputProcessor inputProcessor;
 
     private boolean exit;
 
@@ -39,17 +40,17 @@ public class Interactive extends Module {
         System.out.println();
 
         switch (command) {
-            case "h": // help
+            case "h":
                 help();
                 break;
-            case "b": // exit
+            case "b":
                 exit = true;
                 System.out.println("Exiting application");
                 return;
             case "o":
                 tour();
                 break;
-            default: // pass to hashmap in Module
+            default: // Pass to hashmap in Module
                 Module m = Module.moduleMap.get(command);
                 if (m == null) {
                     System.out.println("Module not found");

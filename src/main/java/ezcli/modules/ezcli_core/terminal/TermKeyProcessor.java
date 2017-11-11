@@ -26,14 +26,13 @@ public class TermKeyProcessor extends KeyHandler {
      * and operates based on the input it receives,
      * using the character value passed by the process() method.
      *
-     * @param input last character input by user
+     * @param input Last character input by user
      */
     @Override
     public void process(int input) {
 
         Keys key = getKey(input);
 
-        // reset if input is not tab
         if (key != Keys.TAB) {
             inputProcessor.setLockTab(false);
             inputProcessor.setBlockClear(false);
@@ -45,8 +44,6 @@ public class TermKeyProcessor extends KeyHandler {
 
     @Override
     public void tabEvent() {
-
-        // Autocomplete
         inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
     }

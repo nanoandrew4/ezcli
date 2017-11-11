@@ -5,8 +5,6 @@ import ezcli.modules.ezcli_core.Ezcli;
 public class Util {
 
     /**
-     * GetRuntime() String
-     * <br></br><br></br>
      * Takes an interval of time in milliseconds, and returns amount of time it represents.
      * Useful for determining runtime of a program in a more readable format.
      * <br></br>
@@ -32,10 +30,7 @@ public class Util {
     }
 
     /**
-     * ClearLine() void
-     * <br></br><br></br>
      * Clears a line in the console of size line.length().
-     * <br></br>
      *
      * @param line        line to be cleared
      * @param clearPrompt choose to clear prompt along with line (only use true if prompt exists)

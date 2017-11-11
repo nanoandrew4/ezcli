@@ -6,18 +6,17 @@ package ezcli.modules.ezcli_core.global_io;
  */
 public abstract class ArrowKeyHandler {
 
-    // stores the three values of the codes that Unix systems pass when an arrow key is pressed
+    // Stores the three values of the codes that Unix systems pass when an arrow key is pressed
     protected static int[] vals = new int[3];
 
-    // specifies which of the three codes used in processing arrow keys in Unix the program should be expecting
+    // Specifies which of the three codes used in processing arrow keys in Unix the program should be expecting
     protected static int pos = 0;
 
-    // last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
+    // Last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
     protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
 
     /**
      * Checks if last input was arrow key (only on Windows).
-     * <br></br>
      *
      * @param i integer value of last key press
      * @return arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
@@ -39,25 +38,25 @@ public abstract class ArrowKeyHandler {
 
     /**
      * Checks if input was arrow key (only on Unix).
-     * <br></br>
-     * For more information, please see comment block below.
-     * <br></br>
+     * <br></br><br></br>
+     * <p>
+     * When Unix processes arrow keys, they are read as a sequence of 3 numbers, for example 27 91 65
+     * which means Process is called once for each of the three numbers. The first number will be processed normally,
+     * which can not be prevented, but the other two run 1ms after the previous one, which means those can be filtered out.
+     * Even when holding down a key, the interval between each detection is 30ms +-1ms, which means this approach
+     * causes no problems at all. If char 27 is ignored, then the program will continue to run normally, at the cost of
+     * the escape character in Unix systems.
      *
      * @param i integer value of last key press
      * @return arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
      */
     /*
-        When Unix processes arrow keys, they are read as a sequence of 3 numbers, for example 27 91 65
-        which means Process is called once for each of the three numbers. The first number will be processed normally,
-        which can not be prevented, but the other two run 1ms after the previous one, which means those can be filtered out.
-        Even when holding down a key, the interval between each detection is 30ms +-1ms, which means this approach
-        causes no problems at all. If char 27 is ignored, then the program will continue to run normally, at the cost of
-        the escape character in Unix systems.
+
 	*/
     public static ArrowKeys arrowKeyCheckUnix(int i) {
 
         if (vals[2] > 64 && vals[2] < 69) {
-            // reset array and position tracker if key was previously returned
+            // Reset array and position tracker if key was previously returned
             vals = new int[3];
             pos = 0;
         }
@@ -78,9 +77,7 @@ public abstract class ArrowKeyHandler {
                     return ArrowKeys.NONE;
             }
         } else if ((vals[0] != 27 && vals[0] != 0) || (i != vals[0] && i == 91 && vals[0] != 0)) {
-            /*
-             * Resets vals array if either of first two positions don't align with expected pattern
-             */
+            // Resets vals array if either of first two positions don't align with expected pattern
             vals = new int[3];
             pos = 0;
         }
@@ -88,6 +85,13 @@ public abstract class ArrowKeyHandler {
         return ArrowKeys.NONE;
     }
 
+    /**
+     * Process an arrow key press. If arrow key handling is simple enough,
+     * can be used by itself to contain all the handling code.
+     *
+     * @param ak Arrow key to process
+     * @return Arrow key that was processed
+     */
     public abstract ArrowKeys process(ArrowKeys ak);
 
     protected abstract void processUp();

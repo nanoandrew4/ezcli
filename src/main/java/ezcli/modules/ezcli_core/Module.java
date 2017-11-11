@@ -14,10 +14,10 @@ import java.util.HashMap;
  */
 public abstract class Module {
 
-    // list of modules that the program wil use
+    // List of modules that the program will use
     public static ArrayList<Module> modules = new ArrayList<>();
 
-    // hashmap that maps a string to a module, which when typed in the interactive module, will run the module the string is mapped to
+    // Hashmap that maps a string to a module, which when typed in interactive module, will run the mapped module
     protected static HashMap<String, Module> moduleMap = new HashMap<>();
     protected static HashMap<Module, String> moduleNameMap = new HashMap<>();
 
@@ -30,8 +30,9 @@ public abstract class Module {
     /**
      * Quasi-constructor. Initializes the class and adds the module to a list of modules.
      * Every module must call this class only once, and pass itself as a module.
-     * @param module module to be added
-     * @param mapWith string to map to module, which when typed in the interactive module will run this module
+     *
+     * @param module  Module to be added
+     * @param mapWith String to map to module, which when typed in the interactive module will run this module
      */
     protected void init(Module module, String mapWith) {
         modules.add(module);
@@ -48,7 +49,7 @@ public abstract class Module {
     /**
      * Code to run when parsing input.
      *
-     * @param command command to parse
+     * @param command Command to parse
      */
     public abstract void parse(String command);
 
@@ -62,8 +63,15 @@ public abstract class Module {
      */
     public abstract void tour();
 
+    /**
+     * Make program sleep but listen for signals such as SIGTERM and SIGKILL.
+     *
+     * @param s Number of seconds to sleep for
+     * @return Signal to be handled
+     */
     protected Command sleep(double s) {
         long start = System.currentTimeMillis();
+
         while (System.currentTimeMillis() - start < s * 1000) {
             try {
                 Command c = KeyHandler.signalCatch(Input.read(false));
@@ -73,6 +81,7 @@ public abstract class Module {
                 e.printStackTrace();
             }
         }
+
         return Command.NONE;
     }
 

@@ -3,16 +3,16 @@ package ezcli.modules.ezcli_core.interactive;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 
 /**
- * Processes key presses for Interactive module.
+ * Processes key presses (except arrow keys) for Interactive module.
  *
  * @see Interactive
  */
 public class MainKeyProcessor extends KeyHandler {
 
+    private MainInputProcessor inputProcessor;
+
     private long lastPress = System.currentTimeMillis();
     private char lastInput = 0;
-
-    private MainInputProcessor inputProcessor;
 
     MainKeyProcessor(MainInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
@@ -29,7 +29,11 @@ public class MainKeyProcessor extends KeyHandler {
         if (System.currentTimeMillis() - lastPress < 10) {
             if (lastInput == 'A') {
                 System.out.println("\b \b");
-                inputProcessor.setCommand(inputProcessor.getCommand().substring(0, inputProcessor.getCommand().length() - 1)); // remove last char
+
+                String command = inputProcessor.getCommand();
+                int commandLength = command.length();
+
+                inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(commandLength).toString());
             }
             return;
         }
@@ -42,12 +46,12 @@ public class MainKeyProcessor extends KeyHandler {
 
     @Override
     public void tabEvent() {
-        // do not process tab key
+        // Do not process tab key
     }
 
     @Override
     public void newLineEvent() {
-        // do not process enter key
+        // Do not process enter key
     }
 
     @Override
@@ -59,6 +63,6 @@ public class MainKeyProcessor extends KeyHandler {
 
     @Override
     public void backspaceEvent() {
-        // do not process backspace key
+        // Do not process backspace key
     }
 }

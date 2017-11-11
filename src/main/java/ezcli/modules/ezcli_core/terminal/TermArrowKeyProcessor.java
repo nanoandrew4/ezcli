@@ -12,9 +12,11 @@ import ezcli.modules.ezcli_core.util.Util;
  */
 public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
-    private int commandListPosition = 0; // position on prevCommands list (used to iterate through it)
+    // Position on prevCommands list (used to iterate through it)
+    private int commandListPosition = 0;
 
-    private String currCommand = ""; // stores current TermInputProcessor.command when iterating through prevCommands
+    // Stores current TermInputProcessor.command when iterating through prevCommands
+    private String currCommand = "";
 
     private TermInputProcessor inputProcessor;
 
@@ -31,7 +33,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     }
 
     /**
-     * Processes arrow keys presses.
+     * Processes arrow keys presses and delegates them to abstract implementations.
      *
      * @param ak arrow key pressed (if any)
      * @return arrow key pressed
@@ -39,7 +41,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     @Override
     public ArrowKeys process(ArrowKeys ak) {
 
-        if (ak != ArrowKeys.NONE) { // process up, down, left and right arrow keys
+        if (ak != ArrowKeys.NONE) {
             switch (ak) {
                 case UP:
                     processUp(); break;
@@ -50,7 +52,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
                 case RIGHT:
                     processRight(); break;
                 default:
-                    return ak; // should never run
+                    return ak; // Should never run
             }
         }
         return ak;
@@ -87,34 +89,41 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
         }
     }
 
+    /**
+     * Iterates through the prevCommands list. Emulates Unix terminal behaviour when using
+     * vertical arrow keys.
+     *
+     * @param ak Arrow key to process
+     */
     private void prevCommandIterator(ArrowKeys ak) {
         if (commandListPosition == inputProcessor.getPrevCommands().size() && lastArrowPress == ArrowKeys.NONE)
-            // saves currently typed command before moving through the list of previously typed commands
+            // Saves currently typed command before moving through the list of previously typed commands
+
             currCommand = inputProcessor.getCommand();
 
-        if (ak == ArrowKeys.UP && commandListPosition > 0) { // move through the list towards first typed command
+        if (ak == ArrowKeys.UP && commandListPosition > 0) {
+            // Move through the list towards first typed command
+
             lastArrowPress = ak;
             Util.clearLine(inputProcessor.getCommand(), true);
 
-            if (commandListPosition > inputProcessor.getPrevCommands().size()) // prevent array out of bounds
+            if (commandListPosition > inputProcessor.getPrevCommands().size())
                 commandListPosition = inputProcessor.getPrevCommands().size();
 
-            // print previous command and set the command variable to it
             System.out.print(Ezcli.prompt + inputProcessor.getPrevCommands().get(--commandListPosition));
             inputProcessor.setCommand(inputProcessor.getPrevCommands().get(commandListPosition));
 
         } else if (ak == ArrowKeys.DOWN && commandListPosition < inputProcessor.getPrevCommands().size() - 1) {
-            // move through list towards last typed element
+            // Move through list towards last typed element
 
             lastArrowPress = ak;
             Util.clearLine(inputProcessor.getCommand(), true);
 
-            // print next command and set command variable to it
             System.out.print(Ezcli.prompt + inputProcessor.getPrevCommands().get(++commandListPosition));
             inputProcessor.setCommand(inputProcessor.getPrevCommands().get(commandListPosition));
 
         } else if (ak == ArrowKeys.DOWN && commandListPosition >= inputProcessor.getPrevCommands().size() - 1) {
-            // print command that was stored before iteration through list began
+            // Print command that was stored before iteration through list began
 
             lastArrowPress = ak;
             Util.clearLine(inputProcessor.getCommand(), true);

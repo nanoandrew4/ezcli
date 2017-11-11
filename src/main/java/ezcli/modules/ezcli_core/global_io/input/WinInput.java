@@ -10,7 +10,6 @@ import java.io.IOException;
 import static ezcli.modules.ezcli_core.global_io.input.Input.*;
 
 public class WinInput {
-    //--- Windows ------------------------------------------------------------------
 
 // The Windows version uses _kbhit() and _getwch() from msvcrt.dll.
 

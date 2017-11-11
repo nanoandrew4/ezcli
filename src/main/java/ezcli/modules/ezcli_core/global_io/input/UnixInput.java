@@ -18,7 +18,6 @@ import java.util.List;
 import static ezcli.modules.ezcli_core.global_io.input.Input.*;
 
 public class UnixInput {
-    //--- Unix ---------------------------------------------------------------------
 
 // The Unix version uses tcsetattr() to switch the console to non-canonical mode,
 // System.in.available() to check whether data is available and System.in.read()

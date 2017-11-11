@@ -14,9 +14,10 @@ import java.nio.file.Paths;
  */
 public class Terminal extends Module {
 
-    private boolean exit;
-
+    // Input handler for this module
     private TermInputProcessor inputProcessor;
+
+    private boolean exit;
 
     public Terminal(String mapWith) {
         super("Terminal");
@@ -43,11 +44,9 @@ public class Terminal extends Module {
     public void parse(String rawCommand) {
 
         String[] split = rawCommand.split("&&");
-
         System.out.println();
 
         for (String command : split) {
-
             command = removeSpaces(command);
 
             if (command.startsWith("cd")) {
@@ -73,7 +72,7 @@ public class Terminal extends Module {
             try {
                 pb = new ProcessBuilder(command);
                 pb.inheritIO(); // Make program and process share IO to allow user to interact with program
-                pb.directory(new File(Ezcli.currDir));
+                pb.directory(new File(Ezcli.currDir)); // Set working directory for command
                 p = pb.start();
             } catch (IOException | IllegalArgumentException e) {
                 System.out.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
@@ -99,10 +98,11 @@ public class Terminal extends Module {
      * Changes the terminals directory, since the system does not interpret chdir commands.
      * Attempts to emulate the "cd" command.
      *
-     * @param command chdir command
+     * @param command chdir command to parse
      */
     private void changeDir(String command) {
         String[] chdirSplit = command.split(" ");
+
         if (chdirSplit.length != 2 || !"cd".equals(chdirSplit[0])) {
             System.out.println("Invalid chdir command passed.");
         } else {
@@ -113,24 +113,28 @@ public class Terminal extends Module {
             // "cd .."
             if ("..".equals(dirChange) && !"/".equals(Ezcli.currDir)) {
                 String[] dirSplit = Ezcli.currDir.split("/");
-                String newPath = "";
-                for (int i = 0; i < dirSplit.length - 1; i++)
-                    newPath += dirSplit[i] + "/";
+                StringBuilder newPath = new StringBuilder();
 
-                System.setProperty("user.dir", newPath);
-                Ezcli.currDir = newPath;
+                for (int i = 0; i < dirSplit.length - 1; i++)
+                    newPath.append(dirSplit[i]).append("/");
+
+                System.setProperty("user.dir", newPath.toString());
+                Ezcli.currDir = newPath.toString();
                 return;
             }
 
             // "cd /home/username/example/"
             if (dirChange.startsWith("/"))
                 f = Paths.get(dirChange).toFile();
+
             // "cd ~/example/"
             else if (dirChange.startsWith("~") && dirChange.length() > 1)
-                f = Paths.get(Ezcli.userHomeDir + dirChange.substring(1)).toFile();
+                f = Paths.get(Ezcli.USER_HOME_DIR + dirChange.substring(1)).toFile();
+
             // "cd ~"
             else if ("~".equals(dirChange))
-                f = Paths.get(Ezcli.userHomeDir).toFile();
+                f = Paths.get(Ezcli.USER_HOME_DIR).toFile();
+
             // "cd example/src/morexamples/"
             else
                 f = Paths.get(currDir + dirChange).toFile();
@@ -139,7 +143,7 @@ public class Terminal extends Module {
                 System.setProperty("user.dir", f.getAbsolutePath());
                 Ezcli.currDir = f.getAbsolutePath() + "/";
             } else {
-                System.out.println("Invalid chdir, please make sure you typed it correctly and that the folder exists");
+                System.out.println("Please enter a valid directory to change to.");
             }
         }
     }
@@ -159,6 +163,7 @@ public class Terminal extends Module {
             else
                 break;
         }
+
         int bpos = command.length() > 0 ? command.length() : 0;
         for (int i = command.length() - 1; i > 0; i--) {
             if (command.charAt(i) == ' ')

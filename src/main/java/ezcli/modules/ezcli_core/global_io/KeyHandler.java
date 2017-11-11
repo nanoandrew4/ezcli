@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public abstract class KeyHandler {
 
-    // stores all key integer values and maps them to the values in Keys enum
+    // Stores all key integer values and maps them to the values in Keys enum
     private static HashMap<Integer, Keys> keymap = new HashMap<>();
 
     public static HashMap<Integer, Keys> getKeymap() {
@@ -54,7 +54,7 @@ public abstract class KeyHandler {
     public static Command signalCatch(int input) {
         if (input == 3) // Ctrl+C
             return Command.CTRLC;
-        if (input == 26) { // Ctrl+Z -> force quit program
+        if (input == 26) { // Ctrl+Z -> force quit program (not really yet...)
             System.out.println();
             return Command.CTRLZ;
         }
@@ -65,14 +65,14 @@ public abstract class KeyHandler {
      * Loads all integer values of keys to HashMap.
      */
     public static void initKeysMap() {
-        if (Ezcli.isWin) {
-            keymap.put(8, Keys.BCKSP); // win backspace
-            keymap.put(9, Keys.TAB); // win tab
-            keymap.put(13, Keys.NWLN); // win newline
-        } else if (Ezcli.isUnix) {
-            keymap.put(127, Keys.BCKSP); // unix backspace
-            keymap.put((int) '\t', Keys.TAB); // unix tab
-            keymap.put((int) '\n', Keys.NWLN); // unix newline
+        if (Ezcli.IS_WIN) {
+            keymap.put(8, Keys.BCKSP);
+            keymap.put(9, Keys.TAB);
+            keymap.put(13, Keys.NWLN);
+        } else if (Ezcli.IS_UNIX) {
+            keymap.put(127, Keys.BCKSP);
+            keymap.put((int) '\t', Keys.TAB);
+            keymap.put((int) '\n', Keys.NWLN);
         }
     }
 

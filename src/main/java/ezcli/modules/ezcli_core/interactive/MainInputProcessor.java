@@ -13,9 +13,10 @@ public class MainInputProcessor extends InputHandler {
 
     private Interactive interactive;
 
-    private String command = ""; // command string for use in interactive mode
+    private String command = "";
 
-    private String wasCommand = ""; // for testing this input processor, stores previous command
+    // Stores previous command, for testing purposes only
+    private String wasCommand = "";
 
     protected void setCommand(String command) {
         wasCommand = this.command;
