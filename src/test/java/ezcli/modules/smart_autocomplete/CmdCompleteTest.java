@@ -4,13 +4,9 @@ import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -29,14 +25,8 @@ public class CmdCompleteTest {
 
     @Test
     public void test() {
-        CmdComplete cmdComplete = new CmdComplete("");
-        try {
-            List<String> commands =
-                    Files.readAllLines(Paths.get("src/test/java/ezcli/modules/smart_autocomplete/prevCommands.txt"));
-            cmdComplete.init(commands);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CmdComplete cmdComplete =
+                new CmdComplete("src/test/java/ezcli/modules/smart_autocomplete/prevCommands.txt");
 
         ArrayList<CommandFreq> freqCommands = cmdComplete.getFreqCommands();
         for (CommandFreq cf : freqCommands) {
