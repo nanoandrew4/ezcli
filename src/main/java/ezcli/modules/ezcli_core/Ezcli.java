@@ -17,7 +17,7 @@ public class Ezcli {
     public static boolean IS_WIN;
     public static boolean IS_UNIX;
 
-    public static boolean testOutput = true;
+    public static boolean testOutput = false;
 
     public static void main(String[] args) {
         setOS();
