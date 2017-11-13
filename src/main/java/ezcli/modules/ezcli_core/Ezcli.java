@@ -1,7 +1,7 @@
 package ezcli.modules.ezcli_core;
 
 import ezcli.modules.ezcli_core.interactive.Interactive;
-import ezcli.modules.ezcli_core.terminal.Terminal;
+import ezcli.modules.terminal.Terminal;
 
 /**
  * Entry point for program. Takes care of all loading and initializing, so modules can get to work.
@@ -17,7 +17,7 @@ public class Ezcli {
     public static boolean IS_WIN;
     public static boolean IS_UNIX;
 
-    public static boolean testOutput = false;
+    public static boolean testOutput = true;
 
     public static void main(String[] args) {
         setOS();

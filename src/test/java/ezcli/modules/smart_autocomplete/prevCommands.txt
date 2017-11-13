@@ -1,0 +1,77 @@
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+mvn package
+exit
+ping 8.8.8.8
+sudo netctl list
+sudo netctl auto-enable wlp3s0-BELL064
+sudo netctl enable wlp3s0-BELL064
+sudo netctl start wlp3s0-BELL064
+start
+startx
+sudo pacman -Rs vim
+sudo pacman -Rs vi
+git config --global core.editor "nano"
+pacman -S vi
+sudo pacman -S vi
+clear
+sudo pacman -Syu
+cd GitHub/Projects/JTerm/
+git fetch upstream
+git pull upstream
+git branch
+git pull upstream dev
+git status
+git pull -f upstream dev
+git add -A
+git pull -f upstream dev
+git merge
+git merge upstream/dev
+git commit -m "Merged with upstream/dev"
+git pull upstream dev
+git status
+git reflog
+clear
+git reflog
+git reflog
+git reflog
+clear
+git config --global core.editor "nano"
+git reflog
+clear
+git config --global --unset-all core.editor
+git reflog
+git 
+git config --global core.editor "nano"
+git reflog
+git config --global --add core.editor "/usr/bin/nano"
+git reflog
+~/.bashrc
+nano ~/.bash_profile
+git status
+git push 
+git reflog
+git checkout ezcli-core
+git reflog
+git reset --hard HEAD@{16}
+git branch
+ip link
+dhcpd enp0s20u1
+dhcpcd enp0s20u1
+sudo dhcpcd enp0s20u1
+startx
