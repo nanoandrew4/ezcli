@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.terminal;
+package ezcli.modules.terminal;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

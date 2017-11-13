@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.terminal;
+package ezcli.modules.terminal;
 
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
