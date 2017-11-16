@@ -1,9 +1,27 @@
 package ezcli.modules.terminal;
 
+import ezcli.modules.ezcli_core.Ezcli;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import static org.junit.Assert.*;
 
 public class TerminalTest {
+
+    @BeforeClass
+    public static void disableOutput() {
+        if (!Ezcli.testOutput || !Ezcli.testTermOuput)
+            System.setOut(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    // no output
+                }
+            }));
+        else
+            System.setOut(Ezcli.os);
+    }
 
     @Test
     public void onlySpacesTest() {

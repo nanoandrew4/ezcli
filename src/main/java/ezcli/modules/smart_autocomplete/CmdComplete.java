@@ -1,5 +1,7 @@
 package ezcli.modules.smart_autocomplete;
 
+import ezcli.modules.ezcli_core.util.Util;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -63,7 +65,7 @@ public class CmdComplete {
         for (String s : commands)
             store(s);
 
-        sort(0, freqCommands.size() - 1);
+        Util.sort(0, freqCommands.size() - 1, freqCommands);
     }
 
     /**
@@ -83,36 +85,6 @@ public class CmdComplete {
 
         if (!stored)
             freqCommands.add(new CommandFreq(command));
-    }
-
-    /**
-     * Sorts the list freqCommands using quicksort.
-     *
-     * @param lPiv Leftmost chunk of list to sort
-     * @param rPiv Rightmost chunk of list to sort
-     */
-    private void sort(int lPiv, int rPiv) {
-        int cPiv = freqCommands.get((rPiv + lPiv) / 2).getFreq();
-        int a = lPiv, b = rPiv;
-
-        while (a <= b) {
-            while (freqCommands.get(a).getFreq() > cPiv)
-                a++;
-            while (freqCommands.get(b).getFreq() < cPiv)
-                b--;
-            if (a <= b) {
-                CommandFreq cfTmp = freqCommands.get(a);
-                freqCommands.set(a, freqCommands.get(b));
-                freqCommands.set(b, cfTmp);
-                a++;
-                b--;
-            }
-        }
-
-        if (b < rPiv)
-            sort(lPiv, b);
-        if (a < rPiv)
-            sort(a, rPiv);
     }
 
     /**

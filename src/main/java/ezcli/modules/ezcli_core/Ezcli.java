@@ -3,6 +3,8 @@ package ezcli.modules.ezcli_core;
 import ezcli.modules.ezcli_core.interactive.Interactive;
 import ezcli.modules.terminal.Terminal;
 
+import java.io.PrintStream;
+
 /**
  * Entry point for program. Takes care of all loading and initializing, so modules can get to work.
  */
@@ -17,7 +19,14 @@ public class Ezcli {
     public static boolean IS_WIN;
     public static boolean IS_UNIX;
 
+    // Toggle output for various test packages
     public static boolean testOutput = false;
+    public static boolean testTermOuput = false;
+    public static boolean ezcliCoreOuput = false;
+    public static boolean smartCompleteOuput = true;
+
+    // Copy of standard output stream so test classes can print if they need to
+    public static PrintStream os = System.out;
 
     public static void main(String[] args) {
         setOS();

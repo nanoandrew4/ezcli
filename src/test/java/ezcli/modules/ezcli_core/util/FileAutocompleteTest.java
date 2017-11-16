@@ -13,12 +13,14 @@ public class FileAutocompleteTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput)
+        if (!Ezcli.testOutput || !Ezcli.ezcliCoreOuput)
             System.setOut(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                // no output
-            }
-        }));
+                public void write(int b) {
+                    // no output
+                }
+            }));
+        else
+            System.setOut(Ezcli.os);
     }
 
     /*

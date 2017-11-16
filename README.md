@@ -12,6 +12,12 @@ ezcli is a project aimed at enhancing a users terminal experience, by creating a
 This project is still under active development, and the first official major release has not yet been achieved. Therefore, this document, as well as any others in this project are subject to change as development progresses.
 To get an idea of where the project is at, check out the [roadmap](docs/ROADMAP.md).
 
+## Demo
+
+Want to see where the project is currently at? Click the image below to see the latest demo!
+
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
+
 ## Why use ezcli
 ---
 
@@ -32,6 +38,11 @@ Want to help us work on ezcli? Check out the [contributing guidelines](docs/CONT
 Want to suggest new features, or found a bug in the software? Head over to the projects [issues](https://github.com/nanoandrew4/ezcli/issues) to submit a new issue. Please follow the template if submitting a bug report, and otherwise make sure to be descriptive and concise.
 
 Want to help out, but don't know how to code? You are more than welcome to improve our existing documentation, and to make sure that all documents are kept up to date. Although this documentation is extremely important, mental lapses can cause some of it to lag behind, so fixing our documentation is a great way to help out!
+
+## Slack
+
+This project has a Slack messaging group. You can email me at <nanoandrew4@gmail.com> to request an invite. Slack also has an app for phones so you can discuss with the rest of the team on the go, and view updates on the project 
+too.
 
 ## Have a question?
 ---
