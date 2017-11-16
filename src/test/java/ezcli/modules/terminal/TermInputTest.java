@@ -14,13 +14,14 @@ public class TermInputTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput) {
+        if (!Ezcli.testOutput || !Ezcli.testTermOuput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // no output
                 }
             }));
-        }
+        else
+            System.setOut(Ezcli.os);
     }
 
     @Test
@@ -288,12 +289,12 @@ public class TermInputTest {
             inputProcessor.process(i);
 
         assertEquals("", inputProcessor.getCommand());
-        String expectedCommand = "";
+        StringBuilder expectedCommand = new StringBuilder();
         for (int i = 48; i < 123; i++) {
             keyProcessor.process(i);
-            expectedCommand += (char)i;
+            expectedCommand.append((char) i);
         }
-        assertEquals(expectedCommand, inputProcessor.getCommand());
+        assertEquals(expectedCommand.toString(), inputProcessor.getCommand());
 
         for (int i = 0; i < 1000; i++)
             keyProcessor.backspaceEvent();

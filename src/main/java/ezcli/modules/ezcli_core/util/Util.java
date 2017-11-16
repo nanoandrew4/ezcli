@@ -1,6 +1,9 @@
 package ezcli.modules.ezcli_core.util;
 
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.smart_autocomplete.CommandFreq;
+
+import java.util.ArrayList;
 
 public class Util {
 
@@ -46,5 +49,35 @@ public class Util {
         for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() / 3 : 0); i++)
             System.out.print("\b");
 
+    }
+
+    /**
+     * Sorts a CommandFreq list using quicksort.
+     *
+     * @param lPiv Leftmost chunk of list to sort
+     * @param rPiv Rightmost chunk of list to sort
+     */
+    public static void sort(int lPiv, int rPiv, ArrayList<CommandFreq> list) {
+        int cPiv = list.get((rPiv + lPiv) / 2).getFreq();
+        int a = lPiv, b = rPiv;
+
+        while (a <= b) {
+            while (list.get(a).getFreq() > cPiv)
+                a++;
+            while (list.get(b).getFreq() < cPiv)
+                b--;
+            if (a <= b) {
+                CommandFreq cfTmp = list.get(a);
+                list.set(a, list.get(b));
+                list.set(b, cfTmp);
+                a++;
+                b--;
+            }
+        }
+
+        if (b < rPiv)
+            sort(lPiv, b, list);
+        if (a < rPiv)
+            sort(a, rPiv, list);
     }
 }
