@@ -1,6 +1,8 @@
-package ezcli.modules.ezcli_core.util;
+package ezcli.modules.smart_autocomplete;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.util.Util;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -19,6 +21,8 @@ public class FileAutocomplete {
     private static String command = "", originalCommand = "", currText = "", path = "";
     private static boolean blockClear, lockTab, resetVars, endsWithSlash, newList;
     private static int startComplete;
+
+    private static ColorOutput colorOutput;
 
     private static boolean available = true;
 
@@ -49,7 +53,7 @@ public class FileAutocomplete {
      * @param blockClear True if method should not delete the file names currently stored, which enables tab rotation
      * @param lockTab    Whether the tab key should be processed or not
      */
-    public static void init(String[] command, boolean blockClear, boolean lockTab) {
+    public static void init(String[] command, ColorOutput colorOutput, boolean blockClear, boolean lockTab) {
 
         if (!available)
             return;
@@ -58,6 +62,7 @@ public class FileAutocomplete {
         resetVars = false;
 
         FileAutocomplete.splitCommand = command;
+        FileAutocomplete.colorOutput = colorOutput;
         FileAutocomplete.command = command[1];
         FileAutocomplete.blockClear = blockClear;
         FileAutocomplete.lockTab = lockTab;
@@ -183,7 +188,8 @@ public class FileAutocomplete {
         Util.clearLine(getCommand(), true);
 
         command = originalCommand + fileName.substring(startComplete) + end;
-        System.out.print(Ezcli.prompt + getCommand());
+        System.out.print(Ezcli.prompt);
+        colorOutput.print(getCommand());
 
         lockTab = true;
 
@@ -206,9 +212,12 @@ public class FileAutocomplete {
             Util.clearLine(getCommand(), true);
 
         // Print matching file names
-        if (newList)
-            for (String s : fileNames)
-                System.out.print(s + "\t");
+        if (newList) {
+            for (String s : fileNames) {
+                colorOutput.print(s, (char)27 + "[38;5;160m");
+                System.out.print("\t");
+            }
+        }
 
         // Rotate
         else if (!lockTab || endsWithSlash) {
@@ -217,15 +226,18 @@ public class FileAutocomplete {
             String currFile = fileNames.pollFirst();
 
             command = originalCommand + currFile.substring(startComplete);
-            System.out.print(Ezcli.prompt + getCommand());
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(getCommand());
 
             // Add to end of list (rotate through list)
             fileNames.add(currFile);
         }
 
-        if (fileNames.size() > 0 && newList)
+        if (fileNames.size() > 0 && newList) {
             // Re-output command after clearing lines
-            System.out.print("\n" + Ezcli.prompt + getCommand());
+            System.out.print("\n" + Ezcli.prompt);
+            colorOutput.print(getCommand());
+        }
     }
 
     /**

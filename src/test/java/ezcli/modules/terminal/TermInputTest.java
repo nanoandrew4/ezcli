@@ -21,7 +21,7 @@ public class TermInputTest {
                 }
             }));
         else
-            System.setOut(Ezcli.os);
+            System.setOut(Ezcli.stdOutput);
     }
 
     @Test

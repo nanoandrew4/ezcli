@@ -1,8 +1,9 @@
 package ezcli.modules.terminal;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
-import ezcli.modules.ezcli_core.util.FileAutocomplete;
+import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +18,8 @@ import java.util.LinkedList;
 public class TermInputProcessor extends InputHandler {
 
     private Terminal terminal;
+
+    private ColorOutput colorOutput;
 
     // Stores all entered commands
     private ArrayList<String> prevCommands = new ArrayList<>();
@@ -41,8 +44,12 @@ public class TermInputProcessor extends InputHandler {
         super();
         this.terminal = terminal;
 
-        keyHandler = new TermKeyProcessor(this);
-        arrowKeyHandler = new TermArrowKeyProcessor(this);
+        colorOutput = new ColorOutput();
+
+        colorOutput.selectColor(ColorOutput.PRETTY_BLUE);
+
+        keyHandler = new TermKeyProcessor(this, colorOutput);
+        arrowKeyHandler = new TermArrowKeyProcessor(this, colorOutput);
 
         KeyHandler.initKeysMap();
     }
@@ -142,7 +149,7 @@ public class TermInputProcessor extends InputHandler {
     protected void fileAutocomplete() {
 
         if (FileAutocomplete.getFiles() == null) {
-            FileAutocomplete.init(disassembleCommand(command), blockClear, lockTab);
+            FileAutocomplete.init(disassembleCommand(command), colorOutput, blockClear, lockTab);
             resetVars = false;
         } else
             FileAutocomplete.fileAutocomplete();

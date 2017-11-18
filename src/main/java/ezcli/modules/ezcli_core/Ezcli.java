@@ -1,5 +1,6 @@
 package ezcli.modules.ezcli_core;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.interactive.Interactive;
 import ezcli.modules.terminal.Terminal;
 
@@ -10,8 +11,9 @@ import java.io.PrintStream;
  */
 public class Ezcli {
 
-    public static final String VERSION = "0.1.0";
-    public static String prompt = "   \b\b\b>> ";
+    public static final String VERSION = "0.2.0";
+    private static String promptColor = (char)27 + "[38;5;95m";
+    public static String prompt = promptColor + "   \b\b\b>> " + ColorOutput.DEFAULT_COLOR;
 
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";
@@ -20,7 +22,7 @@ public class Ezcli {
     public static boolean IS_UNIX;
 
     // Toggle output for various test packages
-    public static boolean testOutput = false;
+    public static boolean testOutput = true;
     public static boolean testTermOuput = false;
     public static boolean ezcliCoreOuput = false;
     public static boolean smartCompleteOuput = true;
