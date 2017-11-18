@@ -21,7 +21,7 @@ public class MultiCmdCompleteTest {
                 }
             }));
         else
-            System.setOut(Ezcli.os);
+            System.setOut(Ezcli.stdOutput);
     }
 
     @Test
@@ -36,5 +36,6 @@ public class MultiCmdCompleteTest {
 
         System.out.println(mcc.getCommandSequences().size());
         System.out.println("\n");
+
     }
 }

@@ -62,7 +62,6 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     protected void processUp() {
         prevCommandIterator(ArrowKeys.UP);
         inputProcessor.setCursorPos(inputProcessor.getCommand().length());
-        //System.out.write(new byte[]{27, 91, 65}); // sample code for future use
     }
 
     @Override
