@@ -26,7 +26,7 @@ public class Ezcli {
     public static boolean smartCompleteOuput = true;
 
     // Copy of standard output stream so test classes can print if they need to
-    public static PrintStream os = System.out;
+    public static PrintStream stdOutput = System.out;
 
     public static void main(String[] args) {
         setOS();
