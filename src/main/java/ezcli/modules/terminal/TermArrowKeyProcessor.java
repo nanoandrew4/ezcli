@@ -1,5 +1,6 @@
 package ezcli.modules.terminal;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
@@ -12,16 +13,19 @@ import ezcli.modules.ezcli_core.util.Util;
  */
 public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
+    private TermInputProcessor inputProcessor;
+
+    private ColorOutput colorOutput;
+
     // Position on prevCommands list (used to iterate through it)
     private int commandListPosition = 0;
 
     // Stores current TermInputProcessor.command when iterating through prevCommands
     private String currCommand = "";
 
-    private TermInputProcessor inputProcessor;
-
-    TermArrowKeyProcessor(TermInputProcessor inputProcessor) {
+    TermArrowKeyProcessor(TermInputProcessor inputProcessor, ColorOutput colorOutput) {
         this.inputProcessor = inputProcessor;
+        this.colorOutput = colorOutput;
     }
 
     protected void setCurrCommand(String currCommand) {
@@ -82,7 +86,8 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     protected void processRight() {
         if (inputProcessor.getCursorPos() < inputProcessor.getCommand().length()) {
             Util.clearLine(inputProcessor.getCommand(), true);
-            System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(inputProcessor.getCommand());
             inputProcessor.increaseCursorPos();
             inputProcessor.moveToCursorPos();
         }
@@ -109,7 +114,8 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             if (commandListPosition > inputProcessor.getPrevCommands().size())
                 commandListPosition = inputProcessor.getPrevCommands().size();
 
-            System.out.print(Ezcli.prompt + inputProcessor.getPrevCommands().get(--commandListPosition));
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(inputProcessor.getPrevCommands().get(--commandListPosition));
             inputProcessor.setCommand(inputProcessor.getPrevCommands().get(commandListPosition));
 
         } else if (ak == ArrowKeys.DOWN && commandListPosition < inputProcessor.getPrevCommands().size() - 1) {
@@ -118,7 +124,8 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             lastArrowPress = ak;
             Util.clearLine(inputProcessor.getCommand(), true);
 
-            System.out.print(Ezcli.prompt + inputProcessor.getPrevCommands().get(++commandListPosition));
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(inputProcessor.getPrevCommands().get(++commandListPosition));
             inputProcessor.setCommand(inputProcessor.getPrevCommands().get(commandListPosition));
 
         } else if (ak == ArrowKeys.DOWN && commandListPosition >= inputProcessor.getPrevCommands().size() - 1) {
@@ -128,7 +135,8 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             Util.clearLine(inputProcessor.getCommand(), true);
             commandListPosition++;
 
-            System.out.print(Ezcli.prompt + currCommand);
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(currCommand);
             inputProcessor.setCommand(currCommand);
         }
     }

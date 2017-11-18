@@ -1,9 +1,10 @@
 package ezcli.modules.terminal;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
-import ezcli.modules.ezcli_core.util.FileAutocomplete;
+import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.util.ArrayList;
@@ -17,8 +18,11 @@ public class TermKeyProcessor extends KeyHandler {
 
     private TermInputProcessor inputProcessor;
 
-    TermKeyProcessor(TermInputProcessor inputProcessor) {
+    private ColorOutput colorOutput;
+
+    TermKeyProcessor(TermInputProcessor inputProcessor, ColorOutput colorOutput) {
         this.inputProcessor = inputProcessor;
+        this.colorOutput = colorOutput;
     }
 
     /**
@@ -71,12 +75,13 @@ public class TermKeyProcessor extends KeyHandler {
         int cursorPos = inputProcessor.getCursorPos();
 
         if (inputProcessor.getCursorPos() == inputProcessor.getCommand().length()) {
-            System.out.print(input);
+            colorOutput.print(input);
             inputProcessor.setCommand(inputProcessor.getCommand() + input);
         } else {
             Util.clearLine(inputProcessor.getCommand(), true);
             inputProcessor.setCommand(new StringBuilder(command).insert(cursorPos, input).toString());
-            System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(inputProcessor.getCommand());
         }
 
         inputProcessor.increaseCursorPos();
@@ -93,7 +98,8 @@ public class TermKeyProcessor extends KeyHandler {
             Util.clearLine(inputProcessor.getCommand(), true);
 
             inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
-            System.out.print(Ezcli.prompt + inputProcessor.getCommand());
+            System.out.print(Ezcli.prompt);
+            colorOutput.print(inputProcessor.getCommand());
 
             inputProcessor.decreaseCursorPos();
             inputProcessor.moveToCursorPos();

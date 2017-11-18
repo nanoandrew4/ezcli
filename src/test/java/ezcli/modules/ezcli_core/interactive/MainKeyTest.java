@@ -20,7 +20,7 @@ public class MainKeyTest {
             }
         }));
         else
-            System.setOut(Ezcli.os);
+            System.setOut(Ezcli.stdOutput);
     }
 
     @Test
