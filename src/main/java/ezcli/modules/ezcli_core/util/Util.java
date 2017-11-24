@@ -40,13 +40,13 @@ public class Util {
      */
     public static void clearLine(String line, boolean clearPrompt) {
 
-        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() / 3 : 0); i++)
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
             System.out.print("\b");
 
-        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() / 3 : 0); i++)
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
             System.out.print(" ");
 
-        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() / 3 : 0); i++)
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
             System.out.print("\b");
 
     }

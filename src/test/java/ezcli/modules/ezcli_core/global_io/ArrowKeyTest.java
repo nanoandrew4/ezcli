@@ -25,36 +25,22 @@ public class ArrowKeyTest {
     public void testUnixArrowHandling() {
 
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(1000));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(-22));
-
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(1000, -22));
         // test up arrow key
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(91));
-        assertEquals(ArrowKeys.UP, ArrowKeyHandler.arrowKeyCheckUnix(65));
+        assertEquals(ArrowKeys.UP, ArrowKeyHandler.arrowKeyCheckUnix(27, 91, 65));
 
         // test down arrow key
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(91));
-        assertEquals(ArrowKeys.DOWN, ArrowKeyHandler.arrowKeyCheckUnix(66));
-
+        assertEquals(ArrowKeys.DOWN, ArrowKeyHandler.arrowKeyCheckUnix(27, 91, 66));
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(22));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(Integer.MIN_VALUE));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(22, Integer.MIN_VALUE));
 
         // test right arrow key
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(91));
-        assertEquals(ArrowKeys.RIGHT, ArrowKeyHandler.arrowKeyCheckUnix(67));
+        assertEquals(ArrowKeys.RIGHT, ArrowKeyHandler.arrowKeyCheckUnix(27, 91, 67));
 
         // random key code to attempt to throw off arrow handler
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(-1));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(1));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(Integer.MAX_VALUE));
+        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(-1, 1, Integer.MAX_VALUE));
 
         // test left arrow key
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(27));
-        assertEquals(ArrowKeys.NONE, ArrowKeyHandler.arrowKeyCheckUnix(91));
-        assertEquals(ArrowKeys.LEFT, ArrowKeyHandler.arrowKeyCheckUnix(68));
+        assertEquals(ArrowKeys.LEFT, ArrowKeyHandler.arrowKeyCheckUnix(27, 91, 68));
     }
 }

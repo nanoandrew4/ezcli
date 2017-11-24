@@ -67,9 +67,6 @@ public class FileAutocomplete {
         FileAutocomplete.blockClear = blockClear;
         FileAutocomplete.lockTab = lockTab;
 
-        if ("".equals(command[1]))
-            FileAutocomplete.command = " ";
-
         // Stores original command so that command does not keep adding to itself
         originalCommand = FileAutocomplete.command;
 
@@ -113,7 +110,7 @@ public class FileAutocomplete {
     public static void fileAutocomplete() {
 
         String[] commandArr = originalCommand.split(" ");
-        FileAutocomplete.currText = originalCommand.endsWith(" ") ? " " : commandArr[commandArr.length - 1];
+        FileAutocomplete.currText = originalCommand.endsWith(" ") ? "" : commandArr[commandArr.length - 1];
 
         // Whether a new list of files should be created or not
         newList = false;
@@ -138,7 +135,7 @@ public class FileAutocomplete {
         else if ((endsWithSlash || currText.startsWith("~")) && !blockClear) {
             fileNames.clear();
             blockClear = true;
-            currText = " ";
+            currText = "";
         }
 
         if (fileNames.size() == 0) {
@@ -163,7 +160,7 @@ public class FileAutocomplete {
         assert files != null;
         for (File f : files) {
             String fileName = f.getName();
-            if ((fileName.startsWith(currText) || " ".equals(currText)) && (!f.isHidden() || currText.startsWith(".")))
+            if ((fileName.startsWith(currText) || "".equals(currText)) && (!f.isHidden() || currText.startsWith(".")))
                 fileNames.add(f.getName());
         }
     }
@@ -208,7 +205,7 @@ public class FileAutocomplete {
     private static void fileNamesIterator() {
 
         // Clear line
-        if (fileNames.size() > 0 || " ".equals(currText))
+        if (fileNames.size() > 0 || "".equals(currText))
             Util.clearLine(getCommand(), true);
 
         // Print matching file names

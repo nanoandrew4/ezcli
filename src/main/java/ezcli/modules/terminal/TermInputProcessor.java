@@ -3,8 +3,10 @@ package ezcli.modules.terminal;
 import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -34,9 +36,6 @@ public class TermInputProcessor extends InputHandler {
 
     // For resetting all variables in FileAutocomplete once a key press other than a tab is registered
     private boolean resetVars = false;
-
-    // For use in detecting arrow presses on Unix, see comment block in ArrowKeyHandler
-    private long lastPress = System.currentTimeMillis();
 
     private int cursorPos = 0;
 
@@ -107,24 +106,28 @@ public class TermInputProcessor extends InputHandler {
      */
     @Override
     public void process(int input) {
-
         if (Ezcli.IS_WIN) {
             ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
 
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
-            if (ak != ArrowKeys.NONE)
-                keyHandler.process(input);
+
+            keyHandler.process(input);
         } else if (Ezcli.IS_UNIX) {
-            ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input);
+            int c1 = -1, c2 = -1;
+            try {
+                c1 = Input.read(false);
+                c2 = Input.read(false);
+            } catch (IOException e) {
+                System.out.println("Error reading arrow key press");
+            }
+            ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input, c1, c2);
 
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
-            if (System.currentTimeMillis() - lastPress > 10 && input != 27)
+            if (input != 27)
                 keyHandler.process(input);
         }
-
-        lastPress = System.currentTimeMillis();
     }
 
     /**
@@ -148,6 +151,9 @@ public class TermInputProcessor extends InputHandler {
      */
     protected void fileAutocomplete() {
 
+        // For determining change in cursor position
+        String prevCommand = command;
+
         if (FileAutocomplete.getFiles() == null) {
             FileAutocomplete.init(disassembleCommand(command), colorOutput, blockClear, lockTab);
             resetVars = false;
@@ -162,7 +168,8 @@ public class TermInputProcessor extends InputHandler {
         // Get variables and set cursor position
         blockClear = FileAutocomplete.isBlockClear();
         lockTab = FileAutocomplete.isLockTab();
-        setCursorPos(command.length());
+        cursorPos += (command.length() - prevCommand.length());
+        moveToCursorPos();
     }
 
     /**

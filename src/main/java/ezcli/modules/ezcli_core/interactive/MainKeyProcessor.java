@@ -11,36 +11,12 @@ public class MainKeyProcessor extends KeyHandler {
 
     private MainInputProcessor inputProcessor;
 
-    private long lastPress = System.currentTimeMillis();
-    private char lastInput = 0;
-
     MainKeyProcessor(MainInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
     }
 
     @Override
     public void process(int input) {
-
-        /*
-         * Prevents arrow key char values from being processed or printed in Unix systems.
-         * This can occur due to the way arrow keys are processed by the application on Unix systems.
-         * See ArrowKeyHandler.arrowKeyCheckUnix() for more info
-         */
-        if (System.currentTimeMillis() - lastPress < 10) {
-            if (lastInput == 'A') {
-                System.out.println("\b \b");
-
-                String command = inputProcessor.getCommand();
-                int commandLength = command.length();
-
-                inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(commandLength).toString());
-            }
-            return;
-        }
-
-        lastPress = System.currentTimeMillis();
-        lastInput = (char)input;
-
         super.process(input);
     }
 
@@ -63,6 +39,13 @@ public class MainKeyProcessor extends KeyHandler {
 
     @Override
     public void backspaceEvent() {
-        // Do not process backspace key
+        if (inputProcessor.getCommand().length() > 0) {
+            System.out.println("\b \b");
+
+            String command = inputProcessor.getCommand();
+            int commandLength = command.length();
+
+            inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(commandLength).toString());
+        }
     }
 }

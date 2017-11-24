@@ -185,7 +185,7 @@ public class TermInputTest {
      */
     @Test
     public void combinedTest() {
-        Ezcli.setOS();
+
         Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
 
@@ -194,13 +194,12 @@ public class TermInputTest {
         inputProcessor.getPrevCommands().clear();
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(0);
 
-        boolean isWin = System.getProperty("os.name").toLowerCase().contains("windows");
         sleep();
 
-        inputProcessor.process('h'); sleep();
-        inputProcessor.process('e'); sleep();
-        inputProcessor.process('l'); sleep();
-        inputProcessor.process('p'); sleep();
+        inputProcessor.getKeyProcessor().process('h'); sleep();
+        inputProcessor.getKeyProcessor().process('e'); sleep();
+        inputProcessor.getKeyProcessor().process('l'); sleep();
+        inputProcessor.getKeyProcessor().process('p'); sleep();
         inputProcessor.getKeyProcessor().newLineEvent(); // simulate newline
 
         assertEquals(1, inputProcessor.getPrevCommands().size());
@@ -208,57 +207,36 @@ public class TermInputTest {
         assertEquals("", inputProcessor.getCommand());
 
         inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.process('t'); sleep();
-        inputProcessor.process('e'); sleep();
-        inputProcessor.process('s'); sleep();
-        inputProcessor.process('t'); sleep();
+        inputProcessor.getKeyProcessor().process('t'); sleep();
+        inputProcessor.getKeyProcessor().process('e'); sleep();
+        inputProcessor.getKeyProcessor().process('s'); sleep();
+        inputProcessor.getKeyProcessor().process('t'); sleep();
         inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
         inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.process('s'); sleep();
-        inputProcessor.process('s'); sleep();
+        inputProcessor.getKeyProcessor().process('s'); sleep();
+        inputProcessor.getKeyProcessor().process('s'); sleep();
         inputProcessor.getKeyProcessor().newLineEvent(); sleep(); // simulate newline
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
         assertEquals("", inputProcessor.getCommand());
 
-        if (isWin) {
-            inputProcessor.process(57424); // down
-            inputProcessor.process(57420); // nothing
-            inputProcessor.process(57416); // up
-            assertEquals("tess", inputProcessor.getCommand()); // moved up one, so last command input
-            inputProcessor.process(57419); // left
-            inputProcessor.process(574200); // nothing
-            assertEquals("tess", inputProcessor.getCommand()); // no movement, so same as last time
-            inputProcessor.process(57416); // up
-            assertEquals("help", inputProcessor.getCommand()); // moved up one, so second last input
-            inputProcessor.process(57416); // up
-            assertEquals("help", inputProcessor.getCommand()); // moved up but at top of list, so same as before
-            inputProcessor.process(57424); // down
-            assertEquals("tess", inputProcessor.getCommand()); // moved down to last input
-            inputProcessor.process(57424); // down
-            inputProcessor.process(57424); // down
-            inputProcessor.process(57424); // down
-            assertEquals("", inputProcessor.getCommand()); // moved down past end of list, so print current input ("")
-            inputProcessor.process(57416); // leaves command equaling "tess"
-        } else { // assumes UNIX
-            simUnixLeftArrow(inputProcessor); // left
-            inputProcessor.process(2); // nothing
-            simUnixUpArrow(inputProcessor); // up
-            assertEquals("tess", inputProcessor.getCommand()); // moved up one, so last command input
-            simUnixRightArrow(inputProcessor); // right
-            inputProcessor.process(2000); // nothing
-            assertEquals("tess", inputProcessor.getCommand()); // no movement, so same as last time
-            simUnixUpArrow(inputProcessor); // up
-            assertEquals("help", inputProcessor.getCommand()); // moved up but at top of list, so same as before
-            simUnixDownArrow(inputProcessor); // down
-            assertEquals("tess", inputProcessor.getCommand()); // moved down to last input
-            simUnixDownArrow(inputProcessor); // down
-            simUnixDownArrow(inputProcessor); // down
-            simUnixDownArrow(inputProcessor); // down
-            assertEquals("", inputProcessor.getCommand()); // moved down past end of list, so print current input ("")
-            simUnixUpArrow(inputProcessor); // leaves command equaling "tess"
-        }
+        inputProcessor.getArrowKeyProcessor().processDown();
+        inputProcessor.getArrowKeyProcessor().processUp();
+        assertEquals("tess", inputProcessor.getCommand()); // moved up one, so last command input
+        inputProcessor.getArrowKeyProcessor().processLeft();
+        assertEquals("tess", inputProcessor.getCommand()); // no movement, so same as last time
+        inputProcessor.getArrowKeyProcessor().processUp();
+        assertEquals("help", inputProcessor.getCommand()); // moved up one, so second last input
+        inputProcessor.getArrowKeyProcessor().processUp();
+        assertEquals("help", inputProcessor.getCommand()); // moved up but at top of list, so same as before
+        inputProcessor.getArrowKeyProcessor().processDown();
+        assertEquals("tess", inputProcessor.getCommand()); // moved down to last input
+        inputProcessor.getArrowKeyProcessor().processDown();
+        inputProcessor.getArrowKeyProcessor().processDown();
+        inputProcessor.getArrowKeyProcessor().processDown();
+        assertEquals("", inputProcessor.getCommand()); // moved down past end of list, so print current input ("")
+        inputProcessor.getArrowKeyProcessor().processUp(); // leaves command equaling "tess"
 
         inputProcessor.getArrowKeyProcessor().processLeft(); // move cursor one character to the left
         inputProcessor.getKeyProcessor().backspaceEvent(); // simulate backspace
@@ -278,15 +256,15 @@ public class TermInputTest {
     @Test
     public void attemptToBreak() {
         // reset variables that might have been modified elsewhere needed for clean test
-
         Ezcli.setOS();
         TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal("t"));
         TermKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
-        inputProcessor.process(Integer.MAX_VALUE);
-        inputProcessor.process(Integer.MIN_VALUE);
-        inputProcessor.process(-1);
+        keyProcessor.process(Integer.MAX_VALUE);
+        keyProcessor.process(Integer.MIN_VALUE);
+        keyProcessor.process(-1);
+
         for (int i = 0; i < 32; i++)
-            inputProcessor.process(i);
+            keyProcessor.process(i);
 
         assertEquals("", inputProcessor.getCommand());
         StringBuilder expectedCommand = new StringBuilder();
@@ -300,44 +278,15 @@ public class TermInputTest {
             keyProcessor.backspaceEvent();
         for (int i = 0; i < 1050; i++)
             keyProcessor.newLineEvent();
-
         assertEquals("", inputProcessor.getCommand());
         assertEquals(0, inputProcessor.getPrevCommands().size());
 
-        // test very long strings, check that nothing gets broken
         for (int i = 0; i < 10000; i++)
             keyProcessor.process(i % 73 + 50);
         assertFalse("".equals(inputProcessor.getCommand()));
         keyProcessor.newLineEvent();
         assertTrue(inputProcessor.getPrevCommands().get(0).length() == 10000);
-    }
 
-    // simulates an up arrow key press for Unix systems
-    private void simUnixUpArrow(TermInputProcessor t) {
-        t.process(27);
-        t.process(91);
-        t.process(65);
-    }
-
-    // simulates a down arrow key press for Unix systems
-    private void simUnixDownArrow(TermInputProcessor t) {
-        t.process(27);
-        t.process(91);
-        t.process(66);
-    }
-
-    // simulates a left arrow key press for Unix systems
-    private void simUnixLeftArrow(TermInputProcessor t) {
-        t.process(27);
-        t.process(91);
-        t.process(68);
-    }
-
-    // simulates a right arrow key press for Unix systems
-    private void simUnixRightArrow(TermInputProcessor t) {
-        t.process(27);
-        t.process(91);
-        t.process(67);
     }
 
     /*
