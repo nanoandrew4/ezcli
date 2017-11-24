@@ -6,12 +6,6 @@ package ezcli.modules.ezcli_core.global_io;
  */
 public abstract class ArrowKeyHandler {
 
-    // Stores the three values of the codes that Unix systems pass when an arrow key is pressed
-    protected static int[] vals = new int[3];
-
-    // Specifies which of the three codes used in processing arrow keys in Unix the program should be expecting
-    protected static int pos = 0;
-
     // Last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
     protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
 
@@ -50,21 +44,10 @@ public abstract class ArrowKeyHandler {
      * @param i integer value of last key press
      * @return arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
      */
-    /*
+    public static ArrowKeys arrowKeyCheckUnix(int... i) {
 
-	*/
-    public static ArrowKeys arrowKeyCheckUnix(int i) {
-
-        if (vals[2] > 64 && vals[2] < 69) {
-            // Reset array and position tracker if key was previously returned
-            vals = new int[3];
-            pos = 0;
-        }
-
-        vals[pos++ % 3] = i;
-
-        if (vals[0] == 27 && vals[1] == 91) {
-            switch (vals[2]) {
+        if (i[0] == 27 && i[1] == 91) {
+            switch (i[2]) {
                 case 65:
                     return ArrowKeys.UP;
                 case 66:
@@ -76,10 +59,6 @@ public abstract class ArrowKeyHandler {
                 default:
                     return ArrowKeys.NONE;
             }
-        } else if ((vals[0] != 27 && vals[0] != 0) || (i != vals[0] && i == 91 && vals[0] != 0)) {
-            // Resets vals array if either of first two positions don't align with expected pattern
-            vals = new int[3];
-            pos = 0;
         }
 
         return ArrowKeys.NONE;
