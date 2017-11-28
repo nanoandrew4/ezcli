@@ -47,7 +47,7 @@ public class Terminal extends Module {
         System.out.println();
 
         for (String command : split) {
-            command = removeSpaces(command);
+            command = command.trim();
 
             if (command.startsWith("cd")) {
                 changeDir(command);
@@ -146,33 +146,6 @@ public class Terminal extends Module {
                 System.out.println("Please enter a valid directory to change to.");
             }
         }
-    }
-
-    /**
-     * Removes blank space before and after command if any exists.
-     *
-     * @param command Command to parse
-     * @return Command without white space
-     */
-    protected static String removeSpaces(String command) {
-
-        int fpos = 0;
-        for (int i = 0; i < command.length(); i++) {
-            if (command.charAt(i) == ' ')
-                fpos++;
-            else
-                break;
-        }
-
-        int bpos = command.length() > 0 ? command.length() : 0;
-        for (int i = command.length() - 1; i > 0; i--) {
-            if (command.charAt(i) == ' ')
-                bpos--;
-            else
-                break;
-        }
-
-        return command.substring(fpos, bpos);
     }
 
     /**

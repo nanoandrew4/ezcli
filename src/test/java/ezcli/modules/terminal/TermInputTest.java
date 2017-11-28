@@ -14,6 +14,7 @@ public class TermInputTest {
 
     @BeforeClass
     public static void disableOutput() {
+
         if (!Ezcli.testOutput || !Ezcli.testTermOuput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
@@ -27,46 +28,36 @@ public class TermInputTest {
     @Test
     public void disassembleCommandTest() {
         Ezcli.setOS();
-        Terminal terminal = new Terminal("t");
-        TermInputProcessor inputProcessor = terminal.getInputProcessor();
 
-        assertEquals("command", inputProcessor.disassembleCommand("command")[1]);
+        assertEquals("command", TermInputProcessor.disassembleCommand("command", 0)[1]);
 
-        inputProcessor.setCursorPos(18);
-        assertEquals("another", inputProcessor.disassembleCommand("command && anothercommand")[1]);
+        assertEquals("another", TermInputProcessor.disassembleCommand("command && anothercommand", 18)[1]);
 
-        inputProcessor.setCursorPos(16);
-        assertEquals("d", inputProcessor.disassembleCommand("a && b && c && d")[1]);
+        assertEquals("d", TermInputProcessor.disassembleCommand("a && b && c && d", 16)[1]);
 
-        inputProcessor.setCursorPos(16);
-        assertEquals("d", inputProcessor.disassembleCommand("a && b && c && d && e")[1]);
+        assertEquals("d", TermInputProcessor.disassembleCommand("a && b && c && d && e", 16)[1]);
 
-        inputProcessor.setCursorPos(15);
-        assertEquals("d", inputProcessor.disassembleCommand("a && b && c &&d && e")[1]);
+        assertEquals("d", TermInputProcessor.disassembleCommand("a && b && c &&d && e", 15)[1]);
 
-        inputProcessor.setCursorPos(14);
-        String[] cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        String[] cmd = TermInputProcessor.disassembleCommand("/home/username && /etc/", 14);
         assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
         assertEquals("", cmd[0]);
         assertEquals("/home/username", cmd[1]);
         assertEquals(" && /etc/", cmd[2]);
 
-        inputProcessor.setCursorPos(16);
-        cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        cmd = TermInputProcessor.disassembleCommand("/home/username && /etc/", 16);
         assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
         assertEquals("", cmd[0]);
         assertEquals("/home/username && /etc/", cmd[1]);
         assertEquals("", cmd[2]);
 
-        inputProcessor.setCursorPos(15);
-        cmd = inputProcessor.disassembleCommand("/home/username && /etc/");
+        cmd = TermInputProcessor.disassembleCommand("/home/username && /etc/", 15);
         assertEquals("/home/username && /etc/", cmd[0] + cmd[1] + cmd[2]);
         assertEquals("/home/username ", cmd[0]);
         assertEquals("", cmd[1]);
         assertEquals("&& /etc/", cmd[2]);
 
-        inputProcessor.setCursorPos(16);
-        cmd = inputProcessor.disassembleCommand("cd / && cd /home");
+        cmd = TermInputProcessor.disassembleCommand("cd / && cd /home", 16);
         assertEquals("cd / && cd /home", cmd[0] + cmd[1] + cmd[2]);
         assertEquals("cd / && ", cmd[0]);
         assertEquals("cd /home", cmd[1]);
@@ -91,10 +82,10 @@ public class TermInputTest {
         keyProcessor.process('b');
         assertEquals("ab", inputProcessor.getCommand());
 
-        keyProcessor.process((char)3);
+        keyProcessor.process((char) 3);
         assertEquals("ab", inputProcessor.getCommand());
 
-        keyProcessor.process((char)1);
+        keyProcessor.process((char) 1);
         assertEquals("ab", inputProcessor.getCommand());
 
         keyProcessor.newLineEvent(); // emulate newline
@@ -131,51 +122,51 @@ public class TermInputTest {
 
         akProcessor.process(ArrowKeys.NONE);
         assertEquals("", inputProcessor.getCommand());
-        sleep();
+
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
 
         akProcessor.process(ArrowKeys.UP);
-        assertEquals("ce", inputProcessor.getCommand()); sleep();
+        assertEquals("ce", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.UP);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.DOWN);
-        assertEquals("ce", inputProcessor.getCommand()); sleep();
+        assertEquals("ce", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.UP);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.NONE);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.LEFT);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.LEFT);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.RIGHT);
-        assertEquals("ab", inputProcessor.getCommand()); sleep();
+        assertEquals("ab", inputProcessor.getCommand());
 
         akProcessor.process(ArrowKeys.DOWN);
-        assertEquals("ce", inputProcessor.getCommand()); sleep();
+        assertEquals("ce", inputProcessor.getCommand());
 
-        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
-        inputProcessor.getKeyProcessor().process('a'); sleep();
+        inputProcessor.getArrowKeyProcessor().processLeft();
+        inputProcessor.getKeyProcessor().backspaceEvent();
+        inputProcessor.getKeyProcessor().process('a');
         assertEquals("ae", inputProcessor.getCommand());
 
-        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
-        inputProcessor.getArrowKeyProcessor().processLeft(); sleep();
-        inputProcessor.getKeyProcessor().process('z'); sleep();
+        inputProcessor.getArrowKeyProcessor().processLeft();
+        inputProcessor.getArrowKeyProcessor().processLeft();
+        inputProcessor.getKeyProcessor().process('z');
         assertEquals("zae", inputProcessor.getCommand());
-        inputProcessor.getArrowKeyProcessor().processRight(); sleep();
-        inputProcessor.getArrowKeyProcessor().processRight(); sleep();
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep();
-        assertEquals("z", inputProcessor.getCommand()); sleep();
+        inputProcessor.getArrowKeyProcessor().processRight();
+        inputProcessor.getArrowKeyProcessor().processRight();
+        inputProcessor.getKeyProcessor().backspaceEvent();
+        inputProcessor.getKeyProcessor().backspaceEvent();
+        assertEquals("z", inputProcessor.getCommand());
 
         inputProcessor.getPrevCommands().clear();
     }
@@ -186,6 +177,8 @@ public class TermInputTest {
     @Test
     public void combinedTest() {
 
+        System.out.println("entered");
+
         Terminal terminal = new Terminal("t");
         TermInputProcessor inputProcessor = terminal.getInputProcessor();
 
@@ -194,28 +187,26 @@ public class TermInputTest {
         inputProcessor.getPrevCommands().clear();
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(0);
 
-        sleep();
-
-        inputProcessor.getKeyProcessor().process('h'); sleep();
-        inputProcessor.getKeyProcessor().process('e'); sleep();
-        inputProcessor.getKeyProcessor().process('l'); sleep();
-        inputProcessor.getKeyProcessor().process('p'); sleep();
+        inputProcessor.getKeyProcessor().process('h');
+        inputProcessor.getKeyProcessor().process('e');
+        inputProcessor.getKeyProcessor().process('l');
+        inputProcessor.getKeyProcessor().process('p');
         inputProcessor.getKeyProcessor().newLineEvent(); // simulate newline
 
         assertEquals(1, inputProcessor.getPrevCommands().size());
         assertEquals("help", inputProcessor.getPrevCommands().get(0));
         assertEquals("", inputProcessor.getCommand());
 
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.getKeyProcessor().process('t'); sleep();
-        inputProcessor.getKeyProcessor().process('e'); sleep();
-        inputProcessor.getKeyProcessor().process('s'); sleep();
-        inputProcessor.getKeyProcessor().process('t'); sleep();
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.getKeyProcessor().backspaceEvent(); sleep(); // simulate backspace
-        inputProcessor.getKeyProcessor().process('s'); sleep();
-        inputProcessor.getKeyProcessor().process('s'); sleep();
-        inputProcessor.getKeyProcessor().newLineEvent(); sleep(); // simulate newline
+        inputProcessor.getKeyProcessor().backspaceEvent();  // simulate backspace
+        inputProcessor.getKeyProcessor().process('t');
+        inputProcessor.getKeyProcessor().process('e');
+        inputProcessor.getKeyProcessor().process('s');
+        inputProcessor.getKeyProcessor().process('t');
+        inputProcessor.getKeyProcessor().backspaceEvent();  // simulate backspace
+        inputProcessor.getKeyProcessor().backspaceEvent();  // simulate backspace
+        inputProcessor.getKeyProcessor().process('s');
+        inputProcessor.getKeyProcessor().process('s');
+        inputProcessor.getKeyProcessor().newLineEvent();  // simulate newline
 
         assertEquals(2, inputProcessor.getPrevCommands().size());
         assertEquals("tess", inputProcessor.getPrevCommands().get(1));
@@ -255,6 +246,7 @@ public class TermInputTest {
      */
     @Test
     public void attemptToBreak() {
+        System.out.println("entered");
         // reset variables that might have been modified elsewhere needed for clean test
         Ezcli.setOS();
         TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal("t"));
@@ -281,22 +273,11 @@ public class TermInputTest {
         assertEquals("", inputProcessor.getCommand());
         assertEquals(0, inputProcessor.getPrevCommands().size());
 
-        for (int i = 0; i < 10000; i++)
-            keyProcessor.process(i % 73 + 50);
+        for (int i = 0; i < 1000; i++)
+            keyProcessor.process(i % 73 + 48);
+
         assertFalse("".equals(inputProcessor.getCommand()));
         keyProcessor.newLineEvent();
-        assertTrue(inputProcessor.getPrevCommands().get(0).length() == 10000);
-
-    }
-
-    /*
-     * Causes program to sleep for 30ms in order to prevent bad tests on Unix (see ArrowKeyHandler + KeyHandler)
-     */
-    private void sleep() {
-        try {
-            Thread.sleep(11);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        assertEquals(1000, inputProcessor.getPrevCommands().get(0).length());
     }
 }

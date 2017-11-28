@@ -22,8 +22,7 @@ public class CommandFreq {
     }
 
     CommandFreq(int startIndex, String... commands) {
-        commandSeq = new LinkedList<>();
-        commandSeq.addAll(Arrays.asList(commands));
+        commandSeq = new LinkedList<>(Arrays.asList(commands));
         this.startIndex = startIndex;
     }
 
@@ -31,7 +30,7 @@ public class CommandFreq {
         return command;
     }
 
-    public void incrementFreq() {
+    protected void incrementFreq() {
         freq++;
     }
 
@@ -39,15 +38,15 @@ public class CommandFreq {
         return freq;
     }
 
-    public void setFreq(int freq) {
+    protected void setFreq(int freq) {
         this.freq = freq;
     }
 
-    public int getStartIndex() {
+    protected int getStartIndex() {
         return startIndex;
     }
 
-    public LinkedList<String> getCommandSeq() {
+    protected LinkedList<String> getCommandSeq() {
         return commandSeq;
     }
 
@@ -57,7 +56,7 @@ public class CommandFreq {
      * @param mcf MultiCmdFreq object to compare this object to
      * @return True if both objects represent the same sequence of strings
      */
-    public boolean isSameAs(CommandFreq mcf) {
+    protected boolean isSameAs(CommandFreq mcf) {
         if (this.commandSeq.size() == mcf.commandSeq.size()) {
             for (int i = 0; i < this.commandSeq.size(); i++)
                 if (!this.commandSeq.get(i).equals(mcf.commandSeq.get(i)))
@@ -73,7 +72,7 @@ public class CommandFreq {
      *
      * @return Sequence of strings represented by this object with double ampersands between each string
      */
-    public String getCommandSequence() {
+    protected String getCommandSequence() {
         StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < commandSeq.size(); i++)
             sb.append(commandSeq.get(i)).append((i < commandSeq.size() - 1) ? " && " : " ");

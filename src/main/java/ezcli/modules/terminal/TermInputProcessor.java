@@ -125,7 +125,7 @@ public class TermInputProcessor extends InputHandler {
 
             if (ak != ArrowKeys.NONE)
                 arrowKeyHandler.process(ak);
-            if (input != 27)
+            if (c1 == -2 && c2 == -2)
                 keyHandler.process(input);
         }
     }
@@ -142,7 +142,7 @@ public class TermInputProcessor extends InputHandler {
      * Usually only used after modifying 'command'
      */
     protected void moveToCursorPos() {
-        for (int i = command.length(); i > cursorPos; i--)
+        for (int i = command.length() + getKeyProcessor().getSuggestion().length(); i > cursorPos; i--)
             System.out.print("\b");
     }
 
@@ -155,7 +155,7 @@ public class TermInputProcessor extends InputHandler {
         String prevCommand = command;
 
         if (FileAutocomplete.getFiles() == null) {
-            FileAutocomplete.init(disassembleCommand(command), colorOutput, blockClear, lockTab);
+            FileAutocomplete.init(disassembleCommand(command, cursorPos), colorOutput, blockClear, lockTab);
             resetVars = false;
         } else
             FileAutocomplete.fileAutocomplete();
@@ -185,7 +185,7 @@ public class TermInputProcessor extends InputHandler {
      * @return Returns disassembled string, with non relevant info in elements 0 and 2, and the string to autocomplete
      * in element 1
      */
-    protected String[] disassembleCommand(String command) {
+    protected static String[] disassembleCommand(String command, int cursorPos) {
 
         if (!command.contains("&&"))
             return new String[]{"", command, ""};
@@ -233,7 +233,7 @@ public class TermInputProcessor extends InputHandler {
         }
 
         // Remove spaces so that autocomplete can work properly
-        splitCommand[1] = Terminal.removeSpaces(splitCommand[1]);
+        splitCommand[1] = splitCommand[1].trim();
 
         return splitCommand;
     }
