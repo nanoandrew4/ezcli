@@ -76,7 +76,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
     @Override
     protected void processLeft() {
-        if (inputProcessor.getCursorPos() > 0) {
+        if (inputProcessor.getCursorPos() + inputProcessor.getKeyProcessor().getSuggestion().length() > 0) {
             System.out.print("\b");
             inputProcessor.decreaseCursorPos();
         }
@@ -90,6 +90,11 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             colorOutput.print(inputProcessor.getCommand());
             inputProcessor.increaseCursorPos();
             inputProcessor.moveToCursorPos();
+        } else if (!"".equals(inputProcessor.getKeyProcessor().getSuggestion()) &&
+                inputProcessor.getCursorPos() < inputProcessor.getCommand().length()
+                        + inputProcessor.getKeyProcessor().getSuggestion().length()) {
+
+            inputProcessor.getKeyProcessor().process(inputProcessor.getKeyProcessor().getSuggestion().charAt(0));
         }
     }
 

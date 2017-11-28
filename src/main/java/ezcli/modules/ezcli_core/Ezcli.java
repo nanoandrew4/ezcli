@@ -11,7 +11,7 @@ import java.io.PrintStream;
  */
 public class Ezcli {
 
-    public static final String VERSION = "0.2.0";
+    public static final String VERSION = "0.2.0-WIP";
     private static String promptColor = (char)27 + "[38;5;95m";
     public static String prompt = promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
 
@@ -25,7 +25,7 @@ public class Ezcli {
     public static boolean testOutput = false;
     public static boolean testTermOuput = false;
     public static boolean ezcliCoreOuput = false;
-    public static boolean smartCompleteOuput = false;
+    public static boolean smartCompleteOuput = true;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;

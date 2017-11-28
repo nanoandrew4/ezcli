@@ -1,5 +1,7 @@
 package ezcli.modules.smart_autocomplete;
 
+import ezcli.modules.ezcli_core.util.Util;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,6 +31,8 @@ public class MultiCmdComplete {
         }
 
         populateList(2);
+
+        Util.sort(0, commandSequences.size() - 1, commandSequences);
     }
 
     public ArrayList<CommandFreq> getCommandSequences() {
@@ -108,7 +112,7 @@ public class MultiCmdComplete {
             freq = removeDuplicatesOf(mcf, commandSequences, listSize);
             listSize = commandSequences.size();
 
-            if (freq == 1 || freq < 5) {
+            if (freq < 5) {
                 commandSequences.remove(mcf);
                 listSize--;
             }

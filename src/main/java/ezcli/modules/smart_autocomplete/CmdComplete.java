@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class CmdComplete {
 
+    private MultiCmdComplete mcc;
+
     // Sorted list of most used commands and generalizations derived from users prior input
     private ArrayList<CommandFreq> freqCommands = new ArrayList<>();
 
@@ -25,18 +27,38 @@ public class CmdComplete {
      *
      * @param pathToStoredCommands Path to file where all the previously written commands are
      */
-    CmdComplete(String pathToStoredCommands) {
+    public CmdComplete(String pathToStoredCommands) {
+
         long start = System.currentTimeMillis();
         try {
             List<String> commands = Files.readAllLines(Paths.get(pathToStoredCommands));
 
             init(commands);
+            mcc = new MultiCmdComplete(pathToStoredCommands);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
         System.out.println("Init time for CmdComplete was: " + initTime);
+    }
+
+    /**
+     * Returns best guess at what user will type based on input history.
+     *
+     * @param command Command to suggest a guess for
+     * @return Best guess at what the user will enter based command history
+     */
+    public String getMatchingCommand(String command) {
+        for (CommandFreq c : mcc.getCommandSequences())
+            if (c.getCommandSequence().startsWith(command))
+                return c.getCommandSequence().substring(command.length());
+
+        for (CommandFreq c : freqCommands)
+            if (c.getCommand().startsWith(command))
+                return c.getCommand().substring(command.length());
+
+        return "";
     }
 
     /**
@@ -58,7 +80,7 @@ public class CmdComplete {
      *
      * @param commands List of commands to initialize class with
      */
-    public void init(List<String> commands) {
+    private void init(List<String> commands) {
         for (int i = 0; i < commands.size(); i++)
             commands.set(i, removeAllAfterQuotes(commands.get(i)));
 

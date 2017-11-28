@@ -28,38 +28,26 @@ public class MainKeyTest {
         Ezcli.setOS();
         Interactive interactive = new Interactive();
         MainInputProcessor inputProcessor = interactive.getInputProcessor();
-
-        sleep();
-
-        inputProcessor.process('a');
+        MainKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
+        
+        keyProcessor.process('a');
         assertEquals("a", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); sleep();
+        interactive.parse(inputProcessor.getWasCommand());
 
-        inputProcessor.process('\t');
+        keyProcessor.process('\t');
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); sleep();
+        interactive.parse(inputProcessor.getWasCommand()); 
 
-        inputProcessor.process('\n');
+        keyProcessor.process('\n');
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); sleep();
+        interactive.parse(inputProcessor.getWasCommand()); 
 
-        inputProcessor.process((char)1);
+        keyProcessor.process((char)1);
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); sleep();
+        interactive.parse(inputProcessor.getWasCommand()); 
 
-        inputProcessor.process((char) 127);
+        keyProcessor.process((char) 127);
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); sleep();
-    }
-
-    /*
-     * Prevents Unix arrow key catching from messing with input
-     */
-    private void sleep() {
-        try {
-            Thread.sleep(11);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        interactive.parse(inputProcessor.getWasCommand()); 
     }
 }
