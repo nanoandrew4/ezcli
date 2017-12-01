@@ -3,8 +3,8 @@ package ezcli.modules.color_output;
 public class ColorOutput {
 
     public final static String DEFAULT_COLOR = (char)27 + "[0m";
-    public final static String PRETTY_BLUE = (char)27 + "[38;5;110m";
-    public final static String CMD_SUGGESTION = (char) 27 + "[38;5;116m";
+    public final static String PRETTY_BLUE = (char)27 + "[38;5;117m";
+    public final static String CMD_SUGGESTION = (char) 27 + "[38;5;100m";
 
     private String[] customColors;
 
