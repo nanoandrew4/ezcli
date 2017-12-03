@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,7 +37,9 @@ public class CmdComplete {
             init(commands);
             mcc = new MultiCmdComplete(pathToStoredCommands);
         } catch (IOException e) {
-            e.printStackTrace();
+            init(new LinkedList<>());
+            mcc = null;
+            System.err.println("Error. No history file found, creating empty list");
         }
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
@@ -50,9 +53,11 @@ public class CmdComplete {
      * @return Best guess at what the user will enter based command history
      */
     public String getMatchingCommand(String command) {
-        for (CommandFreq c : mcc.getCommandSequences())
-            if (c.getCommandSequence().startsWith(command))
-                return c.getCommandSequence().substring(command.length());
+        if (mcc != null) {
+            for (CommandFreq c : mcc.getCommandSequences())
+                if (c.getCommandSequence().startsWith(command))
+                    return c.getCommandSequence().substring(command.length());
+        }
 
         for (CommandFreq c : freqCommands)
             if (c.getCommand().startsWith(command))
