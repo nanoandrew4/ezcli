@@ -14,7 +14,6 @@ public class TermInputTest {
 
     @BeforeClass
     public static void disableOutput() {
-
         if (!Ezcli.testOutput || !Ezcli.testTermOuput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
