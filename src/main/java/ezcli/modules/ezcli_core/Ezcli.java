@@ -12,11 +12,6 @@ import java.io.PrintStream;
 public class Ezcli {
 
     public static final String VERSION = "0.2.0-WIP";
-<<<<<<< Updated upstream
-    private static String promptColor = (char)27 + "[38;5;95m";
-    public static String prompt = promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
-=======
->>>>>>> Stashed changes
 
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";

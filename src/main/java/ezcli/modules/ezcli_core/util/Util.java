@@ -58,13 +58,8 @@ public class Util {
      * @param rPiv Rightmost chunk of list to sort
      */
     public static void sort(int lPiv, int rPiv, ArrayList<CommandFreq> list) {
-<<<<<<< Updated upstream
-	if (list.size() == 0)
-		return;
-=======
         if (list.size() == 0)
             return;
->>>>>>> Stashed changes
 
         int cPiv = list.get((rPiv + lPiv) / 2).getFreq();
         int a = lPiv, b = rPiv;
