@@ -7,6 +7,10 @@ import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.smart_autocomplete.CmdComplete;
 import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
+<<<<<<< Updated upstream:src/main/java/ezcli/modules/terminal/TermKeyProcessor.java
+=======
+import org.omg.PortableInterceptor.SUCCESSFUL;
+>>>>>>> Stashed changes:src/main/java/ezcli/modules/terminal/TermKeyProcessor.java
 import sun.font.EAttribute;
 
 import java.util.ArrayList;
@@ -59,6 +63,8 @@ public class TermKeyProcessor extends KeyHandler {
 
     @Override
     public void tabEvent() {
+        Util.clearLine(inputProcessor.getCommand() + suggestion, true);
+        suggestion = "";
         inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
     }
