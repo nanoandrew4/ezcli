@@ -1,5 +1,6 @@
 package ezcli.modules.terminal;
 
+import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
@@ -32,12 +33,15 @@ public class Terminal extends Module {
     @Override
     public void run() {
         exit = false;
+        Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
 
         System.out.println("Entered terminal mode");
         System.out.print(Ezcli.prompt);
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
         }
+
+        Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
     }
 
     @Override
@@ -70,7 +74,8 @@ public class Terminal extends Module {
             ProcessBuilder pb;
             Process p = null;
             try {
-                pb = new ProcessBuilder(command);
+                String[] commandArr = command.split(" ");
+                pb = new ProcessBuilder(commandArr);
                 pb.inheritIO(); // Make program and process share IO to allow user to interact with program
                 pb.directory(new File(Ezcli.currDir)); // Set working directory for command
                 p = pb.start();
@@ -142,6 +147,7 @@ public class Terminal extends Module {
             if (f.exists() && f.isDirectory()) {
                 System.setProperty("user.dir", f.getAbsolutePath());
                 Ezcli.currDir = f.getAbsolutePath() + "/";
+                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
             } else {
                 System.out.println("Please enter a valid directory to change to.");
             }
