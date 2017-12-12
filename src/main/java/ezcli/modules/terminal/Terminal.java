@@ -6,9 +6,12 @@ import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.InputHandler;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Terminal module. Used to interact with system, as if you were running commands on your system terminal.
@@ -18,16 +21,64 @@ public class Terminal extends Module {
     // Input handler for this module
     private TermInputProcessor inputProcessor;
 
+    private LinkedList<String> inputInSession;
+
+    private final static int maxLinesInHistory = 10000;
+
     private boolean exit;
 
     public Terminal(String mapWith) {
         super("Terminal");
         init(this, mapWith);
         inputProcessor = new TermInputProcessor(this);
+        inputInSession = new LinkedList<>();
     }
 
     protected TermInputProcessor getInputProcessor() {
         return inputProcessor;
+    }
+
+    private void writeCommandsToFile() {
+        File historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
+
+        try {
+            historyFile.createNewFile();
+        } catch (IOException e) {
+            System.err.println("Error creating new history file in directory: " + Ezcli.USER_HOME_DIR);
+            return;
+        }
+
+        List<String> original;
+        try {
+            original = Files.readAllLines(Paths.get(historyFile.getAbsolutePath()));
+            if (original.size() == 0) {
+                // populate
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading lines from original history file");
+            return;
+        }
+
+        if (historyFile.delete()) {
+            historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
+
+            PrintWriter pw;
+            try {
+                pw = new PrintWriter(historyFile);
+            } catch (FileNotFoundException e) {
+                System.out.println("Error creating print writer");
+                return;
+            }
+
+            int startPos = original.size() + inputInSession.size() > maxLinesInHistory ? inputInSession.size() : 0;
+            for (int i = startPos; i < original.size(); i++)
+                pw.println(original.get(i));
+
+            for (String s : inputInSession)
+                pw.println(s);
+
+            pw.close();
+        }
     }
 
     @Override
@@ -41,11 +92,14 @@ public class Terminal extends Module {
             inputProcessor.process(InputHandler.getKey());
         }
 
+        writeCommandsToFile();
         Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
     }
 
     @Override
     public void parse(String rawCommand) {
+
+        inputInSession.add(rawCommand);
 
         String[] split = rawCommand.split("&&");
         System.out.println();
@@ -125,6 +179,7 @@ public class Terminal extends Module {
 
                 System.setProperty("user.dir", newPath.toString());
                 Ezcli.currDir = newPath.toString();
+                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
                 return;
             }
 
