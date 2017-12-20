@@ -1,6 +1,8 @@
 package ezcli.modules.smart_autocomplete;
 
+import ezcli.modules.ezcli_core.Submodule;
 import ezcli.modules.ezcli_core.util.Util;
+import ezcli.modules.terminal.Terminal;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +15,7 @@ import java.util.List;
  * This class sorts through a command history (which is kept by the program), tries to analyze them
  * for similarities and then suggests the user a command based on the analysis.
  */
-public class CmdComplete {
+public class CmdComplete extends Submodule {
 
     private MultiCmdComplete mcc;
 
@@ -28,7 +30,8 @@ public class CmdComplete {
      *
      * @param pathToStoredCommands Path to file where all the previously written commands are
      */
-    public CmdComplete(String pathToStoredCommands) {
+    public CmdComplete(Terminal t, String pathToStoredCommands) {
+        super(t, "smart_autocomplete");
 
         long start = System.currentTimeMillis();
         try {
@@ -47,26 +50,6 @@ public class CmdComplete {
     }
 
     /**
-     * Returns best guess at what user will type based on input history.
-     *
-     * @param command Command to suggest a guess for
-     * @return Best guess at what the user will enter based command history
-     */
-    public String getMatchingCommand(String command) {
-        if (mcc != null) {
-            for (CommandFreq c : mcc.getCommandSequences())
-                if (c.getCommandSequence().startsWith(command))
-                    return c.getCommandSequence().substring(command.length());
-        }
-
-        for (CommandFreq c : freqCommands)
-            if (c.getCommand().startsWith(command))
-                return c.getCommand().substring(command.length());
-
-        return "";
-    }
-
-    /**
      * Returns the list of frequently used commands.
      *
      * @return List storing CommandFreq objects containing info of frequently used commands
@@ -77,6 +60,11 @@ public class CmdComplete {
 
     public double getInitTime() {
         return initTime;
+    }
+
+    public String run(String command) {
+        store(command);
+        return getMatchingCommand(command);
     }
 
     /**
@@ -96,8 +84,29 @@ public class CmdComplete {
     }
 
     /**
+     * Returns best guess at what user will type based on input history.
+     *
+     * @param command Command to suggest a guess for
+     * @return Best guess at what the user will enter based command history
+     */
+    private String getMatchingCommand(String command) {
+        if (mcc != null) {
+            for (CommandFreq c : mcc.getCommandSequences())
+                if (c.getCommandSequence().startsWith(command))
+                    return c.getCommandSequence().substring(command.length());
+        }
+
+        for (CommandFreq c : freqCommands)
+            if (c.getCommand().startsWith(command))
+                return c.getCommand().substring(command.length());
+
+        return "";
+    }
+
+    /**
      * Stores a command if it does not already exist, and increments the counter on it if the
      * command is already stored.
+     *
      * @param command Command to store
      */
     private void store(String command) {
@@ -112,18 +121,6 @@ public class CmdComplete {
 
         if (!stored)
             freqCommands.add(new CommandFreq(command));
-    }
-
-    /**
-     * Returns if freqCommands is sorted from most frequent to least frequent.
-     *
-     * @return if freqCommands is sorted from greatest to smallest frequency
-     */
-    private boolean isSorted() {
-        for (int i = 1; i < freqCommands.size(); i++)
-            if (freqCommands.get(i - 1).getFreq() < freqCommands.get(i).getFreq())
-                return false;
-        return true;
     }
 
     /**

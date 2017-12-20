@@ -30,7 +30,6 @@ public class TermKeyProcessor extends KeyHandler {
     TermKeyProcessor(TermInputProcessor inputProcessor, ColorOutput colorOutput) {
         this.inputProcessor = inputProcessor;
         this.colorOutput = colorOutput;
-        cmdComplete = new CmdComplete(Ezcli.USER_HOME_DIR + "/.bash_history");
     }
 
     protected String getSuggestion() {
@@ -135,7 +134,7 @@ public class TermKeyProcessor extends KeyHandler {
         if (cmdComplete == null)
             return;
 
-        suggestion = cmdComplete.getMatchingCommand(inputProcessor.getCommand());
+        //suggestion = cmdComplete.getMatchingCommand(inputProcessor.getCommand());
 
         if (!"".equals(suggestion) && !"".equals(inputProcessor.getCommand())) {
             colorOutput.print(suggestion, ColorOutput.CMD_SUGGESTION);
