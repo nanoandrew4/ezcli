@@ -27,7 +27,7 @@ public class CmdCompleteTest {
 
     @Test
     public void test() {
-        CmdComplete cmdComplete =
+        /*CmdComplete cmdComplete =
                 new CmdComplete("src/test/java/ezcli/modules/smart_autocomplete/prevCommands.txt");
 
         ColorOutput co = new ColorOutput(ColorOutput.DEFAULT_COLOR, ColorOutput.PRETTY_BLUE);
@@ -39,6 +39,6 @@ public class CmdCompleteTest {
 
         System.out.println("\n");
 
-        co.print(freqCommands.size());
+        co.print(freqCommands.size());*/
     }
 }
