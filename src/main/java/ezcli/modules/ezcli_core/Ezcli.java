@@ -1,6 +1,6 @@
 package ezcli.modules.ezcli_core;
 
-import ezcli.modules.color_output.ColorOutput;
+import ezcli.submodules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.interactive.Interactive;
 import ezcli.modules.ezcli_core.terminal.Terminal;
 
@@ -35,7 +35,7 @@ public class Ezcli {
         setOS();
 
         initModules();
-        Submodule.init();
+        Submodules.initSubmodules();
 
         new Interactive().run();
     }

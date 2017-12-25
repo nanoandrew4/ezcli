@@ -1,4 +1,4 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
@@ -7,8 +7,6 @@ import org.junit.Test;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class MultiCmdCompleteTest {
 

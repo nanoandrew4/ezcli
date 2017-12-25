@@ -1,4 +1,4 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
 import java.util.Arrays;
 import java.util.LinkedList;

@@ -1,6 +1,6 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
-import ezcli.modules.color_output.ColorOutput;
+import ezcli.submodules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.util.Util;
 

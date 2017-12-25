@@ -1,0 +1,13 @@
+_smart_autocomplete.SmartAutocomplete
+
+# no params in init method for this submodule, so no params request
+
+_CmdComplete-returnSuggestion
+
+params Terminal-Command
+
+bind all
+
+CmdComplete-returnSuggestion_
+
+smart_autocomplete.SmartAutocomplete_

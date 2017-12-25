@@ -1,10 +1,10 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.color_output.ColorOutput;
+import ezcli.submodules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.global_io.input.Input;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
+import ezcli.submodules.smart_autocomplete.FileAutocomplete;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
-import ezcli.modules.ezcli_core.Submodule;
+import ezcli.modules.ezcli_core.Submodules;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.io.IOException;
@@ -14,7 +14,9 @@ import java.util.List;
  * This class sorts through a command history (which is kept by the program), tries to analyze them
  * for similarities and then suggests the user a command based on the analysis.
  */
-public class CmdComplete extends Submodule {
+public class SmartAutocomplete extends Submodules {
+
+    private final static String PATH = "~/ezcli_history";
 
     private MultiCmdComplete mcc;
 
@@ -27,12 +29,13 @@ public class CmdComplete extends Submodule {
      * Initializes freqCommands list, generalizes the command history to improve smart complete results
      * and sorts list from most used to least used.
      */
-    public void init(String pathToStoredCommands) {
+    @Override
+    public void init() {
         long start = System.currentTimeMillis();
 
         List<String> commands;
         try {
-            commands = Files.readAllLines(Paths.get(pathToStoredCommands));
+            commands = Files.readAllLines(Paths.get(PATH));
         } catch (IOException e) {
             commands = new LinkedList<>();
             mcc = null;
@@ -48,7 +51,7 @@ public class CmdComplete extends Submodule {
         Util.sort(0, freqCommands.size() - 1, freqCommands);
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
-        System.out.println("Init time for CmdComplete was: " + initTime);
+        System.out.println("Init time for SmartAutocomplete was: " + initTime);
     }
 
     /**
@@ -64,8 +67,9 @@ public class CmdComplete extends Submodule {
         return initTime;
     }
 
-    public String run(String command) {
+    public String returnSuggestion(String command) {
         store(command);
+        System.out.println("Called from returnSuggestion!");
         return getMatchingCommand(command);
     }
 
