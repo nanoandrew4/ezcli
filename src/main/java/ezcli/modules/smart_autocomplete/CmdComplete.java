@@ -2,7 +2,6 @@ package ezcli.modules.smart_autocomplete;
 
 import ezcli.modules.ezcli_core.Submodule;
 import ezcli.modules.ezcli_core.util.Util;
-import ezcli.modules.terminal.Terminal;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,25 +24,28 @@ public class CmdComplete extends Submodule {
     private double initTime = 0;
 
     /**
-     * Initializes the smart completion, by loading the history file and initializing the freqCommands
-     * list.
-     *
-     * @param pathToStoredCommands Path to file where all the previously written commands are
+     * Initializes freqCommands list, generalizes the command history to improve smart complete results
+     * and sorts list from most used to least used.
      */
-    public CmdComplete(Terminal t, String pathToStoredCommands) {
-        super(t, "smart_autocomplete");
-
+    public void init(String pathToStoredCommands) {
         long start = System.currentTimeMillis();
-        try {
-            List<String> commands = Files.readAllLines(Paths.get(pathToStoredCommands));
 
-            init(commands);
-            mcc = new MultiCmdComplete(pathToStoredCommands);
+        List<String> commands;
+        try {
+            commands = Files.readAllLines(Paths.get(pathToStoredCommands));
         } catch (IOException e) {
-            init(new LinkedList<>());
+            commands = new LinkedList<>();
             mcc = null;
             System.err.println("Error. No history file found, creating empty list");
         }
+
+        for (int i = 0; i < commands.size(); i++)
+            commands.set(i, removeAllAfterQuotes(commands.get(i)));
+
+        for (String s : commands)
+            store(s);
+
+        Util.sort(0, freqCommands.size() - 1, freqCommands);
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
         System.out.println("Init time for CmdComplete was: " + initTime);
@@ -65,22 +67,6 @@ public class CmdComplete extends Submodule {
     public String run(String command) {
         store(command);
         return getMatchingCommand(command);
-    }
-
-    /**
-     * Initializes freqCommands list, generalizes the command history to improve smart complete results
-     * and sorts list from most used to least used.
-     *
-     * @param commands List of commands to initialize class with
-     */
-    private void init(List<String> commands) {
-        for (int i = 0; i < commands.size(); i++)
-            commands.set(i, removeAllAfterQuotes(commands.get(i)));
-
-        for (String s : commands)
-            store(s);
-
-        Util.sort(0, freqCommands.size() - 1, freqCommands);
     }
 
     /**

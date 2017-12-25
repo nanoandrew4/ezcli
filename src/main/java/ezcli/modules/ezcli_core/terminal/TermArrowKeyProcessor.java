@@ -1,4 +1,4 @@
-package ezcli.modules.terminal;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;

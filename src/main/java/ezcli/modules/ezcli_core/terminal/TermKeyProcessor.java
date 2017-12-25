@@ -1,4 +1,4 @@
-package ezcli.modules.terminal;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
@@ -7,8 +7,6 @@ import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.smart_autocomplete.CmdComplete;
 import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
-import org.omg.PortableInterceptor.SUCCESSFUL;
-import sun.font.EAttribute;
 
 import java.util.ArrayList;
 
