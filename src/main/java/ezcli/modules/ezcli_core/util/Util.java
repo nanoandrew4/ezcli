@@ -1,7 +1,7 @@
 package ezcli.modules.ezcli_core.util;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.smart_autocomplete.CommandFreq;
+import ezcli.submodules.smart_autocomplete.CommandFreq;
 
 import java.util.ArrayList;
 

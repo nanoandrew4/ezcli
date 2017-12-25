@@ -1,15 +1,11 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
-import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class CmdCompleteTest {
 
@@ -27,8 +23,8 @@ public class CmdCompleteTest {
 
     @Test
     public void test() {
-        /*CmdComplete cmdComplete =
-                new CmdComplete("src/test/java/ezcli/modules/smart_autocomplete/prevCommands.txt");
+        /*SmartAutocomplete cmdComplete =
+                new SmartAutocomplete("src/test/java/ezcli/modules/smart_autocomplete/prevCommands.txt");
 
         ColorOutput co = new ColorOutput(ColorOutput.DEFAULT_COLOR, ColorOutput.PRETTY_BLUE);
 

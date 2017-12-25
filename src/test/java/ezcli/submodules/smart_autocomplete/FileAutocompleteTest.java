@@ -1,7 +1,6 @@
-package ezcli.modules.smart_autocomplete;
+package ezcli.submodules.smart_autocomplete;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

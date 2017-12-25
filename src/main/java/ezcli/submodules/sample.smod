@@ -1,0 +1,21 @@
+# _submodulename
+#
+# params Terminal-Command # request command var when initializing submodule (for init method)
+#
+# _classname-methodname
+#
+# params int-Terminal-CursorPos String-Terminal-Command # requests cursorPos and command vars from Terminal module. Must have getter of style getCursorPos in specified module
+#
+# bind all # only one of the following two bind options
+# bind asdfghjkl # submodule will be run when one of asdfghjkl is pressed
+#
+# classname-methodname_
+#
+# _anothermethodname
+#
+# params Terminal-CurrCommand
+# bind qazwsx
+#
+# anothermethodname_
+#
+# submodulename_

@@ -1,11 +1,11 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.color_output.ColorOutput;
+import ezcli.modules.ezcli_core.Submodules;
+import ezcli.submodules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
-import ezcli.modules.smart_autocomplete.CmdComplete;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
+import ezcli.submodules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.util.ArrayList;
@@ -18,8 +18,6 @@ import java.util.ArrayList;
 public class TermKeyProcessor extends KeyHandler {
 
     private TermInputProcessor inputProcessor;
-
-    private CmdComplete cmdComplete;
 
     private ColorOutput colorOutput;
 
@@ -53,6 +51,8 @@ public class TermKeyProcessor extends KeyHandler {
         }
 
         super.process(input);
+
+        Submodules.charEvent((char)input);
     }
 
     @Override
@@ -128,9 +128,6 @@ public class TermKeyProcessor extends KeyHandler {
     }
 
     private void printSuggestion() {
-
-        if (cmdComplete == null)
-            return;
 
         //suggestion = cmdComplete.getMatchingCommand(inputProcessor.getCommand());
 
