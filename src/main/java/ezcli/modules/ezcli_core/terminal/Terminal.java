@@ -1,4 +1,4 @@
-package ezcli.modules.terminal;
+package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Module;
@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Terminal module. Used to interact with system, as if you were running commands on your system terminal.

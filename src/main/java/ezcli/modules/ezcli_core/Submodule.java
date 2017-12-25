@@ -1,30 +1,35 @@
 package ezcli.modules.ezcli_core;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Submodule {
 
-    private Module parent;
+    private static HashMap<Character, LinkedList<Method>> methods = new HashMap<>();
 
-    HashMap<Character, Method> methods;
+    protected static void init() {
+        File submoduleFolder = new File("submodules/");
+        File[] files = submoduleFolder.listFiles();
 
-    public Submodule(Module parent, String name) {
-        this.parent = parent;
-        methods = new HashMap<>();
+        if (files == null)
+            return;
 
-        try {
-            initSubmodule(name);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            e.printStackTrace();
+        for (File f : files) {
+            try {
+                initSubmodule(f.getName());
+            } catch (ClassNotFoundException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void initSubmodule(String submoduleName) throws ClassNotFoundException, NoSuchMethodException {
+    private static void initSubmodule(String submoduleName) throws ClassNotFoundException, NoSuchMethodException {
         List<String> file;
         try {
             file = Files.readAllLines(Paths.get("submodules/" + submoduleName + ".smod"));
@@ -38,6 +43,7 @@ public abstract class Submodule {
             String[] sArr = s.split(" ");
             if (sArr.length >= 4 && "bind".equals(sArr[0])) {
                 Class<?> c = Class.forName(sArr[2]);
+                LinkedList<Method> list;
                 Method m;
 
                 if (sArr.length <= 4)
@@ -49,14 +55,22 @@ public abstract class Submodule {
                     m = c.getMethod(sArr[3], params);
                 }
                 if ("all".equals(sArr[1])) {
-                    for (int i = 32; i < 126; i++)
-                        methods.put((char) i, m);
-                    methods.put('\t', m);
-                    methods.put('\n', m);
-                    methods.put('\b', m);
-                } else
-                    methods.put(sArr[1].charAt(0), m);
+                    for (int i = 32; i < 126; i++) {
+                        list = methods.computeIfAbsent((char) i, k -> new LinkedList<>());
+                        list.add(m);
+                    }
+                    char[] chars = {'\t', '\n', '\b'};
+                    for (char ch : chars) {
+                        list = methods.computeIfAbsent(ch, k -> new LinkedList<>());
+                        list.add(m);
+                    }
+                } else {
+                    list = methods.computeIfAbsent(sArr[1].charAt(0), k -> new LinkedList<>());
+                    list.add(m);
+                }
             }
         }
     }
+
+
 }

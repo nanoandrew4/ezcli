@@ -2,7 +2,7 @@ package ezcli.modules.ezcli_core;
 
 import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.interactive.Interactive;
-import ezcli.modules.terminal.Terminal;
+import ezcli.modules.ezcli_core.terminal.Terminal;
 
 import java.io.PrintStream;
 
@@ -35,6 +35,7 @@ public class Ezcli {
         setOS();
 
         initModules();
+        Submodule.init();
 
         new Interactive().run();
     }
