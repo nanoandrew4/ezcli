@@ -1,4 +1,4 @@
-package ezcli.submodules.color_output;
+package ezcli.modules.color_output;
 
 public class ColorOutput {
 

@@ -1,5 +1,6 @@
 package ezcli.modules.ezcli_core.interactive;
 
+import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
@@ -27,6 +28,10 @@ public class Interactive extends Module {
     }
 
     @Override
+    public EventState getWhenToRun() {
+        return null;
+    }
+
     public void run() {
         System.out.print(Ezcli.prompt);
 
@@ -35,7 +40,6 @@ public class Interactive extends Module {
         }
     }
 
-    @Override
     public void parse(String command) {
         System.out.println();
 
@@ -67,8 +71,7 @@ public class Interactive extends Module {
         System.out.print(Ezcli.prompt);
     }
 
-    @Override
-    public void help() {
+    private void help() {
         System.out.println("ezcli version: " + Ezcli.VERSION + "\n");
         System.out.println("Enter \"t\" to enter terminal mode");
         System.out.println("Enter \"h\" to display this menu");
@@ -82,7 +85,7 @@ public class Interactive extends Module {
         System.out.println("From this module you will access all other modules.");
         System.out.println("You will now be guided through the rest of the program.");
         System.out.println("Press Ctrl+C at any time to exit.\n\n");
-        if (sleep(7) != Command.NONE)
+        if (Ezcli.sleep(7) != Command.NONE)
             return;
         for (Module m : Module.modules)
             m.tour();

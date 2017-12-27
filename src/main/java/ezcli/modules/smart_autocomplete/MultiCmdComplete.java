@@ -1,6 +1,4 @@
-package ezcli.submodules.smart_autocomplete;
-
-import ezcli.modules.ezcli_core.util.Util;
+package ezcli.modules.smart_autocomplete;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +30,7 @@ public class MultiCmdComplete {
 
         populateList(2);
 
-        Util.sort(0, commandSequences.size() - 1, commandSequences);
+        SmartAutocomplete.sort(0, commandSequences.size() - 1, commandSequences);
     }
 
     public ArrayList<CommandFreq> getCommandSequences() {

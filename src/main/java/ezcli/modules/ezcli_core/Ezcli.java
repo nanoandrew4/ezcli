@@ -1,10 +1,18 @@
 package ezcli.modules.ezcli_core;
 
-import ezcli.submodules.color_output.ColorOutput;
+import ezcli.modules.color_output.ColorOutput;
+import ezcli.modules.ezcli_core.global_io.Command;
+import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.interactive.Interactive;
 import ezcli.modules.ezcli_core.terminal.Terminal;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Entry point for program. Takes care of all loading and initializing, so modules can get to work.
@@ -35,7 +43,6 @@ public class Ezcli {
         setOS();
 
         initModules();
-        Submodules.initSubmodules();
 
         new Interactive().run();
     }
@@ -62,6 +69,50 @@ public class Ezcli {
      * of each module.
      */
     private static void initModules() {
-        new Terminal("t");
+
+        new Terminal();
+
+        List<String> modules;
+
+        try {
+            modules = Files.readAllLines(Paths.get("modules.txt"));
+        } catch (IOException e) {
+            System.err.println("Modules could not be loaded, modules.txt not found");
+            return;
+        }
+
+        for (String s : modules) {
+            if ("".equals(s.trim()) || s.contains("#"))
+                continue;
+
+            try {
+                Class<?> module = Class.forName("ezcli.modules." + s);
+                module.getConstructor().newInstance();
+            } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Make program sleep but listen for signals such as SIGTERM and SIGKILL.
+     *
+     * @param s Number of seconds to sleep for
+     * @return Signal to be handled
+     */
+    public static Command sleep(double s) {
+        long start = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() - start < s * 1000) {
+            try {
+                Command c = KeyHandler.signalCatch(Input.read(false));
+                if (c != Command.NONE)
+                    return c;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return Command.NONE;
     }
 }

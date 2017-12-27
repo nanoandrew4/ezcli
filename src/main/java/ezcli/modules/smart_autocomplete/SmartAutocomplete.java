@@ -1,9 +1,13 @@
-package ezcli.submodules.smart_autocomplete;
+package ezcli.modules.smart_autocomplete;
 
-import ezcli.modules.ezcli_core.Submodules;
+import ezcli.modules.ezcli_core.EventState;
+import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.global_io.Command;
+import ezcli.modules.ezcli_core.terminal.Terminal;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,7 +18,7 @@ import java.util.List;
  * This class sorts through a command history (which is kept by the program), tries to analyze them
  * for similarities and then suggests the user a command based on the analysis.
  */
-public class SmartAutocomplete extends Submodules {
+public class SmartAutocomplete extends Module {
 
     private final static String PATH = "~/ezcli_history";
 
@@ -25,12 +29,30 @@ public class SmartAutocomplete extends Submodules {
 
     private double initTime = 0;
 
+    public SmartAutocomplete() {
+        super("SmartAutocomplete", EventState.POST_EVENT,"Terminal");
+
+        String[] binds = {"all"};
+        try {
+            Method[] methods = {this.getClass().getDeclaredMethod("makeSuggestion")};
+            init(methods, binds);
+        } catch (NoSuchMethodException e) {
+            System.err.println("Loading module SmartAutocomplete and its methods failed");
+        }
+
+        initModule();
+    }
+
+    @Override
+    public EventState getWhenToRun() {
+        return whenToRun;
+    }
+
     /**
      * Initializes freqCommands list, generalizes the command history to improve smart complete results
      * and sorts list from most used to least used.
      */
-    @Override
-    public void init() {
+    public void initModule() {
         long start = System.currentTimeMillis();
 
         List<String> commands;
@@ -48,7 +70,7 @@ public class SmartAutocomplete extends Submodules {
         for (String s : commands)
             store(s);
 
-        Util.sort(0, freqCommands.size() - 1, freqCommands);
+        sort(0, freqCommands.size() - 1, freqCommands);
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
         System.out.println("Init time for SmartAutocomplete was: " + initTime);
@@ -67,10 +89,10 @@ public class SmartAutocomplete extends Submodules {
         return initTime;
     }
 
-    public String returnSuggestion(String command) {
-        store(command);
-        System.out.println("Called from returnSuggestion!");
-        return getMatchingCommand(command);
+    public void makeSuggestion() {
+        Terminal t = (Terminal) modules.get(0);
+        //store(t.inputProcessor.getCommand());
+        System.out.println("Called from makeSuggestion!");
     }
 
     /**
@@ -127,5 +149,48 @@ public class SmartAutocomplete extends Submodules {
                 return rawCommand.substring(0, pos - 1);
 
         return rawCommand;
+    }
+
+    /**
+     * Sorts a CommandFreq list using quicksort.
+     *
+     * @param lPiv Leftmost chunk of list to sort
+     * @param rPiv Rightmost chunk of list to sort
+     */
+    protected static void sort(int lPiv, int rPiv, ArrayList<CommandFreq> freqCommands) {
+        if (freqCommands.size() == 0)
+            return;
+
+        int cPiv = freqCommands.get((rPiv + lPiv) / 2).getFreq();
+        int a = lPiv, b = rPiv;
+
+        while (a <= b) {
+            while (freqCommands.get(a).getFreq() > cPiv)
+                a++;
+            while (freqCommands.get(b).getFreq() < cPiv)
+                b--;
+            if (a <= b) {
+                CommandFreq cfTmp = freqCommands.get(a);
+                freqCommands.set(a, freqCommands.get(b));
+                freqCommands.set(b, cfTmp);
+                a++;
+                b--;
+            }
+        }
+
+        if (b < rPiv)
+            sort(lPiv, b, freqCommands);
+        if (a < rPiv)
+            sort(a, rPiv, freqCommands);
+    }
+
+    @Override
+    public void run() {
+        // Nothing to be done
+    }
+
+    @Override
+    public void tour() {
+        // TODO
     }
 }

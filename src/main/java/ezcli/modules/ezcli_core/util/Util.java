@@ -1,9 +1,11 @@
 package ezcli.modules.ezcli_core.util;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.submodules.smart_autocomplete.CommandFreq;
+import ezcli.modules.ezcli_core.global_io.Command;
+import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
 public class Util {
 
@@ -52,35 +54,24 @@ public class Util {
     }
 
     /**
-     * Sorts a CommandFreq list using quicksort.
+     * Make program sleep but listen for signals such as SIGTERM and SIGKILL.
      *
-     * @param lPiv Leftmost chunk of list to sort
-     * @param rPiv Rightmost chunk of list to sort
+     * @param s Number of seconds to sleep for
+     * @return Signal to be handled
      */
-    public static void sort(int lPiv, int rPiv, ArrayList<CommandFreq> list) {
-        if (list.size() == 0)
-            return;
+    protected Command sleep(double s) {
+        long start = System.currentTimeMillis();
 
-        int cPiv = list.get((rPiv + lPiv) / 2).getFreq();
-        int a = lPiv, b = rPiv;
-
-        while (a <= b) {
-            while (list.get(a).getFreq() > cPiv)
-                a++;
-            while (list.get(b).getFreq() < cPiv)
-                b--;
-            if (a <= b) {
-                CommandFreq cfTmp = list.get(a);
-                list.set(a, list.get(b));
-                list.set(b, cfTmp);
-                a++;
-                b--;
+        while (System.currentTimeMillis() - start < s * 1000) {
+            try {
+                Command c = KeyHandler.signalCatch(Input.read(false));
+                if (c != Command.NONE)
+                    return c;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        if (b < rPiv)
-            sort(lPiv, b, list);
-        if (a < rPiv)
-            sort(a, rPiv, list);
+        return Command.NONE;
     }
 }
