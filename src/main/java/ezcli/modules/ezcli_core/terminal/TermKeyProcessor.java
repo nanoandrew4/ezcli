@@ -1,11 +1,12 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.ezcli_core.Submodules;
-import ezcli.submodules.color_output.ColorOutput;
+import ezcli.modules.color_output.ColorOutput;
+import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
-import ezcli.submodules.smart_autocomplete.FileAutocomplete;
+import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.util.ArrayList;
@@ -52,20 +53,26 @@ public class TermKeyProcessor extends KeyHandler {
 
         super.process(input);
 
-        Submodules.charEvent((char)input);
+        //Submodules.charEvent((char)input);
     }
 
     @Override
     public void tabEvent() {
+        Module.processEvent("\t", EventState.PRE_EVENT);
+
         Util.clearLine(inputProcessor.getCommand() + suggestion, true);
         suggestion = "";
         inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
+
+        Module.processEvent("\t", EventState.POST_EVENT);
     }
 
     @Override
     public void newLineEvent() {
-        boolean empty = Terminal.containsOnlySpaces(inputProcessor.getCommand());
+        Module.processEvent("\n", EventState.PRE_EVENT);
+
+        boolean empty = "".equals(inputProcessor.getCommand().trim());
 
         String command = inputProcessor.getCommand();
         ArrayList<String> prevCommands = inputProcessor.getPrevCommands();
@@ -78,10 +85,14 @@ public class TermKeyProcessor extends KeyHandler {
         inputProcessor.setCursorPos(0);
         inputProcessor.setResetVars(true);
         inputProcessor.parse();
+
+        Module.processEvent("\n", EventState.POST_EVENT);
     }
 
     @Override
     public void charEvent(char input) {
+        Module.processEvent(String.valueOf(input), EventState.PRE_EVENT);
+
         String command = inputProcessor.getCommand();
         int cursorPos = inputProcessor.getCursorPos();
 
@@ -102,10 +113,14 @@ public class TermKeyProcessor extends KeyHandler {
         inputProcessor.increaseCursorPos();
         inputProcessor.moveToCursorPos();
         inputProcessor.setResetVars(true);
+
+        Module.processEvent(String.valueOf(input), EventState.POST_EVENT);
     }
 
     @Override
     public void backspaceEvent() {
+        Module.processEvent(String.valueOf("\b"), EventState.PRE_EVENT);
+
         if (inputProcessor.getCommand().length() > 0 && inputProcessor.getCursorPos() > 0) {
             int charToDelete = inputProcessor.getCursorPos() - 1;
             String command = inputProcessor.getCommand();
@@ -125,6 +140,8 @@ public class TermKeyProcessor extends KeyHandler {
             inputProcessor.moveToCursorPos();
             inputProcessor.setResetVars(true);
         }
+
+        Module.processEvent(String.valueOf("\b"), EventState.POST_EVENT);
     }
 
     private void printSuggestion() {

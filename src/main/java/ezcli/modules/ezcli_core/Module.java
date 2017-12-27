@@ -1,12 +1,10 @@
 package ezcli.modules.ezcli_core;
 
-import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
-import ezcli.modules.ezcli_core.global_io.input.Input;
-
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Abstract class specifying methods all modules should contain.
@@ -21,24 +19,34 @@ public abstract class Module {
     protected static HashMap<String, Module> moduleMap = new HashMap<>();
     protected static HashMap<Module, String> moduleNameMap = new HashMap<>();
 
-    protected String moduleName;
+    protected static HashMap<String, LinkedList<Method>> eventMethods = new HashMap<>();
 
-    public Module(String moduleName) {
+    // Module specific variables...
+
+    public String moduleName;
+
+    private String[] dependencies;
+
+    protected EventState whenToRun;
+
+    public Module(String moduleName, String... dependencies) {
         this.moduleName = moduleName;
+        this.dependencies = dependencies;
+    }
+
+    public Module(String moduleName, EventState whenToRun, String... dependencies) {
+        this.moduleName = moduleName;
+        this.whenToRun = whenToRun;
+        this.dependencies = dependencies;
     }
 
     /**
-     * Quasi-constructor. Initializes the class and adds the module to a list of modules.
-     * Every module must call this class only once, and pass itself as a module.
+     * Return the preferred time to run for this module, so that the given
+     * method uses the correct and up to date variables.
      *
-     * @param module  Module to be added
-     * @param mapWith String to map to module, which when typed in the interactive module will run this module
+     * @return Preferred time to run module.
      */
-    protected void init(Module module, String mapWith) {
-        modules.add(module);
-        moduleMap.put(mapWith, module);
-        moduleNameMap.put(module, mapWith);
-    }
+    public abstract EventState getWhenToRun();
 
     /**
      * Code to run for module. Should contain a while loop similar to that in the Interactive class,
@@ -47,42 +55,69 @@ public abstract class Module {
     public abstract void run();
 
     /**
-     * Code to run when parsing input.
-     *
-     * @param command Command to parse
-     */
-    public abstract void parse(String command);
-
-    /**
-     * Code to run when displaying help for this module.
-     */
-    public abstract void help();
-
-    /**
-     * Code to run when touring program
+     * Code to run when touring program.
      */
     public abstract void tour();
 
     /**
-     * Make program sleep but listen for signals such as SIGTERM and SIGKILL.
+     * Quasi-constructor. Initializes the class and adds the module to a list of modules.
+     * Every module must call this method only once, and pass itself as a module if it wants to be accessible through
+     * the Interactive module.
      *
-     * @param s Number of seconds to sleep for
-     * @return Signal to be handled
+     * @param module  Module to be added
      */
-    protected Command sleep(double s) {
-        long start = System.currentTimeMillis();
+    protected void init(Module module, String keyToBind) {
+        modules.add(module);
+        moduleMap.put(keyToBind, module);
+        moduleNameMap.put(module, keyToBind);
+    }
 
-        while (System.currentTimeMillis() - start < s * 1000) {
+    /**
+     * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur in Terminal module.
+     */
+    protected void init(Method[] methods, String[] binds) {
+        if (methods.length != binds.length) {
+            System.err.println("Methods and Binds arrays are not equal in length " +
+                    "(each method must be bound to something)");
+            return;
+        }
+
+        for (int i = 0; i < methods.length; i++) {
+            if ("all".equals(binds[i])) {
+                for (int j = 30; j < 126; j++) {
+                    LinkedList<Method> list = eventMethods.computeIfAbsent(String.valueOf(j), k -> new LinkedList<>());
+                    list.add(methods[i]);
+                }
+                String[] keys = {"\n", "\b", "\t"};
+                for (String s : keys) {
+                    LinkedList<Method> list = eventMethods.computeIfAbsent(s, k -> new LinkedList<>());
+                    list.add(methods[i]);
+                }
+            } else {
+                for (int j = 0; j < binds[i].length(); j++) {
+                    LinkedList<Method> list = eventMethods.computeIfAbsent(String.valueOf(binds[i].charAt(j)), k -> new LinkedList<>());
+                    list.add(methods[i]);
+                }
+            }
+        }
+    }
+
+    public static void processEvent(String val, EventState es) {
+        LinkedList<Method> list = eventMethods.get(val);
+
+        if (list == null)
+            return;
+
+        for (Method m : list) {
             try {
-                Command c = KeyHandler.signalCatch(Input.read(false));
-                if (c != Command.NONE)
-                    return c;
-            } catch (IOException e) {
+                EventState requestedES =
+                        (EventState) m.getDeclaringClass().getDeclaredMethod("getWhenToRun").invoke(null);
+                if (es == requestedES)
+                    m.invoke(null);
+            } catch (Exception e) {
+                System.err.println("Error processing event");
                 e.printStackTrace();
             }
         }
-
-        return Command.NONE;
     }
-
 }

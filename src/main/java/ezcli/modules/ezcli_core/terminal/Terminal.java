@@ -1,6 +1,7 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.submodules.color_output.ColorOutput;
+import ezcli.modules.color_output.ColorOutput;
+import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
@@ -18,23 +19,25 @@ import java.util.List;
 public class Terminal extends Module {
 
     // Input handler for this module
-    private TermInputProcessor inputProcessor;
+    public TermInputProcessor inputProcessor;
 
-    private LinkedList<String> inputInSession;
+    public LinkedList<String> inputInSession;
 
     private final static int maxLinesInHistory = 10000;
 
     private boolean exit;
 
-    public Terminal(String mapWith) {
+    public Terminal() {
         super("Terminal");
-        init(this, mapWith);
+        init(this, "t");
+
         inputProcessor = new TermInputProcessor(this);
         inputInSession = new LinkedList<>();
     }
 
-    protected TermInputProcessor getInputProcessor() {
-        return inputProcessor;
+    @Override
+    public EventState getWhenToRun() {
+        return null;
     }
 
     private void writeCommandsToFile() {
@@ -95,7 +98,6 @@ public class Terminal extends Module {
         Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
     }
 
-    @Override
     public void parse(String rawCommand) {
 
         inputInSession.add(rawCommand);
@@ -116,7 +118,7 @@ public class Terminal extends Module {
                 inputProcessor.setCommand("");
                 exit = true;
                 return;
-            } else if ("".equals(command) || containsOnlySpaces(command) || "help".equals(command)) {
+            } else if ("".equals(command) || "".equals(command.trim()) || "help".equals(command)) {
                 if ("help".equals(command))
                     help();
                 inputProcessor.setCommand("");
@@ -150,6 +152,39 @@ public class Terminal extends Module {
 
         inputProcessor.setCommand("");
         System.out.print(Ezcli.prompt);
+    }
+
+    public void help() {
+        System.out.println("This module interacts directly with the system.");
+        System.out.println("All input will be passed to the system when a \n" +
+                "newline character is detected (enter key pressed)");
+        System.out.println("To change directory, enter: \"cd [somedir]\".");
+        System.out.println("To return to Interactive module, enter \"exit\".");
+    }
+
+    @Override
+    public void tour() {
+        System.out.println("This is the " + moduleName + " module.");
+        System.out.println("This module deals directly with your system terminal.");
+        System.out.println("Anything input here, with the exception of the commands");
+        System.out.println("\"exit\" and \"t-help\" will be passed directly to the system.");
+        if (Ezcli.sleep(3) != Command.NONE) return;
+
+        System.out.println("For example, lets pass \"dir\"");
+        if (Ezcli.sleep(1.2) != Command.NONE) return;
+        inputProcessor.process('d');
+        if (Ezcli.sleep(0.7) != Command.NONE) return;
+        inputProcessor.process('i');
+        if (Ezcli.sleep(0.7) != Command.NONE) return;
+        inputProcessor.process('r');
+        if (Ezcli.sleep(1.2) != Command.NONE) return;
+        inputProcessor.getKeyProcessor().newLineEvent();
+
+        System.out.println("\n\n");
+
+        System.out.println("That should have printed your working directory!");
+        System.out.println("We will now be exiting this module, please wait.\n\n");
+        Ezcli.sleep(5);
     }
 
     /**
@@ -206,52 +241,5 @@ public class Terminal extends Module {
                 System.out.println("Please enter a valid directory to change to.");
             }
         }
-    }
-
-    /**
-     * Determines if a string is composed only of spaces.
-     *
-     * @param s string to check
-     * @return true if s is composed of only spaces, false if there is a character in it
-     */
-    protected static boolean containsOnlySpaces(String s) {
-        for (int i = 0; i < s.length(); i++)
-            if (s.charAt(i) != ' ')
-                return false;
-        return true;
-    }
-
-    @Override
-    public void help() {
-        System.out.println("This module interacts directly with the system.");
-        System.out.println("All input will be passed to the system when a \n" +
-                "newline character is detected (enter key pressed)");
-        System.out.println("To change directory, enter: \"cd [somedir]\".");
-        System.out.println("To return to Interactive module, enter \"exit\".");
-    }
-
-    @Override
-    public void tour() {
-        System.out.println("This is the " + moduleName + " module.");
-        System.out.println("This module deals directly with your system terminal.");
-        System.out.println("Anything input here, with the exception of the commands");
-        System.out.println("\"exit\" and \"t-help\" will be passed directly to the system.");
-        if (sleep(3) != Command.NONE) return;
-
-        System.out.println("For example, lets pass \"dir\"");
-        if (sleep(1.2) != Command.NONE) return;
-        inputProcessor.process('d');
-        if (sleep(0.7) != Command.NONE) return;
-        inputProcessor.process('i');
-        if (sleep(0.7) != Command.NONE) return;
-        inputProcessor.process('r');
-        if (sleep(1.2) != Command.NONE) return;
-        inputProcessor.getKeyProcessor().newLineEvent();
-
-        System.out.println("\n\n");
-
-        System.out.println("That should have printed your working directory!");
-        System.out.println("We will now be exiting this module, please wait.\n\n");
-        sleep(5);
     }
 }

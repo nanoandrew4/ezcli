@@ -71,8 +71,8 @@ public class TermInputTest {
     @Test
     public void keyTest() {
         Ezcli.setOS();
-        Terminal terminal = new Terminal("t");
-        TermInputProcessor inputProcessor = terminal.getInputProcessor();
+        Terminal terminal = new Terminal();
+        TermInputProcessor inputProcessor = terminal.inputProcessor;
         TermKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
 
         keyProcessor.process('a');
@@ -111,8 +111,8 @@ public class TermInputTest {
      */
     @Test
     public void arrowKeyTest() {
-        Terminal terminal = new Terminal("t");
-        TermInputProcessor inputProcessor = terminal.getInputProcessor();
+        Terminal terminal = new Terminal();
+        TermInputProcessor inputProcessor = terminal.inputProcessor;
         TermArrowKeyProcessor akProcessor = inputProcessor.getArrowKeyProcessor();
 
         inputProcessor.getPrevCommands().add("ab");
@@ -178,8 +178,8 @@ public class TermInputTest {
 
         System.out.println("entered");
 
-        Terminal terminal = new Terminal("t");
-        TermInputProcessor inputProcessor = terminal.getInputProcessor();
+        Terminal terminal = new Terminal();
+        TermInputProcessor inputProcessor = terminal.inputProcessor;
 
         // reset variables that might have been modified elsewhere needed for clean test
         inputProcessor.setCommand("");
@@ -248,7 +248,7 @@ public class TermInputTest {
         System.out.println("entered");
         // reset variables that might have been modified elsewhere needed for clean test
         Ezcli.setOS();
-        TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal("t"));
+        TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal());
         TermKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
         keyProcessor.process(Integer.MAX_VALUE);
         keyProcessor.process(Integer.MIN_VALUE);
