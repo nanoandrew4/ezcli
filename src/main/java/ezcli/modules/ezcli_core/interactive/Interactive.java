@@ -87,7 +87,7 @@ public class Interactive extends Module {
         System.out.println("Press Ctrl+C at any time to exit.\n\n");
         if (Ezcli.sleep(7) != Command.NONE)
             return;
-        for (Module m : Module.modules)
+        for (Module m : Module.modules.values())
             m.tour();
     }
 }

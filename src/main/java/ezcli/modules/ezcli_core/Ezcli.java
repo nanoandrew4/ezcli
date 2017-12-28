@@ -86,7 +86,7 @@ public class Ezcli {
                 continue;
 
             try {
-                Class<?> module = Class.forName("ezcli.modules." + s);
+                Class<?> module = Class.forName("ezcli.modules." + s.trim());
                 module.getConstructor().newInstance();
             } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();

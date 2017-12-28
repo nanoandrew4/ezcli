@@ -1,9 +1,7 @@
 package ezcli.modules.ezcli_core;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
+ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -13,7 +11,7 @@ import java.util.LinkedList;
 public abstract class Module {
 
     // List of modules that the program will use
-    public static ArrayList<Module> modules = new ArrayList<>();
+    public static HashMap<String, Module> modules = new HashMap<>();
 
     // Hashmap that maps a string to a module, which when typed in interactive module, will run the mapped module
     protected static HashMap<String, Module> moduleMap = new HashMap<>();
@@ -25,19 +23,15 @@ public abstract class Module {
 
     public String moduleName;
 
-    private String[] dependencies;
-
     protected EventState whenToRun;
 
-    public Module(String moduleName, String... dependencies) {
+    public Module(String moduleName) {
         this.moduleName = moduleName;
-        this.dependencies = dependencies;
     }
 
-    public Module(String moduleName, EventState whenToRun, String... dependencies) {
+    public Module(String moduleName, EventState whenToRun) {
         this.moduleName = moduleName;
         this.whenToRun = whenToRun;
-        this.dependencies = dependencies;
     }
 
     /**
@@ -67,39 +61,54 @@ public abstract class Module {
      * @param module  Module to be added
      */
     protected void init(Module module, String keyToBind) {
-        modules.add(module);
+        modules.put(module.moduleName, module);
         moduleMap.put(keyToBind, module);
         moduleNameMap.put(module, keyToBind);
     }
 
     /**
-     * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur in Terminal module.
+     * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur in Terminal module,
+     * such as key press events.
      */
-    protected void init(Method[] methods, String[] binds) {
+    protected void init(Module module, Method[] methods, String[] binds) {
+
         if (methods.length != binds.length) {
             System.err.println("Methods and Binds arrays are not equal in length " +
                     "(each method must be bound to something)");
             return;
         }
 
+        modules.put(module.moduleName, module);
+
         for (int i = 0; i < methods.length; i++) {
             if ("all".equals(binds[i])) {
-                for (int j = 30; j < 126; j++) {
-                    LinkedList<Method> list = eventMethods.computeIfAbsent(String.valueOf(j), k -> new LinkedList<>());
-                    list.add(methods[i]);
-                }
+                for (int j = 30; j < 126; j++)
+                    addCharsToHashmap(String.valueOf((char) j), methods[i]);
+
                 String[] keys = {"\n", "\b", "\t"};
-                for (String s : keys) {
-                    LinkedList<Method> list = eventMethods.computeIfAbsent(s, k -> new LinkedList<>());
-                    list.add(methods[i]);
-                }
-            } else {
-                for (int j = 0; j < binds[i].length(); j++) {
-                    LinkedList<Method> list = eventMethods.computeIfAbsent(String.valueOf(binds[i].charAt(j)), k -> new LinkedList<>());
-                    list.add(methods[i]);
-                }
-            }
+                for (String s : keys)
+                    addCharsToHashmap(s, methods[i]);
+
+            } else
+                addCharsToHashmap(binds[i], methods[i]);
         }
+    }
+
+    private void addCharsToHashmap(String s, Method m) {
+        for (int i = 0; i < s.length(); i++) {
+            LinkedList<Method> list = eventMethods.get(String.valueOf(s.charAt(i)));
+
+            if (list == null) {
+                list = new LinkedList<>();
+                eventMethods.put(String.valueOf(s.charAt(i)), list);
+            }
+
+            list.add(m);
+        }
+    }
+
+    private void addStirngToHashmap(String s, Method m) {
+
     }
 
     public static void processEvent(String val, EventState es) {
@@ -110,12 +119,14 @@ public abstract class Module {
 
         for (Method m : list) {
             try {
-                EventState requestedES =
-                        (EventState) m.getDeclaringClass().getDeclaredMethod("getWhenToRun").invoke(null);
+                System.out.println(m.getDeclaringClass().getSimpleName());
+                EventState requestedES = (EventState) m.getDeclaringClass().getDeclaredMethod("getWhenToRun")
+                        .invoke(modules.get(m.getDeclaringClass().getSimpleName()));
                 if (es == requestedES)
-                    m.invoke(null);
+                    m.invoke(modules.get(m.getDeclaringClass().getSimpleName()));
             } catch (Exception e) {
-                System.err.println("Error processing event");
+                System.err.println("Error processing event from class: " + m.getDeclaringClass().getSimpleName());
+                System.out.println("Error processing \"" + val + "\"");
                 e.printStackTrace();
             }
         }
