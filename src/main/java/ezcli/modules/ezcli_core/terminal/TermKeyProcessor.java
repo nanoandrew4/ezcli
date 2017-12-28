@@ -1,12 +1,10 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
 import ezcli.modules.ezcli_core.util.Util;
 
 import java.util.ArrayList;
@@ -20,13 +18,10 @@ public class TermKeyProcessor extends KeyHandler {
 
     private TermInputProcessor inputProcessor;
 
-    private ColorOutput colorOutput;
-
     private String suggestion = "";
 
-    TermKeyProcessor(TermInputProcessor inputProcessor, ColorOutput colorOutput) {
+    TermKeyProcessor(TermInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
-        this.colorOutput = colorOutput;
     }
 
     protected String getSuggestion() {
@@ -48,12 +43,10 @@ public class TermKeyProcessor extends KeyHandler {
         if (key != Keys.TAB) {
             inputProcessor.setLockTab(false);
             inputProcessor.setBlockClear(false);
-            FileAutocomplete.resetVars();
+            //FileAutocomplete.resetVars();
         }
 
         super.process(input);
-
-        //Submodules.charEvent((char)input);
     }
 
     @Override
@@ -62,7 +55,7 @@ public class TermKeyProcessor extends KeyHandler {
 
         Util.clearLine(inputProcessor.getCommand() + suggestion, true);
         suggestion = "";
-        inputProcessor.fileAutocomplete();
+        //inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
 
         Module.processEvent("\t", EventState.POST_EVENT);
@@ -100,15 +93,15 @@ public class TermKeyProcessor extends KeyHandler {
 
         if (inputProcessor.getCursorPos() == command.length()) {
             System.out.print(Ezcli.prompt);
-            colorOutput.print(command + input);
+            System.out.print(command + input);
             inputProcessor.setCommand(command + input);
         } else {
             inputProcessor.setCommand(new StringBuilder(command).insert(cursorPos, input).toString());
             System.out.print(Ezcli.prompt);
-            colorOutput.print(inputProcessor.getCommand());
+            System.out.print(inputProcessor.getCommand());
         }
 
-        printSuggestion();
+        //printSuggestion();
 
         inputProcessor.increaseCursorPos();
         inputProcessor.moveToCursorPos();
@@ -129,9 +122,9 @@ public class TermKeyProcessor extends KeyHandler {
 
             inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
             System.out.print(Ezcli.prompt);
-            colorOutput.print(inputProcessor.getCommand());
+            System.out.print(inputProcessor.getCommand());
 
-            printSuggestion();
+            //printSuggestion();
 
             if (inputProcessor.getCursorPos() == 1)
                 suggestion = "";
@@ -143,13 +136,14 @@ public class TermKeyProcessor extends KeyHandler {
 
         Module.processEvent(String.valueOf("\b"), EventState.POST_EVENT);
     }
-
+    /*
     private void printSuggestion() {
 
         //suggestion = cmdComplete.getMatchingCommand(inputProcessor.getCommand());
 
         if (!"".equals(suggestion) && !"".equals(inputProcessor.getCommand())) {
-            colorOutput.print(suggestion, ColorOutput.CMD_SUGGESTION);
+            System.out.print(suggestion, ColorOutput.CMD_SUGGESTION);
         }
     }
+    */
 }

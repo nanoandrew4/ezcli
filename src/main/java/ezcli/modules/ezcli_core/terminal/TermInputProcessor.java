@@ -1,10 +1,8 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.global_io.input.Input;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,8 +18,6 @@ import java.util.LinkedList;
 public class TermInputProcessor extends InputHandler {
 
     private Terminal terminal;
-
-    private ColorOutput colorOutput;
 
     // Stores all entered commands
     private ArrayList<String> prevCommands = new ArrayList<>();
@@ -43,12 +39,8 @@ public class TermInputProcessor extends InputHandler {
         super();
         this.terminal = terminal;
 
-        colorOutput = new ColorOutput();
-
-        colorOutput.selectColor(ColorOutput.PRETTY_BLUE);
-
-        keyHandler = new TermKeyProcessor(this, colorOutput);
-        arrowKeyHandler = new TermArrowKeyProcessor(this, colorOutput);
+        keyHandler = new TermKeyProcessor(this);
+        arrowKeyHandler = new TermArrowKeyProcessor(this);
 
         KeyHandler.initKeysMap();
     }
@@ -149,6 +141,7 @@ public class TermInputProcessor extends InputHandler {
     /**
      * Autocompletes desired file name similar to how terminals do it.
      */
+    /*
     protected void fileAutocomplete() {
 
         // For determining change in cursor position
@@ -171,6 +164,7 @@ public class TermInputProcessor extends InputHandler {
         cursorPos += (command.length() - prevCommand.length());
         moveToCursorPos();
     }
+    */
 
     /**
      * Splits a command into 3 parts for the autocomplete function to operate properly.

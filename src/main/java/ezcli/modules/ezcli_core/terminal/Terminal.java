@@ -1,6 +1,5 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
@@ -86,7 +85,7 @@ public class Terminal extends Module {
     @Override
     public void run() {
         exit = false;
-        Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+//        Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
 
         System.out.println("Entered terminal mode");
         System.out.print(Ezcli.prompt);
@@ -95,7 +94,7 @@ public class Terminal extends Module {
         }
 
         writeCommandsToFile();
-        Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
+//        Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
     }
 
     public void parse(String rawCommand) {
@@ -213,7 +212,8 @@ public class Terminal extends Module {
 
                 System.setProperty("user.dir", newPath.toString());
                 Ezcli.currDir = newPath.toString();
-                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+                Ezcli.prompt = Ezcli.currDir + " >> ";
                 return;
             }
 
@@ -236,7 +236,8 @@ public class Terminal extends Module {
             if (f.exists() && f.isDirectory()) {
                 System.setProperty("user.dir", f.getAbsolutePath());
                 Ezcli.currDir = f.getAbsolutePath() + "/";
-                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+                Ezcli.prompt = Ezcli.currDir + " >> ";
             } else {
                 System.out.println("Please enter a valid directory to change to.");
             }

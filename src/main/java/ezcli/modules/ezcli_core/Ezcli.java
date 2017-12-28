@@ -1,6 +1,5 @@
 package ezcli.modules.ezcli_core;
 
-import ezcli.modules.color_output.ColorOutput;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
@@ -24,8 +23,8 @@ public class Ezcli {
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";
 
-    public static String promptColor = (char)27 + "[38;5;95m";
-    public static String prompt = promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
+    //public static String promptColor = (char)27 + "[38;5;95m";
+    public static String prompt = ">> ";
 
     public static boolean IS_WIN;
     public static boolean IS_UNIX;
