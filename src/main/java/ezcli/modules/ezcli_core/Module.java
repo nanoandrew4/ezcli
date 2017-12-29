@@ -1,7 +1,7 @@
 package ezcli.modules.ezcli_core;
 
 import java.lang.reflect.Method;
- import java.util.HashMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -58,7 +58,7 @@ public abstract class Module {
      * Every module must call this method only once, and pass itself as a module if it wants to be accessible through
      * the Interactive module.
      *
-     * @param module  Module to be added
+     * @param module Module to be added
      */
     protected void init(Module module, String keyToBind) {
         modules.put(module.moduleName, module);
@@ -81,16 +81,36 @@ public abstract class Module {
         modules.put(module.moduleName, module);
 
         for (int i = 0; i < methods.length; i++) {
-            if ("all".equals(binds[i])) {
-                for (int j = 30; j < 126; j++)
-                    addCharsToHashmap(String.valueOf((char) j), methods[i]);
+            String[] bind = binds[i].split(" ");
+            for (String b : bind) {
+                if ("allkeys".equals(b)) {
+                    for (int j = 30; j < 126; j++)
+                        addCharsToHashmap(String.valueOf((char) j), methods[i]);
 
-                String[] keys = {"\n", "\b", "\t"};
-                for (String s : keys)
-                    addCharsToHashmap(s, methods[i]);
+                    String[] keys = {"\n", "\b", "\t"};
+                    for (String s : keys)
+                        addCharsToHashmap(s, methods[i]);
 
-            } else
-                addCharsToHashmap(binds[i], methods[i]);
+                } else if (!b.contains("arrow")) {
+                    addCharsToHashmap(binds[i], methods[i]);
+                    continue;
+                }
+
+                if ("allarrows".equals(b)) {
+                    String[] arrows = {"uarrow", "darrow", "larrow", "rarrow"};
+                    for (String s : arrows)
+                        addStringToHashmap(s, methods[i]);
+                } else {
+                    if ("uarrow".equals(b))
+                        addStringToHashmap(b, methods[i]);
+                    if ("darrow".equals(b))
+                        addStringToHashmap(b, methods[i]);
+                    if ("larrow".equals(b))
+                        addStringToHashmap(b, methods[i]);
+                    if ("rarrow".equals(b))
+                        addStringToHashmap(b, methods[i]);
+                }
+            }
         }
     }
 
@@ -107,8 +127,15 @@ public abstract class Module {
         }
     }
 
-    private void addStirngToHashmap(String s, Method m) {
+    private void addStringToHashmap(String s, Method m) {
+        LinkedList<Method> list = eventMethods.get(s);
 
+        if (list == null) {
+            list = new LinkedList<>();
+            eventMethods.put(s, list);
+        }
+
+        list.add(m);
     }
 
     public static void processEvent(String val, EventState es) {
