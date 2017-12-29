@@ -134,7 +134,7 @@ public class TermInputProcessor extends InputHandler {
      * Usually only used after modifying 'command'
      */
     protected void moveToCursorPos() {
-        for (int i = command.length() + getKeyProcessor().getSuggestion().length(); i > cursorPos; i--)
+        for (int i = command.length(); i > cursorPos; i--)
             System.out.print("\b");
     }
 

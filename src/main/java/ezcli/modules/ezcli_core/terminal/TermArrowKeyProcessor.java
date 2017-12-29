@@ -1,6 +1,8 @@
 package ezcli.modules.ezcli_core.terminal;
 
+import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.global_io.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
 import ezcli.modules.ezcli_core.util.Util;
@@ -60,38 +62,41 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
     @Override
     protected void processUp() {
+        Module.processEvent("uarrow", EventState.PRE_EVENT);
         prevCommandIterator(ArrowKeys.UP);
         inputProcessor.setCursorPos(inputProcessor.getCommand().length());
+        Module.processEvent("uarrow", EventState.POST_EVENT);
     }
 
     @Override
     protected void processDown() {
+        Module.processEvent("darrow", EventState.PRE_EVENT);
         prevCommandIterator(ArrowKeys.DOWN);
         inputProcessor.setCursorPos(inputProcessor.getCommand().length());
+        Module.processEvent("darrow", EventState.POST_EVENT);
     }
 
     @Override
     protected void processLeft() {
-        if (inputProcessor.getCursorPos() + inputProcessor.getKeyProcessor().getSuggestion().length() > 0) {
+        Module.processEvent("larrow", EventState.PRE_EVENT);
+        if (inputProcessor.getCursorPos() > 0) {
             System.out.print("\b");
             inputProcessor.decreaseCursorPos();
         }
+        Module.processEvent("larrow", EventState.POST_EVENT);
     }
 
     @Override
     protected void processRight() {
+        Module.processEvent("rarrow", EventState.PRE_EVENT);
         if (inputProcessor.getCursorPos() < inputProcessor.getCommand().length()) {
             Util.clearLine(inputProcessor.getCommand(), true);
             System.out.print(Ezcli.prompt);
             System.out.print(inputProcessor.getCommand());
             inputProcessor.increaseCursorPos();
             inputProcessor.moveToCursorPos();
-        } else if (!"".equals(inputProcessor.getKeyProcessor().getSuggestion()) &&
-                inputProcessor.getCursorPos() < inputProcessor.getCommand().length()
-                        + inputProcessor.getKeyProcessor().getSuggestion().length()) {
-
-            inputProcessor.getKeyProcessor().process(inputProcessor.getKeyProcessor().getSuggestion().charAt(0));
         }
+        Module.processEvent("rarrow", EventState.POST_EVENT);
     }
 
     /**

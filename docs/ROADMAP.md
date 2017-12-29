@@ -20,6 +20,7 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [x] Allow user to drop to command prompt with single key-press while in "interactive" mode.
   * [x] Allow user to return to "interactive" mode for continued use of the program.
   * [x] Print help for each module that is developed.
+* [x] Modular framework for all modules to operate under.
 * [ ] Text based file explorer.
   * [ ] Rename, create and delete files.
   * [ ] Open files with default program assigned by OS, or with an included module such as the text editor.

@@ -18,14 +18,8 @@ public class TermKeyProcessor extends KeyHandler {
 
     private TermInputProcessor inputProcessor;
 
-    private String suggestion = "";
-
     TermKeyProcessor(TermInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
-    }
-
-    protected String getSuggestion() {
-        return suggestion;
     }
 
     /**
@@ -53,8 +47,7 @@ public class TermKeyProcessor extends KeyHandler {
     public void tabEvent() {
         Module.processEvent("\t", EventState.PRE_EVENT);
 
-        Util.clearLine(inputProcessor.getCommand() + suggestion, true);
-        suggestion = "";
+        Util.clearLine(inputProcessor.getCommand(), true);
         //inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
 
@@ -89,7 +82,7 @@ public class TermKeyProcessor extends KeyHandler {
         String command = inputProcessor.getCommand();
         int cursorPos = inputProcessor.getCursorPos();
 
-        Util.clearLine(command + suggestion, true);
+        Util.clearLine(command, true);
 
         if (inputProcessor.getCursorPos() == command.length()) {
             System.out.print(Ezcli.prompt);
@@ -100,8 +93,6 @@ public class TermKeyProcessor extends KeyHandler {
             System.out.print(Ezcli.prompt);
             System.out.print(inputProcessor.getCommand());
         }
-
-        //printSuggestion();
 
         inputProcessor.increaseCursorPos();
         inputProcessor.moveToCursorPos();
@@ -118,16 +109,11 @@ public class TermKeyProcessor extends KeyHandler {
             int charToDelete = inputProcessor.getCursorPos() - 1;
             String command = inputProcessor.getCommand();
 
-            Util.clearLine(command + suggestion, true);
+            Util.clearLine(command, true);
 
             inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
             System.out.print(Ezcli.prompt);
             System.out.print(inputProcessor.getCommand());
-
-            //printSuggestion();
-
-            if (inputProcessor.getCursorPos() == 1)
-                suggestion = "";
 
             inputProcessor.decreaseCursorPos();
             inputProcessor.moveToCursorPos();
@@ -136,14 +122,4 @@ public class TermKeyProcessor extends KeyHandler {
 
         Module.processEvent(String.valueOf("\b"), EventState.POST_EVENT);
     }
-    /*
-    private void printSuggestion() {
-
-        //suggestion = cmdComplete.getMatchingCommand(inputProcessor.getCommand());
-
-        if (!"".equals(suggestion) && !"".equals(inputProcessor.getCommand())) {
-            System.out.print(suggestion, ColorOutput.CMD_SUGGESTION);
-        }
-    }
-    */
 }
