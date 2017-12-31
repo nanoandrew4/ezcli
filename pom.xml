@@ -6,7 +6,7 @@
 
     <groupId>nanoandrew4</groupId>
     <artifactId>ezcli</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
     <description>Cross-platform command line interface aid, allows user to move and interact with the system more easily,
     while maintaining the functionality of a regular command line interface.
@@ -51,11 +51,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>1.2.4</version>
-            </plugin>
         </plugins>
     </build>
 
@@ -72,5 +67,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

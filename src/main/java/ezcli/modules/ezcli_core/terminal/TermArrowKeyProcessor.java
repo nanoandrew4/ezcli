@@ -106,6 +106,9 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
      * @param ak Arrow key to process
      */
     private void prevCommandIterator(ArrowKeys ak) {
+        if (inputProcessor.getPrevCommands().size() == 0)
+            return;
+
         if (commandListPosition == inputProcessor.getPrevCommands().size() && lastArrowPress == ArrowKeys.NONE)
             // Saves currently typed command before moving through the list of previously typed commands
 
