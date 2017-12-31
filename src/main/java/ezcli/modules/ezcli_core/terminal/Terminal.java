@@ -52,9 +52,6 @@ public class Terminal extends Module {
         List<String> original;
         try {
             original = Files.readAllLines(Paths.get(historyFile.getAbsolutePath()));
-            if (original.size() == 0) {
-                // populate
-            }
         } catch (IOException e) {
             System.err.println("Error reading lines from original history file");
             return;
@@ -192,7 +189,7 @@ public class Terminal extends Module {
      *
      * @param command chdir command to parse
      */
-    private void changeDir(String command) {
+    public void changeDir(String command) {
         String[] chdirSplit = command.split(" ");
 
         if (chdirSplit.length != 2 || !"cd".equals(chdirSplit[0])) {

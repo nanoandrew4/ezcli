@@ -45,11 +45,11 @@ public class TermInputProcessor extends InputHandler {
         KeyHandler.initKeysMap();
     }
 
-    protected TermKeyProcessor getKeyProcessor() {
+    public TermKeyProcessor getKeyProcessor() {
         return (TermKeyProcessor) keyHandler;
     }
 
-    protected TermArrowKeyProcessor getArrowKeyProcessor() {
+    public TermArrowKeyProcessor getArrowKeyProcessor() {
         return (TermArrowKeyProcessor) arrowKeyHandler;
     }
 

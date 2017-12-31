@@ -4,14 +4,9 @@ import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.interactive.Interactive;
-import ezcli.modules.ezcli_core.terminal.Terminal;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Entry point for program. Takes care of all loading and initializing, so modules can get to work.
@@ -30,10 +25,11 @@ public class Ezcli {
     public static boolean IS_UNIX;
 
     // Toggle output for various test packages
-    public static boolean testOutput = false;
+    public static boolean testOutput = true;
     public static boolean testTermOuput = false;
     public static boolean ezcliCoreOuput = false;
     public static boolean smartCompleteOuput = true;
+    public static boolean testModularityOutput = false;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;
@@ -41,7 +37,7 @@ public class Ezcli {
     public static void main(String[] args) {
         setOS();
 
-        initModules();
+        Module.initModules("modules.txt");
 
         new Interactive().run();
     }
@@ -56,41 +52,6 @@ public class Ezcli {
             IS_WIN = true;
         else if ("linux".equals(os) || os.contains("mac") || "sunos".equals(os) || "freebsd".equals(os))
             IS_UNIX = true;
-    }
-
-    /**
-     * Create modules to be used in program. Pass the string you want them to be mapped to in the Module hashmap.
-     * <p>
-     * When the string (for example "t" for terminal module) is detected in the Interactive module, the associated
-     * module will run (using the previous example, that would be the terminal module).
-     * <p>
-     * For this implementation to work, the init() method in the Module class must be called in the constructor
-     * of each module.
-     */
-    private static void initModules() {
-
-        new Terminal();
-
-        List<String> modules;
-
-        try {
-            modules = Files.readAllLines(Paths.get("modules.txt"));
-        } catch (IOException e) {
-            System.err.println("Modules could not be loaded, modules.txt not found");
-            return;
-        }
-
-        for (String s : modules) {
-            if ("".equals(s.trim()) || s.contains("#"))
-                continue;
-
-            try {
-                Class<?> module = Class.forName("ezcli.modules." + s.trim());
-                module.getConstructor().newInstance();
-            } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
