@@ -1,6 +1,8 @@
-package ezcli.modules.ezcli_core.global_io;
+package ezcli.modules.ezcli_core.global_io.handlers;
 
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.Command;
+import ezcli.modules.ezcli_core.global_io.Keys;
 
 import java.util.HashMap;
 

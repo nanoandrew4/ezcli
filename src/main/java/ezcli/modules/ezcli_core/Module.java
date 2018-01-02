@@ -33,14 +33,15 @@ public abstract class Module {
 
     // Hashmap that maps a string to a module, which when typed in interactive module, will run the mapped module
     public static HashMap<String, Module> moduleMap = new HashMap<>();
-    private static HashMap<Module, String> moduleNameMap = new HashMap<>();
+    public static HashMap<Module, String> moduleNameMap = new HashMap<>();
 
     // Contains methods to be run when events from TermKeyProcessor and TermArrowKeyProcessor are processed
-    private static HashMap<String, LinkedList<Method>> eventMethods = new HashMap<>();
+    public static HashMap<String, LinkedList<Method>> eventMethods = new HashMap<>();
 
     // Module specific variables...
     public String moduleName;
     private EventState whenToRun;
+    public boolean currentlyActive = false;
 
     public Module(String moduleName) {
         this.moduleName = moduleName;
@@ -57,7 +58,8 @@ public abstract class Module {
 
     /**
      * Code to run for module. Should contain a while loop similar to that in the Interactive class,
-     * in order to process input.
+     * in order to process input. Always ensure that currentlyActive is set to true when this method
+     * is initially called, and to false when it exits.
      */
     public abstract void run();
 
@@ -164,10 +166,6 @@ public abstract class Module {
         if ("allkeys".equals(b)) {
             for (int j = 30; j < 126; j++) // ascii
                 addCharsToHashmap(String.valueOf((char) j), m);
-
-            String[] keys = {"\n", "\b", "\t"};
-            for (String s : keys)
-                addCharsToHashmap(s, m);
             return true;
 
         } else if (!b.contains("arrow")) {
@@ -270,6 +268,7 @@ public abstract class Module {
                                 .invoke(modules.get(m.getDeclaringClass().getSimpleName()));
                 if (es.equals(requestedES))
                     m.invoke(modules.get(m.getDeclaringClass().getSimpleName()));
+
             } catch (Exception e) {
                 System.err.println("Error processing event from class: " + m.getDeclaringClass().getSimpleName());
                 System.out.println("Error processing \"" + event + "\"");

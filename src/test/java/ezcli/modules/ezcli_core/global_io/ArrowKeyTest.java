@@ -1,7 +1,9 @@
 package ezcli.modules.ezcli_core.global_io;
 
+import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class ArrowKeyTest {
 

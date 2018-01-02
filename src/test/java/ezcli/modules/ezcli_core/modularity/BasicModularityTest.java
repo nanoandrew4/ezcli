@@ -42,18 +42,18 @@ public class BasicModularityTest {
         takp.process(ArrowKeys.DOWN);
         assertEquals("0", String.valueOf(Module1.someChar));
         assertEquals(49, Module2.someInt);
-        assertEquals("cba000", Module3.someStr);
+        assertEquals("cba00", Module3.someStr);
 
         takp.process(ArrowKeys.RIGHT);
         takp.process(ArrowKeys.UP);
         assertEquals("0", String.valueOf(Module1.someChar));
         assertEquals(50, Module2.someInt);
-        assertEquals("cba00012", Module3.someStr);
+        assertEquals("cba0012", Module3.someStr);
 
         tkp.process('b');
         System.out.println();
         assertEquals("2", String.valueOf(Module1.someChar));
         assertEquals(50, Module2.someInt);
-        assertEquals("cba000122", Module3.someStr);
+        assertEquals("cba00122", Module3.someStr);
     }
 }

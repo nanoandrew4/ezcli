@@ -1,6 +1,7 @@
 package ezcli.modules.ezcli_core.interactive;
 
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 
 /**
  * Processes key presses (except arrow keys) for Interactive module.
@@ -33,14 +34,14 @@ public class MainKeyProcessor extends KeyHandler {
     @Override
     public void charEvent(char input) {
         inputProcessor.setCommand(inputProcessor.getCommand() + input);
-        System.out.print(input);
+        Ezcli.ezcliOutput.print(input, "command");
         inputProcessor.parse();
     }
 
     @Override
     public void backspaceEvent() {
         if (inputProcessor.getCommand().length() > 0) {
-            System.out.println("\b \b");
+            Ezcli.ezcliOutput.println("\b \b", "command");
 
             String command = inputProcessor.getCommand();
             int commandLength = command.length();
