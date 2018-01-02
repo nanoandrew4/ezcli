@@ -1,8 +1,10 @@
 package ezcli.modules.ezcli_core;
 
 import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
+import ezcli.modules.ezcli_core.global_io.output.ConsoleOutput;
+import ezcli.modules.ezcli_core.global_io.output.Output;
 import ezcli.modules.ezcli_core.interactive.Interactive;
 
 import java.io.IOException;
@@ -13,12 +15,11 @@ import java.io.PrintStream;
  */
 public class Ezcli {
 
-    public static final String VERSION = "0.2.0-WIP";
+    public static final String VERSION = "0.2.0";
 
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";
 
-    //public static String promptColor = (char)27 + "[38;5;95m";
     public static String prompt = ">> ";
 
     public static boolean IS_WIN;
@@ -28,11 +29,13 @@ public class Ezcli {
     public static boolean testOutput = true;
     public static boolean testTermOuput = false;
     public static boolean ezcliCoreOuput = false;
-    public static boolean smartCompleteOuput = true;
+    public static boolean smartCompleteOuput = false;
     public static boolean testModularityOutput = false;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;
+
+    public static Output ezcliOutput;
 
     public static void main(String[] args) {
         setOS();
@@ -52,6 +55,8 @@ public class Ezcli {
             IS_WIN = true;
         else if ("linux".equals(os) || os.contains("mac") || "sunos".equals(os) || "freebsd".equals(os))
             IS_UNIX = true;
+
+        ezcliOutput = new ConsoleOutput();
     }
 
     /**

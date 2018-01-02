@@ -1,4 +1,4 @@
-package ezcli.modules.ezcli_core.global_io;
+package ezcli.modules.ezcli_core.global_io.handlers;
 
 import java.io.IOException;
 import ezcli.modules.ezcli_core.global_io.input.Input;

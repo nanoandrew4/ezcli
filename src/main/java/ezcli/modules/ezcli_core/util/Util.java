@@ -2,7 +2,7 @@ package ezcli.modules.ezcli_core.util;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
 
 import java.io.IOException;

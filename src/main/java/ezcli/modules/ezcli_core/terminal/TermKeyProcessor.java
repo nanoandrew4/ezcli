@@ -3,7 +3,7 @@ package ezcli.modules.ezcli_core.terminal;
 import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.Module;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.ezcli_core.util.Util;
 
@@ -48,7 +48,7 @@ public class TermKeyProcessor extends KeyHandler {
         Module.processEvent("\t", EventState.PRE_EVENT);
 
         Util.clearLine(inputProcessor.getCommand(), true);
-        //inputProcessor.fileAutocomplete();
+        inputProcessor.fileAutocomplete();
         inputProcessor.setResetVars(false);
 
         Module.processEvent("\t", EventState.POST_EVENT);
@@ -85,13 +85,13 @@ public class TermKeyProcessor extends KeyHandler {
         Util.clearLine(command, true);
 
         if (inputProcessor.getCursorPos() == command.length()) {
-            System.out.print(Ezcli.prompt);
-            System.out.print(command + input);
+            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
+            Ezcli.ezcliOutput.print(command + input, "command");
             inputProcessor.setCommand(command + input);
         } else {
             inputProcessor.setCommand(new StringBuilder(command).insert(cursorPos, input).toString());
-            System.out.print(Ezcli.prompt);
-            System.out.print(inputProcessor.getCommand());
+            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
+            Ezcli.ezcliOutput.print(inputProcessor.getCommand(), "command");
         }
 
         inputProcessor.increaseCursorPos();
@@ -112,8 +112,8 @@ public class TermKeyProcessor extends KeyHandler {
             Util.clearLine(command, true);
 
             inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
-            System.out.print(Ezcli.prompt);
-            System.out.print(inputProcessor.getCommand());
+            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
+            Ezcli.ezcliOutput.print(inputProcessor.getCommand(), "command");
 
             inputProcessor.decreaseCursorPos();
             inputProcessor.moveToCursorPos();

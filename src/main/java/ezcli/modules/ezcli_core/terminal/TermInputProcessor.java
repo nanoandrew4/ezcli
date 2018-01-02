@@ -2,7 +2,11 @@ package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.*;
+import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
+import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,7 +115,7 @@ public class TermInputProcessor extends InputHandler {
                 c1 = Input.read(false);
                 c2 = Input.read(false);
             } catch (IOException e) {
-                System.out.println("Error reading arrow key press");
+                System.err.println("Error reading arrow key press");
             }
             ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input, c1, c2);
 
@@ -135,20 +139,19 @@ public class TermInputProcessor extends InputHandler {
      */
     protected void moveToCursorPos() {
         for (int i = command.length(); i > cursorPos; i--)
-            System.out.print("\b");
+            Ezcli.ezcliOutput.print("\b", "command");
     }
 
     /**
      * Autocompletes desired file name similar to how terminals do it.
      */
-    /*
     protected void fileAutocomplete() {
 
         // For determining change in cursor position
         String prevCommand = command;
 
         if (FileAutocomplete.getFiles() == null) {
-            FileAutocomplete.init(disassembleCommand(command, cursorPos), colorOutput, blockClear, lockTab);
+            FileAutocomplete.init(disassembleCommand(command, cursorPos), blockClear, lockTab);
             resetVars = false;
         } else
             FileAutocomplete.fileAutocomplete();
@@ -164,7 +167,6 @@ public class TermInputProcessor extends InputHandler {
         cursorPos += (command.length() - prevCommand.length());
         moveToCursorPos();
     }
-    */
 
     /**
      * Splits a command into 3 parts for the autocomplete function to operate properly.

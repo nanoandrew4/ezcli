@@ -1,7 +1,7 @@
 package ezcli.modules.ezcli_core.interactive;
 
-import ezcli.modules.ezcli_core.global_io.InputHandler;
-import ezcli.modules.ezcli_core.global_io.KeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class MainInputProcessor extends InputHandler {
             Input.read(false);
             Input.read(false);
         } catch (IOException e) {
-            System.out.println("Error in Interactive arrow catching");
+            System.err.println("Error in Interactive arrow catching");
         }
         keyHandler.process(input);
     }

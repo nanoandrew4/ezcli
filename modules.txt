@@ -1,0 +1,4 @@
+# packageName.classNameExtendingModule
+
+smart_autocomplete.SmartAutocomplete
+color_output.ANSIColorOutput

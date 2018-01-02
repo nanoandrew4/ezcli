@@ -4,7 +4,7 @@ import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.InputHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -64,7 +64,7 @@ public class Terminal extends Module {
             try {
                 pw = new PrintWriter(historyFile);
             } catch (FileNotFoundException e) {
-                System.out.println("Error creating print writer");
+                System.err.println("Error creating print writer");
                 return;
             }
 
@@ -82,16 +82,18 @@ public class Terminal extends Module {
     @Override
     public void run() {
         exit = false;
-//        Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+        this.currentlyActive = true;
+        Ezcli.prompt = Ezcli.currDir + " >> ";
 
-        System.out.println("Entered terminal mode");
-        System.out.print(Ezcli.prompt);
+        Ezcli.ezcliOutput.println("Entered terminal mode", "info");
+        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
         }
 
         writeCommandsToFile();
-//        Ezcli.prompt = Ezcli.promptColor + ">> " + ColorOutput.DEFAULT_COLOR;
+        this.currentlyActive = false;
+        Ezcli.prompt = ">> ";
     }
 
     public void parse(String rawCommand) {
@@ -99,7 +101,7 @@ public class Terminal extends Module {
         inputInSession.add(rawCommand);
 
         String[] split = rawCommand.split("&&");
-        System.out.println();
+        Ezcli.ezcliOutput.println();
 
         for (String command : split) {
             command = command.trim();
@@ -118,7 +120,7 @@ public class Terminal extends Module {
                 if ("help".equals(command))
                     help();
                 inputProcessor.setCommand("");
-                System.out.print(Ezcli.prompt);
+                Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
                 return;
             }
 
@@ -131,7 +133,7 @@ public class Terminal extends Module {
                 pb.directory(new File(Ezcli.currDir)); // Set working directory for command
                 p = pb.start();
             } catch (IOException | IllegalArgumentException e) {
-                System.out.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
+                System.err.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
             }
 
             if (p != null) {
@@ -147,26 +149,26 @@ public class Terminal extends Module {
         }
 
         inputProcessor.setCommand("");
-        System.out.print(Ezcli.prompt);
+        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
     }
 
     public void help() {
-        System.out.println("This module interacts directly with the system.");
-        System.out.println("All input will be passed to the system when a \n" +
-                "newline character is detected (enter key pressed)");
-        System.out.println("To change directory, enter: \"cd [somedir]\".");
-        System.out.println("To return to Interactive module, enter \"exit\".");
+        Ezcli.ezcliOutput.println("This module interacts directly with the system.", "info");
+        Ezcli.ezcliOutput.println("All input will be passed to the system when a \n" +
+                "newline character is detected (enter key pressed)", "info");
+        Ezcli.ezcliOutput.println("To change directory, enter: \"cd [somedir]\".", "info");
+        Ezcli.ezcliOutput.println("To return to Interactive module, enter \"exit\".", "info");
     }
 
     @Override
     public void tour() {
-        System.out.println("This is the " + moduleName + " module.");
-        System.out.println("This module deals directly with your system terminal.");
-        System.out.println("Anything input here, with the exception of the commands");
-        System.out.println("\"exit\" and \"t-help\" will be passed directly to the system.");
+        Ezcli.ezcliOutput.println("This is the " + moduleName + " module.", "info");
+        Ezcli.ezcliOutput.println("This module deals directly with your system terminal.", "info");
+        Ezcli.ezcliOutput.println("Anything input here, with the exception of the commands", "info");
+        Ezcli.ezcliOutput.println("\"exit\" and \"t-help\" will be passed directly to the system.", "info");
         if (Ezcli.sleep(3) != Command.NONE) return;
 
-        System.out.println("For example, lets pass \"dir\"");
+        Ezcli.ezcliOutput.println("For example, lets pass \"dir\"", "info");
         if (Ezcli.sleep(1.2) != Command.NONE) return;
         inputProcessor.process('d');
         if (Ezcli.sleep(0.7) != Command.NONE) return;
@@ -176,10 +178,10 @@ public class Terminal extends Module {
         if (Ezcli.sleep(1.2) != Command.NONE) return;
         inputProcessor.getKeyProcessor().newLineEvent();
 
-        System.out.println("\n\n");
+        Ezcli.ezcliOutput.println("\n\n", "info");
 
-        System.out.println("That should have printed your working directory!");
-        System.out.println("We will now be exiting this module, please wait.\n\n");
+        Ezcli.ezcliOutput.println("That should have printed your working directory!", "info");
+        Ezcli.ezcliOutput.println("We will now be exiting this module, please wait.\n\n", "info");
         Ezcli.sleep(5);
     }
 
@@ -193,7 +195,7 @@ public class Terminal extends Module {
         String[] chdirSplit = command.split(" ");
 
         if (chdirSplit.length != 2 || !"cd".equals(chdirSplit[0])) {
-            System.out.println("Invalid chdir command passed.");
+            Ezcli.ezcliOutput.println("Invalid chdir command passed.", "info");
         } else {
             String dirChange = chdirSplit[1];
             String currDir = Ezcli.currDir;
@@ -209,7 +211,7 @@ public class Terminal extends Module {
 
                 System.setProperty("user.dir", newPath.toString());
                 Ezcli.currDir = newPath.toString();
-//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
+//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ANSIColorOutput.DEFAULT_COLOR;
                 Ezcli.prompt = Ezcli.currDir + " >> ";
                 return;
             }
@@ -233,10 +235,9 @@ public class Terminal extends Module {
             if (f.exists() && f.isDirectory()) {
                 System.setProperty("user.dir", f.getAbsolutePath());
                 Ezcli.currDir = f.getAbsolutePath() + "/";
-//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ColorOutput.DEFAULT_COLOR;
                 Ezcli.prompt = Ezcli.currDir + " >> ";
             } else {
-                System.out.println("Please enter a valid directory to change to.");
+                Ezcli.ezcliOutput.println("Please enter a valid directory to change to.", "info");
             }
         }
     }

@@ -4,7 +4,7 @@ import ezcli.modules.ezcli_core.EventState;
 import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
-import ezcli.modules.ezcli_core.global_io.InputHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 
 /**
  * Interactive module. Entry point for program, and module used to reach all others.
@@ -33,7 +33,7 @@ public class Interactive extends Module {
     }
 
     public void run() {
-        System.out.print(Ezcli.prompt);
+        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
 
         while (!exit) {
             inputProcessor.process(InputHandler.getKey());
@@ -41,7 +41,8 @@ public class Interactive extends Module {
     }
 
     public void parse(String command) {
-        System.out.println();
+        this.currentlyActive = true;
+        Ezcli.ezcliOutput.println();
 
         switch (command) {
             case "h":
@@ -49,7 +50,7 @@ public class Interactive extends Module {
                 break;
             case "b":
                 exit = true;
-                System.out.println("Exiting application");
+                Ezcli.ezcliOutput.println("Exiting application", "info");
                 return;
             case "o":
                 tour();
@@ -57,34 +58,37 @@ public class Interactive extends Module {
             default: // Pass to hashmap in Module
                 Module m = Module.moduleMap.get(command);
                 if (m == null) {
-                    System.out.println("Module not found");
+                    Ezcli.ezcliOutput.println("Module not found", "info");
                     inputProcessor.setCommand("");
-                    System.out.print(Ezcli.prompt);
+                    Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
                     return;
-                } else
+                } else {
+                    this.currentlyActive = false;
                     m.run();
+                    this.currentlyActive = true;
+                }
         }
 
         inputProcessor.setCommand("");
         if (!"h".equals(command))
-            System.out.println("Back in interactive module");
-        System.out.print(Ezcli.prompt);
+            Ezcli.ezcliOutput.println("Back in interactive module", "info");
+        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
     }
 
     private void help() {
-        System.out.println("ezcli version: " + Ezcli.VERSION + "\n");
-        System.out.println("Enter \"t\" to enter terminal mode");
-        System.out.println("Enter \"h\" to display this menu");
-        System.out.println("Enter \"o\" to get a guided tour of the program");
-        System.out.println("Enter \"b\" to exit the program");
+        Ezcli.ezcliOutput.println("ezcli version: " + Ezcli.VERSION + "\n", "info");
+        Ezcli.ezcliOutput.println("Enter \"t\" to enter terminal mode", "info");
+        Ezcli.ezcliOutput.println("Enter \"h\" to display this menu", "info");
+        Ezcli.ezcliOutput.println("Enter \"o\" to get a guided tour of the program", "info");
+        Ezcli.ezcliOutput.println("Enter \"b\" to exit the program", "info");
     }
 
     @Override
     public void tour() {
-        System.out.println("You are currently in the " + this.moduleName + " module.");
-        System.out.println("From this module you will access all other modules.");
-        System.out.println("You will now be guided through the rest of the program.");
-        System.out.println("Press Ctrl+C at any time to exit.\n\n");
+        Ezcli.ezcliOutput.println("You are currently in the " + this.moduleName + " module.", "info");
+        Ezcli.ezcliOutput.println("From this module you will access all other modules.", "info");
+        Ezcli.ezcliOutput.println("You will now be guided through the rest of the program.", "info");
+        Ezcli.ezcliOutput.println("Press Ctrl+C at any time to exit.\n\n", "info");
         if (Ezcli.sleep(7) != Command.NONE)
             return;
         for (Module m : Module.modules.values())

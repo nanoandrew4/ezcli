@@ -1,4 +1,6 @@
-package ezcli.modules.ezcli_core.global_io;
+package ezcli.modules.ezcli_core.global_io.handlers;
+
+import ezcli.modules.ezcli_core.global_io.ArrowKeys;
 
 /**
  * Abstract class specifying how arrow keys should be handled.
