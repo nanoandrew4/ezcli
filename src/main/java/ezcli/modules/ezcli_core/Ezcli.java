@@ -6,6 +6,7 @@ import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.global_io.output.ConsoleOutput;
 import ezcli.modules.ezcli_core.global_io.output.Output;
 import ezcli.modules.ezcli_core.interactive.Interactive;
+import ezcli.modules.ezcli_core.modularity.Module;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -25,12 +26,12 @@ public class Ezcli {
     public static boolean IS_WIN;
     public static boolean IS_UNIX;
 
-    // Toggle output for various test packages
-    public static boolean testOutput = true;
-    public static boolean testTermOuput = false;
-    public static boolean ezcliCoreOuput = false;
-    public static boolean smartCompleteOuput = false;
-    public static boolean testModularityOutput = false;
+    // Toggle displaying output from various test packages
+    public static boolean displayTestOutput = true;
+    public static boolean displayTermTestOutput = false;
+    public static boolean displayCoreTestOutput = false;
+    public static boolean displaySmartAutocompleteOutput = false;
+    public static boolean displayModularityTestOutput = false;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;

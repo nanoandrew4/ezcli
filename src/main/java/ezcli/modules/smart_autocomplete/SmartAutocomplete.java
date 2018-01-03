@@ -1,7 +1,9 @@
 package ezcli.modules.smart_autocomplete;
 
-import ezcli.modules.ezcli_core.EventState;
-import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
+import ezcli.modules.ezcli_core.terminal.Terminal;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +18,9 @@ import java.util.List;
  */
 public class SmartAutocomplete extends Module {
 
-    private final static String PATH = "~/ezcli_history";
+    private final static String PATH = Ezcli.USER_HOME_DIR + ".ezcli_history";
+
+    private Terminal terminal;
 
     private MultiCmdComplete mcc = null;
 
@@ -25,12 +29,16 @@ public class SmartAutocomplete extends Module {
 
     private double initTime = 0;
 
-    public SmartAutocomplete() {
-        super("SmartAutocomplete", EventState.POST_EVENT);
+    private String currentSuggestion;
 
-        String[] binds = {"allkeys"};
-        String[] methods = {"makeSuggestion"};
-        init(this, methods, binds);
+    public SmartAutocomplete() {
+        super("SmartAutocomplete");
+        terminal = (Terminal) modules.get("Terminal");
+
+        String[] binds = {"allkeys", "clearln", "clearln"};
+        String[] methods = {"makeSuggestion", "clearSuggestion", "setTermVars"};
+        EventState[] whenToRunEach = {EventState.POST_EVENT, EventState.PRE_EVENT, EventState.POST_EVENT};
+        init(this, binds, methods, whenToRunEach);
 
         initModule();
     }
@@ -76,13 +84,22 @@ public class SmartAutocomplete extends Module {
     }
 
     public void makeSuggestion() {
-        //Terminal t = (Terminal) modules.get("Terminal");
-        //store(t.inputProcessor.getCommand());
-        //System.out.println("Called from makeSuggestion!");
+        currentSuggestion = getMatchingCommand(terminal.inputProcessor.getCommand());
+        if ("null".equals(currentSuggestion))
+            currentSuggestion = "";
+//        Ezcli.ezcliOutput.print(currentSuggestion, "suggestion");
     }
 
     public void clearSuggestion() {
+        String command = terminal.inputProcessor.getCommand();
+        terminal.inputProcessor.setCommand(command + currentSuggestion);
+    }
 
+    public void setTermVars() {
+        String commandWithSuggestion = terminal.inputProcessor.getCommand();
+        terminal.inputProcessor.setCommand(
+                commandWithSuggestion.substring(0, commandWithSuggestion.length() - currentSuggestion.length())
+        );
     }
 
     /**
@@ -111,7 +128,7 @@ public class SmartAutocomplete extends Module {
      *
      * @param command Command to store
      */
-    private void store(String command) {
+    public void store(String command) {
         boolean stored = false;
         for (CommandFreq cf : freqCommands) {
             if (cf.getCommand().equals(command)) {

@@ -1,9 +1,8 @@
-package ezcli.modules.ezcli_core;
+package ezcli.modules.ezcli_core.modularity;
 
 import ezcli.modules.ezcli_core.terminal.Terminal;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -36,24 +35,14 @@ public abstract class Module {
     public static HashMap<Module, String> moduleNameMap = new HashMap<>();
 
     // Contains methods to be run when events from TermKeyProcessor and TermArrowKeyProcessor are processed
-    public static HashMap<String, LinkedList<Method>> eventMethods = new HashMap<>();
+    public static HashMap<String, LinkedList<ReactiveMethod>> eventMethods = new HashMap<>();
 
     // Module specific variables...
     public String moduleName;
-    private EventState whenToRun;
     public boolean currentlyActive = false;
 
     public Module(String moduleName) {
         this.moduleName = moduleName;
-    }
-
-    public Module(String moduleName, EventState whenToRun) {
-        this.moduleName = moduleName;
-        this.whenToRun = whenToRun;
-    }
-
-    public EventState getWhenToRun() {
-        return whenToRun;
     }
 
     /**
@@ -107,6 +96,7 @@ public abstract class Module {
      * the Interactive module.
      *
      * @param module Module to be added
+     * @param keyToBind Key to which the module is bound. Pressing this key in Interactive module will run the module
      */
     protected void init(Module module, String keyToBind) {
         modules.put(module.moduleName, module);
@@ -117,19 +107,25 @@ public abstract class Module {
     /**
      * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur in Terminal module,
      * such as key press events.
+     *
+     * @param module Module in which the methods are located
+     * @param binds Sequences of characters or events to which the methods passed will respond
+     * @param methodNames Names of methods to be bound
+     * @param whenToRunEach See EventStates. Determines if method will run before or after the specified event
      */
-    protected void init(Module module, String[] methodNames, String[] binds) {
+    protected void init(Module module, String[] binds, String[] methodNames, EventState[] whenToRunEach) {
 
         if (methodNames.length != binds.length) {
-            System.err.println("Methods and Binds arrays have unequal size in module \""
+            System.err.println("Methods and ReactiveMethod arrays have unequal size in module \""
                     + module.getClass().getSimpleName() + "\" (each method must be bound to something) ");
             return;
         }
 
-        Method[] methods = new Method[methodNames.length];
+        ReactiveMethod[] reactiveMethods = new ReactiveMethod[methodNames.length];
         for (int i = 0; i < methodNames.length; i++) {
             try {
-                methods[i] = module.getClass().getDeclaredMethod(methodNames[i]);
+                reactiveMethods[i] =
+                        new ReactiveMethod(module.getClass().getDeclaredMethod(methodNames[i]), whenToRunEach[i]);
             } catch (NoSuchMethodException e) {
                 System.err.println("Error loading method \"" + methodNames[i] + "\" from module "
                         + module.getClass().getSimpleName());
@@ -139,22 +135,21 @@ public abstract class Module {
         modules.put(module.moduleName, module);
 
         // Match key binds with methods passed in arrays
-        for (int i = 0; i < methods.length; i++) {
-            if (methods[i] == null)
+        for (int i = 0; i < reactiveMethods.length; i++) {
+            if (reactiveMethods[i].method == null)
                 continue;
 
             String[] bind = binds[i].split(" ");
             for (String b : bind) {
                 b = b.trim();
-                if (!bindToKeys(b, binds[i], methods[i]))
-                    bindToArrowKeys(b, methods[i]);
-
+                if (!bindToKeys(b, binds[i], reactiveMethods[i]))
+                    bindToOther(b, reactiveMethods[i]);
             }
         }
     }
 
     /**
-     * Binds a sequence of characters to a method. If any character in the sequence
+     * ReactiveMethod a sequence of characters to a method. If any character in the sequence
      * if processed later on, the passed method will be invoked.
      *
      * @param b Current request to bind
@@ -162,7 +157,7 @@ public abstract class Module {
      * @param m Method to be bound to sequence of characters
      * @return True if binding was attempted, false if no binding occurred
      */
-    private boolean bindToKeys(String b, String bind, Method m) {
+    private boolean bindToKeys(String b, String bind, ReactiveMethod m) {
         if ("allkeys".equals(b)) {
             for (int j = 30; j < 126; j++) // ascii
                 addCharsToHashmap(String.valueOf((char) j), m);
@@ -176,18 +171,19 @@ public abstract class Module {
     }
 
     /**
-     * Binds a string to a method. If the string is passed as an event later on,
-     * the passed method will be invoked. For use primarily with keys that have no ASCII values.
+     * ReactiveMethod a string to a method. If the string is passed as an event later on,
+     * the passed method will be invoked. For use primarily with keys that have no ASCII values, or
+     * events that are non-key related.
      *
      * @param b String to bind to method
      * @param m Method to be bound to string
      */
-    private void bindToArrowKeys(String b, Method m) {
+    private void bindToOther(String b, ReactiveMethod m) {
         if ("allarrows".equals(b)) {
             String[] arrows = {"uarrow", "darrow", "larrow", "rarrow"};
             for (String s : arrows)
                 addStringToHashmap(s, m);
-        } else {
+        } else if (b.contains("arrow")){
             if ("uarrow".equals(b))
                 addStringToHashmap(b, m);
             if ("darrow".equals(b))
@@ -196,6 +192,8 @@ public abstract class Module {
                 addStringToHashmap(b, m);
             if ("rarrow".equals(b))
                 addStringToHashmap(b, m);
+        } else if ("clearln".equals(b)) {
+            addStringToHashmap(b, m);
         }
     }
 
@@ -208,9 +206,9 @@ public abstract class Module {
      * @param s String of characters to assign to method
      * @param m Method to be assigned to sequence of characters
      */
-    private void addCharsToHashmap(String s, Method m) {
+    private void addCharsToHashmap(String s, ReactiveMethod m) {
         for (int i = 0; i < s.length(); i++) {
-            LinkedList<Method> list = eventMethods.get(String.valueOf(s.charAt(i)));
+            LinkedList<ReactiveMethod> list = eventMethods.get(String.valueOf(s.charAt(i)));
 
             if (list == null) {
                 list = new LinkedList<>();
@@ -226,15 +224,16 @@ public abstract class Module {
      * <p>
      * Only for use of keys which do not have ASCII codes, such as arrow keys.
      * <p>
-     * Currently only supports uarrow, darrow, larrow and rarrow for arrow keys.
+     * Currently only supports uarrow, darrow, larrow and rarrow for arrow keys, as well as clearln
+     * for when the current line is deleted (see Util.clearLine()).
      *
      * @see ezcli.modules.ezcli_core.terminal.TermArrowKeyProcessor
      *
      * @param s String to map to method.
      * @param m Method to be mapped to string
      */
-    private void addStringToHashmap(String s, Method m) {
-        LinkedList<Method> list = eventMethods.get(s);
+    private void addStringToHashmap(String s, ReactiveMethod m) {
+        LinkedList<ReactiveMethod> list = eventMethods.get(s);
 
         if (list == null) {
             list = new LinkedList<>();
@@ -256,21 +255,19 @@ public abstract class Module {
      * @param es Required stage to process at (currently either before or after the input processors have updated)
      */
     public static void processEvent(String event, EventState es) {
-        LinkedList<Method> list = eventMethods.get(event);
+        LinkedList<ReactiveMethod> list = eventMethods.get(event);
 
         if (list == null)
             return;
 
-        for (Method m : list) {
+        for (ReactiveMethod m : list) {
             try {
-                EventState requestedES =
-                        (EventState) m.getDeclaringClass().getSuperclass().getDeclaredMethod("getWhenToRun")
-                                .invoke(modules.get(m.getDeclaringClass().getSimpleName()));
+                EventState requestedES = m.whenToRun;
                 if (es.equals(requestedES))
-                    m.invoke(modules.get(m.getDeclaringClass().getSimpleName()));
+                    m.method.invoke(modules.get(m.method.getDeclaringClass().getSimpleName()));
 
             } catch (Exception e) {
-                System.err.println("Error processing event from class: " + m.getDeclaringClass().getSimpleName());
+                System.err.println("Error processing event from class: " + m.method.getDeclaringClass().getSimpleName());
                 System.out.println("Error processing \"" + event + "\"");
                 e.printStackTrace();
             }

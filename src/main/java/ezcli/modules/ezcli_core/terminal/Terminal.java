@@ -1,16 +1,19 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.ezcli_core.EventState;
-import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
+import ezcli.modules.ezcli_core.modularity.Module;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Terminal module. Used to interact with system, as if you were running commands on your system terminal.
@@ -34,16 +37,27 @@ public class Terminal extends Module {
         inputInSession = new LinkedList<>();
     }
 
-    @Override
-    public EventState getWhenToRun() {
-        return null;
+    private void importBashHistory() {
+        System.out.println("You currently have an empty history file. Do you wish to import you bash history?");
+        Scanner in = new Scanner(System.in);
+        String ans = in.nextLine();
+        if ("y".equalsIgnoreCase(ans) || "yes".equalsIgnoreCase(ans)) {
+            try {
+                List<String> bashHistory = Files.readAllLines(Paths.get(Ezcli.USER_HOME_DIR + ".bash_history"));
+                inputInSession.addAll(bashHistory);
+                writeCommandsToFile();
+            } catch (IOException e) {
+                System.err.println("Error reading bash history file. Aborting import...");
+            }
+        }
     }
 
     private void writeCommandsToFile() {
         File historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
 
         try {
-            historyFile.createNewFile();
+            if (historyFile.createNewFile())
+                importBashHistory();
         } catch (IOException e) {
             System.err.println("Error creating new history file in directory: " + Ezcli.USER_HOME_DIR);
             return;

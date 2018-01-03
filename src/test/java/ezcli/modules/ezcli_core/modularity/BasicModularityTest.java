@@ -1,7 +1,6 @@
 package ezcli.modules.ezcli_core.modularity;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.Module;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
 import ezcli.modules.ezcli_core.terminal.*;
 import ezcli.modules.testModules.*;
@@ -17,7 +16,7 @@ public class BasicModularityTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput || !Ezcli.testModularityOutput)
+        if (!Ezcli.displayTestOutput || !Ezcli.displayModularityTestOutput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // no output

@@ -1,15 +1,16 @@
 package ezcli.modules.testModules;
 
-import ezcli.modules.ezcli_core.EventState;
-import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
 
 public class Module2 extends Module {
 
     public static int someInt = 48;
 
     public Module2() {
-        super("Module2", EventState.PRE_EVENT);
-        init(this, new String[]{"doSomethingElse"}, new String[] {"allkeys uarrow rarrow"});
+        super("Module2");
+        init(this, new String[] {"allkeys uarrow rarrow"}, new String[]{"doSomethingElse"},
+                new EventState[] {EventState.PRE_EVENT});
     }
 
     public void doSomethingElse() {

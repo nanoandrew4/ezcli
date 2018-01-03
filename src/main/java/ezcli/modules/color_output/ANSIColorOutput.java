@@ -1,7 +1,7 @@
 package ezcli.modules.color_output;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.global_io.output.Output;
 
 import java.util.HashMap;
@@ -13,6 +13,7 @@ public class ANSIColorOutput extends Module implements Output {
     public final static String CMD_COLOR = (char)27 + "[38;5;117m";
     public final static String CMD_SUGGESTION_COLOR = (char) 27 + "[38;5;100m";
 
+    // For adding values to the hashmap, ideally do it inside the static body below to prevent coupling issues
     public static HashMap<String, String> textTypes = new HashMap<>();
 
     static {

@@ -1,8 +1,8 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.ezcli_core.EventState;
+import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.ezcli_core.util.Util;

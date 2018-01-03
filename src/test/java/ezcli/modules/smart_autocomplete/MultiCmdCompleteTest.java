@@ -12,7 +12,7 @@ public class MultiCmdCompleteTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput || !Ezcli.smartCompleteOuput)
+        if (!Ezcli.displayTestOutput || !Ezcli.displaySmartAutocompleteOutput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // no output
