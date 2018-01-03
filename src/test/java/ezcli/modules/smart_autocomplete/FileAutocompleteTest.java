@@ -13,7 +13,7 @@ public class FileAutocompleteTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput || !Ezcli.ezcliCoreOuput)
+        if (!Ezcli.displayTestOutput || !Ezcli.displayCoreTestOutput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // no output

@@ -1,6 +1,8 @@
 package ezcli.modules.ezcli_core.util;
 
+import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
@@ -41,6 +43,7 @@ public class Util {
      * @param clearPrompt choose to clear prompt along with line (only use true if prompt exists)
      */
     public static void clearLine(String line, boolean clearPrompt) {
+        Module.processEvent("clearln", EventState.PRE_EVENT);
 
         for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
             System.out.print("\b");
@@ -51,6 +54,7 @@ public class Util {
         for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
             System.out.print("\b");
 
+        Module.processEvent("clearln", EventState.POST_EVENT);
     }
 
     /**

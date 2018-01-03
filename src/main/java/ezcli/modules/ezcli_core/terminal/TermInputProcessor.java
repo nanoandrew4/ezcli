@@ -89,7 +89,7 @@ public class TermInputProcessor extends InputHandler {
         cursorPos--;
     }
 
-    protected int getCursorPos() {
+    public int getCursorPos() {
         return cursorPos;
     }
 

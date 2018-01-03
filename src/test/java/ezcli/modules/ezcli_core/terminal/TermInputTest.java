@@ -14,7 +14,7 @@ public class TermInputTest {
 
     @BeforeClass
     public static void disableOutput() {
-        if (!Ezcli.testOutput || !Ezcli.testTermOuput)
+        if (!Ezcli.displayTestOutput || !Ezcli.displayTermTestOutput)
             System.setOut(new PrintStream(new OutputStream() {
                 public void write(int b) {
                     // no output
@@ -245,7 +245,6 @@ public class TermInputTest {
      */
     @Test
     public void attemptToBreak() {
-        System.out.println("entered");
         // reset variables that might have been modified elsewhere needed for clean test
         Ezcli.setOS();
         TermInputProcessor inputProcessor = new TermInputProcessor(new Terminal());

@@ -1,7 +1,7 @@
 package ezcli.modules.ezcli_core.interactive;
 
-import ezcli.modules.ezcli_core.EventState;
-import ezcli.modules.ezcli_core.Module;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
@@ -25,11 +25,6 @@ public class Interactive extends Module {
 
     protected MainInputProcessor getInputProcessor() {
         return inputProcessor;
-    }
-
-    @Override
-    public EventState getWhenToRun() {
-        return null;
     }
 
     public void run() {
