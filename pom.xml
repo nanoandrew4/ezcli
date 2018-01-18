@@ -6,7 +6,7 @@
 
     <groupId>nanoandrew4</groupId>
     <artifactId>ezcli</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0-WIP</version>
     <packaging>jar</packaging>
     <description>Cross-platform command line interface aid, allows user to move and interact with the system more easily,
     while maintaining the functionality of a regular command line interface.

@@ -14,39 +14,43 @@ public class MainKeyProcessor extends KeyHandler {
 
     MainKeyProcessor(MainInputProcessor inputProcessor) {
         this.inputProcessor = inputProcessor;
+        setUpTabEvent();
+        setUpNWLNEvent();
+        setUpCharEvent();
+        setUpBackspaceEvent();
+    }
+
+    private void setUpTabEvent() {
+        tabEvent = () -> {};
+    }
+
+    private void setUpNWLNEvent() {
+        newLineEvent = () -> {};
+    }
+
+    private void setUpCharEvent() {
+        charEvent = (char input) -> {
+            inputProcessor.setCommand(inputProcessor.getCommand() + input);
+            Ezcli.ezcliOutput.print(input, "command");
+            inputProcessor.parse();
+        };
+    }
+
+    private void setUpBackspaceEvent() {
+        backspaceEvent = () -> {
+            if (inputProcessor.getCommand().length() > 0) {
+                Ezcli.ezcliOutput.println("\b \b", "command");
+
+                String command = inputProcessor.getCommand();
+                int commandLength = command.length();
+
+                inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(commandLength).toString());
+            }
+        };
     }
 
     @Override
     public void process(int input) {
         super.process(input);
-    }
-
-    @Override
-    public void tabEvent() {
-        // Do not process tab key
-    }
-
-    @Override
-    public void newLineEvent() {
-        // Do not process enter key
-    }
-
-    @Override
-    public void charEvent(char input) {
-        inputProcessor.setCommand(inputProcessor.getCommand() + input);
-        Ezcli.ezcliOutput.print(input, "command");
-        inputProcessor.parse();
-    }
-
-    @Override
-    public void backspaceEvent() {
-        if (inputProcessor.getCommand().length() > 0) {
-            Ezcli.ezcliOutput.println("\b \b", "command");
-
-            String command = inputProcessor.getCommand();
-            int commandLength = command.length();
-
-            inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(commandLength).toString());
-        }
     }
 }

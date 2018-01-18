@@ -1,6 +1,12 @@
 package ezcli.modules.ezcli_core.global_io.handlers;
 
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
+import ezcli.modules.ezcli_core.global_io.handlers.events.DArrEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.LArrEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.RArrEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.UArrEvent;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
 
 /**
  * Abstract class specifying how arrow keys should be handled.
@@ -10,6 +16,11 @@ public abstract class ArrowKeyHandler {
 
     // Last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
     protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
+
+    public LArrEvent lArrEvent;
+    public RArrEvent rArrEvent;
+    public UArrEvent uArrEvent;
+    public DArrEvent dArrEvent;
 
     /**
      * Checks if last input was arrow key (only on Windows).
@@ -73,13 +84,36 @@ public abstract class ArrowKeyHandler {
      * @param ak Arrow key to process
      * @return Arrow key that was processed
      */
-    public abstract ArrowKeys process(ArrowKeys ak);
+    public ArrowKeys process(ArrowKeys ak) {
 
-    protected abstract void processUp();
+        if (ak != ArrowKeys.NONE) {
+            switch (ak) {
+                case UP:
+                    Module.processEvent("uarrow", EventState.PRE_EVENT);
+                    uArrEvent.process();
+                    Module.processEvent("uarrow", EventState.POST_EVENT);
+                    break;
+                case DOWN:
+                    Module.processEvent("darrow", EventState.PRE_EVENT);
+                    dArrEvent.process();
+                    Module.processEvent("darrow", EventState.POST_EVENT);
+                    break;
+                case LEFT:
+                    Module.processEvent("larrow", EventState.PRE_EVENT);
+                    lArrEvent.process();
+                    Module.processEvent("larrow", EventState.POST_EVENT);
+                    break;
+                case RIGHT:
+                    Module.processEvent("rarrow", EventState.PRE_EVENT);
+                    rArrEvent.process();
+                    Module.processEvent("rarrow", EventState.POST_EVENT);
+                    break;
+                default:
+                    return ak; // Should never run
+            }
+        }
 
-    protected abstract void processDown();
-
-    protected abstract void processLeft();
-
-    protected abstract void processRight();
+        return ak;
+    }
 }
+
