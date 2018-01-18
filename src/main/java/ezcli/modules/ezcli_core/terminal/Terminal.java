@@ -23,8 +23,6 @@ public class Terminal extends Module {
     // Input handler for this module
     public TermInputProcessor inputProcessor;
 
-    public LinkedList<String> inputInSession;
-
     private final static int maxLinesInHistory = 10000;
 
     private boolean exit;
@@ -34,63 +32,8 @@ public class Terminal extends Module {
         init(this, "t");
 
         inputProcessor = new TermInputProcessor(this);
-        inputInSession = new LinkedList<>();
-    }
 
-    private void importBashHistory() {
-        System.out.println("You currently have an empty history file. Do you wish to import you bash history?");
-        Scanner in = new Scanner(System.in);
-        String ans = in.nextLine();
-        if ("y".equalsIgnoreCase(ans) || "yes".equalsIgnoreCase(ans)) {
-            try {
-                List<String> bashHistory = Files.readAllLines(Paths.get(Ezcli.USER_HOME_DIR + ".bash_history"));
-                inputInSession.addAll(bashHistory);
-                writeCommandsToFile();
-            } catch (IOException e) {
-                System.err.println("Error reading bash history file. Aborting import...");
-            }
-        }
-    }
-
-    private void writeCommandsToFile() {
-        File historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
-
-        try {
-            if (historyFile.createNewFile())
-                importBashHistory();
-        } catch (IOException e) {
-            System.err.println("Error creating new history file in directory: " + Ezcli.USER_HOME_DIR);
-            return;
-        }
-
-        List<String> original;
-        try {
-            original = Files.readAllLines(Paths.get(historyFile.getAbsolutePath()));
-        } catch (IOException e) {
-            System.err.println("Error reading lines from original history file");
-            return;
-        }
-
-        if (historyFile.delete()) {
-            historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
-
-            PrintWriter pw;
-            try {
-                pw = new PrintWriter(historyFile);
-            } catch (FileNotFoundException e) {
-                System.err.println("Error creating print writer");
-                return;
-            }
-
-            int startPos = original.size() + inputInSession.size() > maxLinesInHistory ? inputInSession.size() : 0;
-            for (int i = startPos; i < original.size(); i++)
-                pw.println(original.get(i));
-
-            for (String s : inputInSession)
-                pw.println(s);
-
-            pw.close();
-        }
+        importEzcliHistory();
     }
 
     @Override
@@ -101,9 +44,8 @@ public class Terminal extends Module {
 
         Ezcli.ezcliOutput.println("Entered terminal mode", "info");
         Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
-        while (!exit) {
+        while (!exit)
             inputProcessor.process(InputHandler.getKey());
-        }
 
         writeCommandsToFile();
         this.currentlyActive = false;
@@ -111,8 +53,6 @@ public class Terminal extends Module {
     }
 
     public void parse(String rawCommand) {
-
-        inputInSession.add(rawCommand);
 
         String[] split = rawCommand.split("&&");
         Ezcli.ezcliOutput.println();
@@ -161,9 +101,6 @@ public class Terminal extends Module {
                 p.destroy();
             }
         }
-
-        inputProcessor.setCommand("");
-        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
     }
 
     public void help() {
@@ -190,13 +127,82 @@ public class Terminal extends Module {
         if (Ezcli.sleep(0.7) != Command.NONE) return;
         inputProcessor.process('r');
         if (Ezcli.sleep(1.2) != Command.NONE) return;
-        inputProcessor.getKeyProcessor().newLineEvent();
+        inputProcessor.getKeyProcessor().newLineEvent.process();
 
         Ezcli.ezcliOutput.println("\n\n", "info");
 
         Ezcli.ezcliOutput.println("That should have printed your working directory!", "info");
         Ezcli.ezcliOutput.println("We will now be exiting this module, please wait.\n\n", "info");
         Ezcli.sleep(5);
+    }
+
+    private void importEzcliHistory() {
+        try {
+            List<String> history = Files.readAllLines(Paths.get(Ezcli.USER_HOME_DIR + ".ezcli_history"));
+            inputProcessor.commandHistory.addAll(history);
+            inputProcessor.getArrowKeyProcessor().setCommandListPosition(history.size());
+            if (history.size() > 0)
+                return;
+        } catch (IOException e) {
+            System.err.println("Error reading ezcli history file");
+            importBashHistory();
+            return;
+        }
+
+        importBashHistory();
+    }
+
+    private void importBashHistory() {
+        System.out.println("You currently have an empty or non-existent history file, importing bash history...");
+        try {
+            List<String> bashHistory = Files.readAllLines(Paths.get(Ezcli.USER_HOME_DIR + ".bash_history"));
+            inputProcessor.commandHistory.addAll(bashHistory);
+            inputProcessor.getArrowKeyProcessor().setCommandListPosition(bashHistory.size());
+            writeCommandsToFile();
+        } catch (IOException e) {
+            System.err.println("Error reading bash history file. Aborting import...");
+        }
+    }
+
+    private void writeCommandsToFile() {
+        File historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
+
+        try {
+            historyFile.createNewFile();
+        } catch (IOException e) {
+            System.err.println("Error creating new history file in directory: " + Ezcli.USER_HOME_DIR);
+            return;
+        }
+
+        List<String> original;
+        try {
+            original = Files.readAllLines(Paths.get(historyFile.getAbsolutePath()));
+        } catch (IOException e) {
+            System.err.println("Error reading lines from original history file");
+            return;
+        }
+
+        if (historyFile.delete()) {
+            historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
+
+            PrintWriter pw;
+            try {
+                pw = new PrintWriter(historyFile);
+            } catch (FileNotFoundException e) {
+                System.err.println("Error creating print writer");
+                return;
+            }
+
+            int startPos = original.size() +
+                    inputProcessor.commandHistory.size() > maxLinesInHistory ? inputProcessor.commandHistory.size() : 0;
+            for (int i = startPos; i < original.size(); i++)
+                pw.println(original.get(i));
+
+            for (String s : inputProcessor.commandHistory)
+                pw.println(s);
+
+            pw.close();
+        }
     }
 
     /**
@@ -225,7 +231,6 @@ public class Terminal extends Module {
 
                 System.setProperty("user.dir", newPath.toString());
                 Ezcli.currDir = newPath.toString();
-//                Ezcli.prompt = Ezcli.promptColor + Ezcli.currDir + " >> " + ANSIColorOutput.DEFAULT_COLOR;
                 Ezcli.prompt = Ezcli.currDir + " >> ";
                 return;
             }
@@ -234,15 +239,15 @@ public class Terminal extends Module {
             if (dirChange.startsWith("/"))
                 f = Paths.get(dirChange).toFile();
 
-            // "cd ~/example/"
+                // "cd ~/example/"
             else if (dirChange.startsWith("~") && dirChange.length() > 1)
                 f = Paths.get(Ezcli.USER_HOME_DIR + dirChange.substring(1)).toFile();
 
-            // "cd ~"
+                // "cd ~"
             else if ("~".equals(dirChange))
                 f = Paths.get(Ezcli.USER_HOME_DIR).toFile();
 
-            // "cd example/src/morexamples/"
+                // "cd example/src/morexamples/"
             else
                 f = Paths.get(currDir + dirChange).toFile();
 

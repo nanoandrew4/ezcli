@@ -6,7 +6,7 @@ import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
-import ezcli.modules.smart_autocomplete.FileAutocomplete;
+//import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class TermInputProcessor extends InputHandler {
     private Terminal terminal;
 
     // Stores all entered commands
-    private ArrayList<String> prevCommands = new ArrayList<>();
+    public ArrayList<String> commandHistory = new ArrayList<>();
 
     private String command = "";
 
@@ -55,10 +55,6 @@ public class TermInputProcessor extends InputHandler {
 
     public TermArrowKeyProcessor getArrowKeyProcessor() {
         return (TermArrowKeyProcessor) arrowKeyHandler;
-    }
-
-    protected ArrayList<String> getPrevCommands() {
-        return prevCommands;
     }
 
     public String getCommand() {
@@ -137,7 +133,7 @@ public class TermInputProcessor extends InputHandler {
      * Moves the cursor from the end of the command to where it should be (if the user is using arrow keys)
      * Usually only used after modifying 'command'
      */
-    protected void moveToCursorPos() {
+    public void moveToCursorPos() {
         for (int i = command.length(); i > cursorPos; i--)
             Ezcli.ezcliOutput.print("\b", "command");
     }
@@ -145,7 +141,7 @@ public class TermInputProcessor extends InputHandler {
     /**
      * Autocompletes desired file name similar to how terminals do it.
      */
-    protected void fileAutocomplete() {
+/*    protected void fileAutocomplete() {
 
         // For determining change in cursor position
         String prevCommand = command;
@@ -167,7 +163,7 @@ public class TermInputProcessor extends InputHandler {
         cursorPos += (command.length() - prevCommand.length());
         moveToCursorPos();
     }
-
+*/
     /**
      * Splits a command into 3 parts for the autocomplete function to operate properly.
      * <p>

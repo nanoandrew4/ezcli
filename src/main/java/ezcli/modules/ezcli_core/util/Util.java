@@ -14,7 +14,6 @@ public class Util {
     /**
      * Takes an interval of time in milliseconds, and returns amount of time it represents.
      * Useful for determining runtime of a program in a more readable format.
-     * <br></br>
      *
      * @param interval milliseconds to convert to dd, hh, mm, ss, SSS format
      * @return time converted to readable format

@@ -257,6 +257,8 @@ public abstract class Module {
     public static void processEvent(String event, EventState es) {
         LinkedList<ReactiveMethod> list = eventMethods.get(event);
 
+        System.out.println("Processing: " + event);
+
         if (list == null)
             return;
 
@@ -265,9 +267,8 @@ public abstract class Module {
                 EventState requestedES = m.whenToRun;
                 if (es.equals(requestedES))
                     m.method.invoke(modules.get(m.method.getDeclaringClass().getSimpleName()));
-
             } catch (Exception e) {
-                System.err.println("Error processing event from class: " + m.method.getDeclaringClass().getSimpleName());
+                System.err.println("\nError processing event from class: " + m.method.getDeclaringClass().getSimpleName());
                 System.out.println("Error processing \"" + event + "\"");
                 e.printStackTrace();
             }

@@ -16,7 +16,7 @@ import java.io.PrintStream;
  */
 public class Ezcli {
 
-    public static final String VERSION = "0.2.0";
+    public static final String VERSION = "0.3.0-WIP";
 
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";
@@ -31,7 +31,7 @@ public class Ezcli {
     public static boolean displayTermTestOutput = false;
     public static boolean displayCoreTestOutput = false;
     public static boolean displaySmartAutocompleteOutput = false;
-    public static boolean displayModularityTestOutput = false;
+    public static boolean displayModularityTestOutput = true;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;
@@ -40,6 +40,11 @@ public class Ezcli {
 
     public static void main(String[] args) {
         setOS();
+
+        if (IS_WIN) {
+            System.out.println("Windows version is currently not available.");
+            return;
+        }
 
         Module.initModules("modules.txt");
 

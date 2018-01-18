@@ -3,6 +3,12 @@ package ezcli.modules.ezcli_core.global_io.handlers;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.Keys;
+import ezcli.modules.ezcli_core.global_io.handlers.events.BackspaceEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.CharEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.NewLineEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.TabEvent;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
 
 import java.util.HashMap;
 
@@ -19,6 +25,11 @@ public abstract class KeyHandler {
         return keymap;
     }
 
+    public TabEvent tabEvent;
+    public NewLineEvent newLineEvent;
+    public CharEvent charEvent;
+    public BackspaceEvent backspaceEvent;
+
     /**
      * Processes all input by relegating it to abstract methods.
      *
@@ -26,21 +37,21 @@ public abstract class KeyHandler {
      */
     public void process(int input) {
         Keys key = getKey(input);
-        // Back Space
+
+        Module.processEvent(String.valueOf((char) input), EventState.PRE_EVENT);
+
+        Ezcli.stdOutput.println("Processing: " + (char)input);
+
         if (key == Keys.BCKSP)
-            backspaceEvent();
-
-        // Tab
+            backspaceEvent.process();
         else if (key == Keys.TAB)
-            tabEvent();
-
-        // Enter, or new line
+            tabEvent.process();
         else if (key == Keys.NWLN)
-            newLineEvent();
-
-        // Character input
+            newLineEvent.process();
         else if (input > 31 && input < 127)
-            charEvent((char)input);
+            charEvent.process((char) input);
+
+        Module.processEvent(String.valueOf((char) input), EventState.POST_EVENT);
 
         signalCatch(input);
     }
@@ -86,26 +97,5 @@ public abstract class KeyHandler {
     protected static Keys getKey(int i) {
         return keymap.get(i);
     }
-
-    /**
-     * Code to run when tab key is pressed.
-     */
-    public abstract void tabEvent();
-
-    /**
-     * Code to run when enter key is pressed.
-     */
-    public abstract void newLineEvent();
-
-    /**
-     * Code to run when an ASCII value between 32 and 126 (all characters).
-     *
-     * @param input ASCII key code of key pressed
-     */
-    public abstract void charEvent(char input);
-
-    /**
-     * Code to run when backspace key is pressed.
-     */
-    public abstract void backspaceEvent();
 }
+
