@@ -29,25 +29,25 @@ public class MainKeyTest {
         Interactive interactive = new Interactive();
         MainInputProcessor inputProcessor = interactive.getInputProcessor();
         MainKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
-        
+
         keyProcessor.process('a');
         assertEquals("a", inputProcessor.getWasCommand());
         interactive.parse(inputProcessor.getWasCommand());
 
         keyProcessor.process('\t');
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); 
+        interactive.parse(inputProcessor.getWasCommand());
 
         keyProcessor.process('\n');
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); 
+        interactive.parse(inputProcessor.getWasCommand());
 
         keyProcessor.process((char)1);
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); 
+        interactive.parse(inputProcessor.getWasCommand());
 
         keyProcessor.process((char) 127);
         assertEquals("", inputProcessor.getWasCommand());
-        interactive.parse(inputProcessor.getWasCommand()); 
+        interactive.parse(inputProcessor.getWasCommand());
     }
 }

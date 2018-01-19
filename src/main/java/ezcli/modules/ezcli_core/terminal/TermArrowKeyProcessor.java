@@ -40,18 +40,15 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
     private void setLArrowBehaviour() {
         lArrEvent = () -> {
-            Module.processEvent("larrow", EventState.PRE_EVENT);
             if (inputProcessor.getCursorPos() > 0) {
                 Ezcli.ezcliOutput.print("\b", "command");
                 inputProcessor.decreaseCursorPos();
             }
-            Module.processEvent("larrow", EventState.POST_EVENT);
         };
     }
 
     private void setRArrowBehaviour() {
         rArrEvent = () -> {
-            Module.processEvent("rarrow", EventState.PRE_EVENT);
             if (inputProcessor.getCursorPos() < inputProcessor.getCommand().length()) {
                 Util.clearLine(inputProcessor.getCommand(), true);
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
@@ -59,25 +56,20 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
                 inputProcessor.increaseCursorPos();
 //            inputProcessor.moveToCursorPos();
             }
-            Module.processEvent("rarrow", EventState.POST_EVENT);
         };
     }
 
     private void setUArrowBehaviour() {
         uArrEvent = () -> {
-            Module.processEvent("uarrow", EventState.PRE_EVENT);
             prevCommandIterator(ArrowKeys.UP);
             inputProcessor.setCursorPos(inputProcessor.getCommand().length());
-            Module.processEvent("uarrow", EventState.POST_EVENT);
         };
     }
 
     private void setDArrowBehaviour() {
         dArrEvent = () -> {
-            Module.processEvent("darrow", EventState.PRE_EVENT);
             prevCommandIterator(ArrowKeys.DOWN);
             inputProcessor.setCursorPos(inputProcessor.getCommand().length());
-            Module.processEvent("darrow", EventState.POST_EVENT);
         };
     }
 

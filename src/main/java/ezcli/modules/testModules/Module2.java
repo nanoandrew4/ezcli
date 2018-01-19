@@ -15,6 +15,7 @@ public class Module2 extends Module {
 
     public void doSomethingElse() {
         Module3.someStr += (char) someInt;
+        System.out.println("incre");
     }
 
     @Override

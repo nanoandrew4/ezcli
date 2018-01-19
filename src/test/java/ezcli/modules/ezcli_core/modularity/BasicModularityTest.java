@@ -35,9 +35,9 @@ public class BasicModularityTest {
         TermKeyProcessor tkp = t.inputProcessor.getKeyProcessor();
         TermArrowKeyProcessor takp = t.inputProcessor.getArrowKeyProcessor();
 
-        tkp.charEvent.process('a');
-        tkp.charEvent.process('/');
-        tkp.charEvent.process('\n');
+        tkp.process('a');
+        tkp.process('/');
+        tkp.process('\n');
         takp.process(ArrowKeys.DOWN);
         assertEquals("0", String.valueOf(Module1.someChar));
         assertEquals(49, Module2.someInt);
