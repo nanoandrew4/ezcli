@@ -13,14 +13,14 @@ import java.util.List;
  * Abstract class specifying methods all modules should contain, and some initialization ones.
  * Each module must extend this class and implement the methods specified here.
  *
- * <p>Two types of module exist:
+ * <p> Two types of module exist:
  *
- * <p>One type is like the Terminal module, which is an independent entity
+ * <p> One type is like the Terminal module, which is an independent entity
  * that handles its own input and does not rely on other modules to function or for data of any type.
  * That type of module should be initialized with the single parameter super class constructor, and the
  * single parameter super class init method (in that order).
  *
- * <p>The other type of module that exists works on top of independent modules. It provides some extra
+ * <p> The other type of module that exists works on top of independent modules. It provides some extra
  * optional functionality, which is non essential and can be removed if desired. These modules are run
  * when certain events are detected. This type of module should be initialized by using the double parameter
  * super class constructor and the triple parameter super class init method (in that order).
@@ -257,7 +257,7 @@ public abstract class Module {
     public static void processEvent(String event, EventState es) {
         LinkedList<ReactiveMethod> list = eventMethods.get(event);
 
-        System.out.println("Processing: " + event);
+//        System.out.println("Processing: " + event);
 
         if (list == null)
             return;

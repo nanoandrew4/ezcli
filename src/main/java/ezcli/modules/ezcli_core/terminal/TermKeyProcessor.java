@@ -101,7 +101,6 @@ public class TermKeyProcessor extends KeyHandler {
      */
     @Override
     public void process(int input) {
-
         Keys key = getKey(input);
 
         if (key != Keys.TAB) {

@@ -40,8 +40,6 @@ public abstract class KeyHandler {
 
         Module.processEvent(String.valueOf((char) input), EventState.PRE_EVENT);
 
-        Ezcli.stdOutput.println("Processing: " + (char)input);
-
         if (key == Keys.BCKSP)
             backspaceEvent.process();
         else if (key == Keys.TAB)
