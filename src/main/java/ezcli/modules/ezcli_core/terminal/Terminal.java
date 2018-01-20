@@ -60,7 +60,7 @@ public class Terminal extends Module {
         for (String command : split) {
             command = command.trim();
 
-            if (command.startsWith("cd")) {
+            if (command.startsWith("cd ")) {
                 changeDir(command);
                 continue;
             }
@@ -70,36 +70,27 @@ public class Terminal extends Module {
                 inputProcessor.setCommand("");
                 exit = true;
                 return;
-            } else if ("".equals(command) || "".equals(command.trim()) || "help".equals(command)) {
-                if ("help".equals(command))
+            } else if ("".equals(command) || "".equals(command.trim()) || "t-help".equals(command)) {
+                if ("t-help".equals(command))
                     help();
                 inputProcessor.setCommand("");
-                Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
                 return;
             }
 
             ProcessBuilder pb;
-            Process p = null;
+            Process p;
             try {
-                String[] commandArr = command.split(" ");
-                pb = new ProcessBuilder(commandArr);
+                pb = new ProcessBuilder("/bin/bash", "-c", command);
                 pb.inheritIO(); // Make program and process share IO to allow user to interact with program
                 pb.directory(new File(Ezcli.currDir)); // Set working directory for command
                 p = pb.start();
-            } catch (IOException | IllegalArgumentException e) {
-                System.err.println("Parsing command \"" + command + "\" failed, enter \"help\" for help using module.");
+                p.waitFor();
+                p.destroy();
+            } catch (IOException | IllegalArgumentException | InterruptedException e) {
+                System.err.println("Parsing command \"" + command + "\" failed, enter \"t-help\" for help using module.");
             }
 
-            if (p != null) {
-                while (p.isAlive()) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                p.destroy();
-            }
+            Ezcli.currDir = System.getProperty("user.dir") + "/";
         }
     }
 

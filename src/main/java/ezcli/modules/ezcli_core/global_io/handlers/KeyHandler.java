@@ -3,10 +3,9 @@ package ezcli.modules.ezcli_core.global_io.handlers;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.Keys;
-import ezcli.modules.ezcli_core.global_io.handlers.events.BackspaceEvent;
 import ezcli.modules.ezcli_core.global_io.handlers.events.CharEvent;
-import ezcli.modules.ezcli_core.global_io.handlers.events.NewLineEvent;
-import ezcli.modules.ezcli_core.global_io.handlers.events.TabEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.Event;
+import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;
 
@@ -25,10 +24,12 @@ public abstract class KeyHandler {
         return keymap;
     }
 
-    public TabEvent tabEvent;
-    public NewLineEvent newLineEvent;
+    private long lastPress = System.currentTimeMillis();
+
+    public Event tabEvent;
+    public Event newLineEvent;
     public CharEvent charEvent;
-    public BackspaceEvent backspaceEvent;
+    public Event backspaceEvent;
 
     /**
      * Processes all input by relegating it to abstract methods.
@@ -37,6 +38,10 @@ public abstract class KeyHandler {
      */
     public void process(int input) {
         Keys key = getKey(input);
+
+        if (System.currentTimeMillis() - lastPress < InputHandler.minWaitTime)
+            return;
+        lastPress = System.currentTimeMillis();
 
         Module.processEvent(String.valueOf((char) input), EventState.PRE_EVENT);
 

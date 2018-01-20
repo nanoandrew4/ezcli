@@ -1,13 +1,11 @@
-[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=ezcli-core)](https://travis-ci.org/nanoandrew4/ezcli)
+[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=lambdaExpressions)](https://travis-ci.org/nanoandrew4/ezcli)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7445f61eb56f4cd9bfcf41cbeab9aae9)](https://www.codacy.com/app/nanoandrew4/ezcli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nanoandrew4/ezcli&amp;utm_campaign=Badge_Grade)
 
 # ezcli
----
 
 ezcli is a project aimed at enhancing a users terminal experience, by creating a programmable layer of shortcuts and features to minimize your key strokes and mouse moving, while integrating with your favourite terminal so you can easily fall back to your comfortable command line interface when needed.
 
 ## About
----
 
 This project is still under active development, and the first official major release has not yet been achieved. Therefore, this document, as well as any others in this project are subject to change as development progresses.
 To get an idea of where the project is at, check out the [roadmap](docs/ROADMAP.md).
@@ -19,7 +17,6 @@ Want to see where the project is currently at? Click the image below to see the 
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
 
 ## Why use ezcli
----
 
 (Features specified here not indicative of the current state of development, but of the features that will be included in the first major release)
 
@@ -31,7 +28,6 @@ Want to see where the project is currently at? Click the image below to see the 
 * **Modular**: Built on modules, so you can customize it to your liking, and even write your own modules to compile alongside the core program for added functionality.
 
 ## Contrubuting
----
 
 Want to help us work on ezcli? Check out the [contributing guidelines](docs/CONTRIBUTING.md) for all you need to know about setting yourself up to work on it. Whether you are new to open source or an industry veteran, all contributions are welcomed and greatly appreciated!
 
@@ -45,6 +41,5 @@ This project has a Slack messaging group. You can email me at <nanoandrew4@gmail
 too.
 
 ## Have a question?
----
 
 If you have any questions, comments or concerns that cannot be addressed through the issues, feel free to email me at <nanoandrew4@gmail.com>. 

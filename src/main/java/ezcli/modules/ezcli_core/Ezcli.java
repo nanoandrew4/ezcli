@@ -42,7 +42,7 @@ public class Ezcli {
         setOS();
 
         if (IS_WIN) {
-            System.out.println("Windows version is currently not available.");
+            stdOutput.println("Windows version is currently not available.");
             return;
         }
 
