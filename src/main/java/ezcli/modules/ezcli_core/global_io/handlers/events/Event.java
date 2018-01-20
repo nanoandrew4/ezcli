@@ -1,5 +1,5 @@
 package ezcli.modules.ezcli_core.global_io.handlers.events;
 
-public interface DArrEvent {
+public interface Event {
     void process();
 }

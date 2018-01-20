@@ -28,15 +28,6 @@ public class TermInputProcessor extends InputHandler {
 
     private String command = "";
 
-    // Stops autocomplete from reprinting command it completed if tab is pressed at the end of a complete file name
-    private boolean lockTab = false;
-
-    // Stops autocomplete from constantly erasing fileNames list when searching sub-directories
-    private boolean blockClear = false;
-
-    // For resetting all variables in FileAutocomplete once a key press other than a tab is registered
-    private boolean resetVars = false;
-
     private int cursorPos = 0;
 
     TermInputProcessor(Terminal terminal) {
@@ -63,18 +54,6 @@ public class TermInputProcessor extends InputHandler {
 
     public void setCommand(String command) {
         this.command = command;
-    }
-
-    protected void setLockTab(boolean lockTab) {
-        this.lockTab = lockTab;
-    }
-
-    protected void setBlockClear(boolean blockClear) {
-        this.blockClear = blockClear;
-    }
-
-    protected void setResetVars(boolean resetVars) {
-        this.resetVars = resetVars;
     }
 
     protected void increaseCursorPos() {
@@ -138,32 +117,6 @@ public class TermInputProcessor extends InputHandler {
             Ezcli.ezcliOutput.print("\b", "command");
     }
 
-    /**
-     * Autocompletes desired file name similar to how terminals do it.
-     */
-/*    protected void fileAutocomplete() {
-
-        // For determining change in cursor position
-        String prevCommand = command;
-
-        if (FileAutocomplete.getFiles() == null) {
-            FileAutocomplete.init(disassembleCommand(command, cursorPos), blockClear, lockTab);
-            resetVars = false;
-        } else
-            FileAutocomplete.fileAutocomplete();
-
-        command = FileAutocomplete.getCommand();
-
-        if (FileAutocomplete.isResetVars() || resetVars)
-            FileAutocomplete.resetVars();
-
-        // Get variables and set cursor position
-        blockClear = FileAutocomplete.isBlockClear();
-        lockTab = FileAutocomplete.isLockTab();
-        cursorPos += (command.length() - prevCommand.length());
-        moveToCursorPos();
-    }
-*/
     /**
      * Splits a command into 3 parts for the autocomplete function to operate properly.
      * <p>

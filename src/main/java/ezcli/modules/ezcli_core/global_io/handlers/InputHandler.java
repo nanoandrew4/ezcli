@@ -12,6 +12,12 @@ public abstract class InputHandler {
     protected ArrowKeyHandler arrowKeyHandler;
     protected KeyHandler keyHandler;
 
+    /*
+        Determines how long the program will ignore user input (in ms).
+        Prevents program from going visually insane, by not overloading the system with too much output.
+    */
+    public static int minWaitTime = 40;
+
     /**
      * Create key handler object with null arrow key handler and key handler.
      * Only call this constructor if you plan to manually assign the handlers

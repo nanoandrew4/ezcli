@@ -257,8 +257,6 @@ public abstract class Module {
     public static void processEvent(String event, EventState es) {
         LinkedList<ReactiveMethod> list = eventMethods.get(event);
 
-//        System.out.println("Processing: " + event);
-
         if (list == null)
             return;
 

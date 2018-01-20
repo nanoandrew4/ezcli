@@ -25,13 +25,13 @@ public class TermKeyProcessor extends KeyHandler {
     private void setUpTabEvents() {
         tabEvent = () -> {
             Util.clearLine(inputProcessor.getCommand(), true);
-//            inputProcessor.fileAutocomplete();
-            inputProcessor.setResetVars(false);
+//            inputProcessor.setResetVars(false);
         };
     }
 
     private void setUpNWLNEvent() {
         newLineEvent = () -> {
+
             String command = inputProcessor.getCommand();
 
             boolean empty = "".equals(command.trim());
@@ -42,7 +42,7 @@ public class TermKeyProcessor extends KeyHandler {
             inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.commandHistory.size());
             inputProcessor.getArrowKeyProcessor().setCurrCommand("");
             inputProcessor.setCursorPos(0);
-            inputProcessor.setResetVars(true);
+//            inputProcessor.setResetVars(true);
             inputProcessor.parse();
 
             inputProcessor.setCommand("");
@@ -69,7 +69,7 @@ public class TermKeyProcessor extends KeyHandler {
 
             inputProcessor.increaseCursorPos();
             inputProcessor.moveToCursorPos();
-            inputProcessor.setResetVars(true);
+//            inputProcessor.setResetVars(true);
         };
     }
 
@@ -87,28 +87,8 @@ public class TermKeyProcessor extends KeyHandler {
 
                 inputProcessor.decreaseCursorPos();
                 inputProcessor.moveToCursorPos();
-                inputProcessor.setResetVars(true);
+//                inputProcessor.setResetVars(true);
             }
         };
-    }
-
-    /**
-     * Processes input provided by input class,
-     * and operates based on the input it receives,
-     * using the character value passed by the process() method.
-     *
-     * @param input Last character input by user
-     */
-    @Override
-    public void process(int input) {
-        Keys key = getKey(input);
-
-        if (key != Keys.TAB) {
-            inputProcessor.setLockTab(false);
-            inputProcessor.setBlockClear(false);
-            //FileAutocomplete.resetVars();
-        }
-
-        super.process(input);
     }
 }

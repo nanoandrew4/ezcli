@@ -1,10 +1,9 @@
 package ezcli.modules.ezcli_core.interactive;
 
-import ezcli.modules.ezcli_core.modularity.EventState;
-import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
+import ezcli.modules.ezcli_core.modularity.Module;
 
 /**
  * Interactive module. Entry point for program, and module used to reach all others.

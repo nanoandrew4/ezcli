@@ -1,6 +1,7 @@
 package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
@@ -22,6 +23,7 @@ public class TermInputTest {
             }));
         else
             System.setOut(Ezcli.stdOutput);
+        InputHandler.minWaitTime = -1;
     }
 
     @Test
@@ -192,25 +194,25 @@ public class TermInputTest {
         inputProcessor.commandHistory.clear();
         inputProcessor.getArrowKeyProcessor().setCommandListPosition(0);
 
-        inputProcessor.getKeyProcessor().process('h');
-        inputProcessor.getKeyProcessor().process('e');
-        inputProcessor.getKeyProcessor().process('l');
-        inputProcessor.getKeyProcessor().process('p');
-        inputProcessor.getKeyProcessor().newLineEvent.process(); // simulate newline
+        inputProcessor.getKeyProcessor().process('h'); 
+        inputProcessor.getKeyProcessor().process('e'); 
+        inputProcessor.getKeyProcessor().process('l'); 
+        inputProcessor.getKeyProcessor().process('p'); 
+        inputProcessor.getKeyProcessor().newLineEvent.process();  // simulate newline
 
-        assertEquals(1, inputProcessor.commandHistory.size());
-        assertEquals("help", inputProcessor.commandHistory.get(0));
-        assertEquals("", inputProcessor.getCommand());
+        assertEquals(1, inputProcessor.commandHistory.size()); 
+        assertEquals("help", inputProcessor.commandHistory.get(0)); 
+        assertEquals("", inputProcessor.getCommand()); 
 
+        inputProcessor.getKeyProcessor().backspaceEvent.process(); // simulate backspace
+        inputProcessor.getKeyProcessor().process('t'); 
+        inputProcessor.getKeyProcessor().process('e'); 
+        inputProcessor.getKeyProcessor().process('s'); 
+        inputProcessor.getKeyProcessor().process('t'); 
         inputProcessor.getKeyProcessor().backspaceEvent.process();  // simulate backspace
-        inputProcessor.getKeyProcessor().process('t');
-        inputProcessor.getKeyProcessor().process('e');
-        inputProcessor.getKeyProcessor().process('s');
-        inputProcessor.getKeyProcessor().process('t');
         inputProcessor.getKeyProcessor().backspaceEvent.process();  // simulate backspace
-        inputProcessor.getKeyProcessor().backspaceEvent.process();  // simulate backspace
-        inputProcessor.getKeyProcessor().process('s');
-        inputProcessor.getKeyProcessor().process('s');
+        inputProcessor.getKeyProcessor().process('s'); 
+        inputProcessor.getKeyProcessor().process('s'); 
         inputProcessor.getKeyProcessor().newLineEvent.process();  // simulate newline
 
         assertEquals(2, inputProcessor.commandHistory.size());

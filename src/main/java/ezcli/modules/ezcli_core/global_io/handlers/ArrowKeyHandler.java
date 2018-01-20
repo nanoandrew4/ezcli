@@ -1,10 +1,7 @@
 package ezcli.modules.ezcli_core.global_io.handlers;
 
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
-import ezcli.modules.ezcli_core.global_io.handlers.events.DArrEvent;
-import ezcli.modules.ezcli_core.global_io.handlers.events.LArrEvent;
-import ezcli.modules.ezcli_core.global_io.handlers.events.RArrEvent;
-import ezcli.modules.ezcli_core.global_io.handlers.events.UArrEvent;
+import ezcli.modules.ezcli_core.global_io.handlers.events.Event;
 import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;
 
@@ -17,10 +14,12 @@ public abstract class ArrowKeyHandler {
     // Last arrow key that was pressed (if any other key is pressed sets to ArrowKeys.NONE)
     protected static ArrowKeys lastArrowPress = ArrowKeys.NONE;
 
-    public LArrEvent lArrEvent;
-    public RArrEvent rArrEvent;
-    public UArrEvent uArrEvent;
-    public DArrEvent dArrEvent;
+    private long lastPress = System.currentTimeMillis();
+
+    public Event lArrEvent;
+    public Event rArrEvent;
+    public Event uArrEvent;
+    public Event dArrEvent;
 
     /**
      * Checks if last input was arrow key (only on Windows).
@@ -86,7 +85,8 @@ public abstract class ArrowKeyHandler {
      */
     public ArrowKeys process(ArrowKeys ak) {
 
-        if (ak != ArrowKeys.NONE) {
+        if (ak != ArrowKeys.NONE && System.currentTimeMillis() - lastPress > InputHandler.minWaitTime) {
+            lastPress = System.currentTimeMillis();
             switch (ak) {
                 case UP:
                     Module.processEvent("uarrow", EventState.PRE_EVENT);

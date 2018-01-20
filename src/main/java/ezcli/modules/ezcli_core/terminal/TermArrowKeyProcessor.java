@@ -1,8 +1,6 @@
 package ezcli.modules.ezcli_core.terminal;
 
-import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
 import ezcli.modules.ezcli_core.util.Util;
@@ -83,9 +81,9 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
         if (inputProcessor.commandHistory.size() == 0)
             return;
 
-        if (commandListPosition == inputProcessor.commandHistory.size() && lastArrowPress == ArrowKeys.NONE)
-            // Saves currently typed command before moving through the list of previously typed commands
+        int cmdHistorySize = inputProcessor.commandHistory.size() - 1;
 
+        if (commandListPosition == inputProcessor.commandHistory.size() && lastArrowPress == ArrowKeys.NONE)
             currCommand = inputProcessor.getCommand();
 
         if (ak == ArrowKeys.UP && commandListPosition > 0) {
@@ -101,26 +99,25 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             Ezcli.ezcliOutput.print(inputProcessor.commandHistory.get(--commandListPosition), "command");
             inputProcessor.setCommand(inputProcessor.commandHistory.get(commandListPosition));
 
-        } else if (ak == ArrowKeys.DOWN && commandListPosition < inputProcessor.commandHistory.size() - 1) {
-            // Move through list towards last typed element
-
+        } else if (ak == ArrowKeys.DOWN) {
             lastArrowPress = ak;
-            Util.clearLine(inputProcessor.getCommand(), true);
 
-            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
-            Ezcli.ezcliOutput.print(inputProcessor.commandHistory.get(++commandListPosition), "info");
-            inputProcessor.setCommand(inputProcessor.commandHistory.get(commandListPosition));
+            if (commandListPosition < cmdHistorySize) {
+                // Move through list towards last typed element
+                Util.clearLine(inputProcessor.getCommand(), true);
 
-        } else if (ak == ArrowKeys.DOWN && commandListPosition >= inputProcessor.commandHistory.size() - 1) {
-            // Print command that was stored before iteration through list began
+                Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
+                Ezcli.ezcliOutput.print(inputProcessor.commandHistory.get(++commandListPosition), "info");
+                inputProcessor.setCommand(inputProcessor.commandHistory.get(commandListPosition));
+            } else if (!inputProcessor.getCommand().equals(currCommand)) {
+                // Print command that was stored before iteration through list began
+                Util.clearLine(inputProcessor.getCommand(), true);
+                commandListPosition++;
 
-            lastArrowPress = ak;
-            Util.clearLine(inputProcessor.getCommand(), true);
-            commandListPosition++;
-
-            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
-            Ezcli.ezcliOutput.print(currCommand, "command");
-            inputProcessor.setCommand(currCommand);
+                Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
+                Ezcli.ezcliOutput.print(currCommand, "command");
+                inputProcessor.setCommand(currCommand);
+            }
         }
     }
 }
