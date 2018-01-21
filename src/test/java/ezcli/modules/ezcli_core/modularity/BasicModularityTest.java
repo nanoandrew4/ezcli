@@ -2,8 +2,9 @@ package ezcli.modules.ezcli_core.modularity;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.terminal.*;
-import ezcli.modules.testModules.*;
+import ezcli.modules.testmodules.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,6 +25,7 @@ public class BasicModularityTest {
             }));
         else
             System.setOut(Ezcli.stdOutput);
+        InputHandler.minWaitTime = -1;
     }
 
     @Test

@@ -1,12 +1,10 @@
 package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.global_io.*;
 import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
 import ezcli.modules.ezcli_core.global_io.input.Input;
-//import ezcli.modules.smart_autocomplete.FileAutocomplete;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,26 +76,21 @@ public class TermInputProcessor extends InputHandler {
     @Override
     public void process(int input) {
         if (Ezcli.IS_WIN) {
-            ArrowKeys ak = arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
-
-            if (ak != ArrowKeys.NONE)
-                arrowKeyHandler.process(ak);
-
+            arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckWindows(input));
             keyHandler.process(input);
         } else if (Ezcli.IS_UNIX) {
-            int c1 = -1, c2 = -1;
+            int c1, c2;
             try {
                 c1 = Input.read(false);
                 c2 = Input.read(false);
+
+                if (c1 == -2 && c2 == -2)
+                    keyHandler.process(input);
+                else
+                    arrowKeyHandler.process(ArrowKeyHandler.arrowKeyCheckUnix(input, c1, c2));
             } catch (IOException e) {
                 System.err.println("Error reading arrow key press");
             }
-            ArrowKeys ak = ArrowKeyHandler.arrowKeyCheckUnix(input, c1, c2);
-
-            if (ak != ArrowKeys.NONE)
-                arrowKeyHandler.process(ak);
-            if (c1 == -2 && c2 == -2)
-                keyHandler.process(input);
         }
     }
 

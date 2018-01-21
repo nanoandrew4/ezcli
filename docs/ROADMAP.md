@@ -5,11 +5,11 @@ This document is an overview of the goals to be accomplished by v1.0.0. Because 
 Some definitions of terms used in this document:
 * Interactive mode -> Mode in which the program processes your input, and does not relegate it to the system.
 * Command mode -> Mode in which program relegates all input to the system, and returns all ouput from system to user.
-* Module -> This program is built by modules that process input individually. Only module can be active at once. An example of a module could be the text editor. Modules can be accessed with a single key stroke within interactive mode.
+* Module -> This program is formed by modules. Two types of modules exist. Independent modules, which the user interacts with directly (see Terminal module), and modules that provide functionality but are no use as standalone modules.
 
 ### Features warranting new minor release
 
-Completion of an top level element on this list warrants a new minor release. When a top level element in the v1.0.0 list is achieved, a new issue will be created with the remaining minor features and fixes needed before a new minor release, so they can be worked on.
+Completion of any top level element on this list warrants a new minor release. Fundamental changes to the core portion of the program can also warrant a new minor release.
 
 ---
 
@@ -41,7 +41,6 @@ Completion of an top level element on this list warrants a new minor release. Wh
   * [ ] Implement most frequently typed commands overriding, and add option to name and give short description (to create command shortcuts).
   * [ ] Add overrides to config files within program, using list sorted by frequency of previous inputs to build an override manually and save it.
 * [ ] Program help (will not be checked until release).
-  * [ ] Include help method for each module.
   * [ ] Module that tours the program and shows the user how to use the basics of each module included, interactively.
 * [ ] Implement own raw input processing class to replace Input, if possible.
 * [ ] Windows support (:S)

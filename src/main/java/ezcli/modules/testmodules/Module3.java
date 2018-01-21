@@ -1,4 +1,4 @@
-package ezcli.modules.testModules;
+package ezcli.modules.testmodules;
 
 import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;
@@ -9,7 +9,7 @@ public class Module3 extends Module {
 
     public Module3() {
         super("Module3");
-        init(this, new String[] {"abc"}, new String[] {"doSomeMore"}, new EventState[] {EventState.PRE_EVENT});
+        init(this, new String[]{"abc"}, new String[]{"doSomeMore"}, new EventState[]{EventState.PRE_EVENT});
     }
 
     public void doSomeMore() {
@@ -17,8 +17,8 @@ public class Module3 extends Module {
     }
 
     @Override
-    public void run() {}
+    public void run() {/* Nothing to do */}
 
     @Override
-    public void tour() {}
+    public void tour() {/* Nothing to do */}
 }

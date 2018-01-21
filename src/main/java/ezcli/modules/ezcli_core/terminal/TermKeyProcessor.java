@@ -1,9 +1,8 @@
 package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.global_io.Keys;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.global_io.handlers.KeyHandler;
-import ezcli.modules.ezcli_core.util.Util;
 
 /**
  * Processes key presses (except arrow keys) for Terminal module.
@@ -23,10 +22,7 @@ public class TermKeyProcessor extends KeyHandler {
     }
 
     private void setUpTabEvents() {
-        tabEvent = () -> {
-            Util.clearLine(inputProcessor.getCommand(), true);
-//            inputProcessor.setResetVars(false);
-        };
+        tabEvent = () -> {};
     }
 
     private void setUpNWLNEvent() {
@@ -42,11 +38,9 @@ public class TermKeyProcessor extends KeyHandler {
             inputProcessor.getArrowKeyProcessor().setCommandListPosition(inputProcessor.commandHistory.size());
             inputProcessor.getArrowKeyProcessor().setCurrCommand("");
             inputProcessor.setCursorPos(0);
-//            inputProcessor.setResetVars(true);
             inputProcessor.parse();
 
             inputProcessor.setCommand("");
-            Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
         };
     }
 
@@ -55,7 +49,7 @@ public class TermKeyProcessor extends KeyHandler {
             String command = inputProcessor.getCommand();
             int cursorPos = inputProcessor.getCursorPos();
 
-            Util.clearLine(command, true);
+            InputHandler.clearLine(command, true);
 
             if (inputProcessor.getCursorPos() == command.length()) {
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
@@ -69,7 +63,6 @@ public class TermKeyProcessor extends KeyHandler {
 
             inputProcessor.increaseCursorPos();
             inputProcessor.moveToCursorPos();
-//            inputProcessor.setResetVars(true);
         };
     }
 
@@ -79,7 +72,7 @@ public class TermKeyProcessor extends KeyHandler {
                 int charToDelete = inputProcessor.getCursorPos() - 1;
                 String command = inputProcessor.getCommand();
 
-                Util.clearLine(command, true);
+                InputHandler.clearLine(command, true);
 
                 inputProcessor.setCommand(new StringBuilder(command).deleteCharAt(charToDelete).toString());
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
@@ -87,7 +80,6 @@ public class TermKeyProcessor extends KeyHandler {
 
                 inputProcessor.decreaseCursorPos();
                 inputProcessor.moveToCursorPos();
-//                inputProcessor.setResetVars(true);
             }
         };
     }

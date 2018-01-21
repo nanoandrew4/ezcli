@@ -17,13 +17,12 @@ import java.util.List;
  *
  * <p> One type is like the Terminal module, which is an independent entity
  * that handles its own input and does not rely on other modules to function or for data of any type.
- * That type of module should be initialized with the single parameter super class constructor, and the
- * single parameter super class init method (in that order).
+ * That type of module should be initialized with the init(Module, String) method.
  *
  * <p> The other type of module that exists works on top of independent modules. It provides some extra
  * optional functionality, which is non essential and can be removed if desired. These modules are run
- * when certain events are detected. This type of module should be initialized by using the double parameter
- * super class constructor and the triple parameter super class init method (in that order).
+ * when certain events are detected. This type of module should be initialized by using the
+ * init(Module, String[], String[], EventState[]) method.
  */
 public abstract class Module {
 
@@ -37,7 +36,7 @@ public abstract class Module {
     // Contains methods to be run when events from TermKeyProcessor and TermArrowKeyProcessor are processed
     public static HashMap<String, LinkedList<ReactiveMethod>> eventMethods = new HashMap<>();
 
-    // Module specific variables...
+    // Module specific variables
     public String moduleName;
     public boolean currentlyActive = false;
 
@@ -105,7 +104,7 @@ public abstract class Module {
     }
 
     /**
-     * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur in Terminal module,
+     * Quasi-constructor. Adds methods to eventMethods, which are called when certain events occur,
      * such as key press events.
      *
      * @param module Module in which the methods are located
@@ -117,7 +116,7 @@ public abstract class Module {
 
         if (methodNames.length != binds.length) {
             System.err.println("Methods and ReactiveMethod arrays have unequal size in module \""
-                    + module.getClass().getSimpleName() + "\" (each method must be bound to something) ");
+                    + module.getClass().getSimpleName() + "\" (each method must be bound to something)");
             return;
         }
 
@@ -208,13 +207,8 @@ public abstract class Module {
      */
     private void addCharsToHashmap(String s, ReactiveMethod m) {
         for (int i = 0; i < s.length(); i++) {
-            LinkedList<ReactiveMethod> list = eventMethods.get(String.valueOf(s.charAt(i)));
-
-            if (list == null) {
-                list = new LinkedList<>();
-                eventMethods.put(String.valueOf(s.charAt(i)), list);
-            }
-
+            LinkedList<ReactiveMethod> list =
+                    eventMethods.computeIfAbsent(String.valueOf(s.charAt(i)), k -> new LinkedList<>());
             list.add(m);
         }
     }
@@ -227,19 +221,13 @@ public abstract class Module {
      * Currently only supports uarrow, darrow, larrow and rarrow for arrow keys, as well as clearln
      * for when the current line is deleted (see Util.clearLine()).
      *
-     * @see ezcli.modules.ezcli_core.terminal.TermArrowKeyProcessor
+     * @see ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler
      *
      * @param s String to map to method.
      * @param m Method to be mapped to string
      */
     private void addStringToHashmap(String s, ReactiveMethod m) {
-        LinkedList<ReactiveMethod> list = eventMethods.get(s);
-
-        if (list == null) {
-            list = new LinkedList<>();
-            eventMethods.put(s, list);
-        }
-
+        LinkedList<ReactiveMethod> list = eventMethods.computeIfAbsent(s, k -> new LinkedList<>());
         list.add(m);
     }
 
@@ -248,11 +236,11 @@ public abstract class Module {
      * For more info regarding the calling of these methods and the hardcoded events that are accepted,
      * see the mentioned classes.
      *
-     * @see ezcli.modules.ezcli_core.terminal.TermKeyProcessor
-     * @see ezcli.modules.ezcli_core.terminal.TermArrowKeyProcessor
+     * @see ezcli.modules.ezcli_core.global_io.handlers.KeyHandler
+     * @see ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler
      *
      * @param event Event to process
-     * @param es Required stage to process at (currently either before or after the input processors have updated)
+     * @param es Stage at which the event is at (PRE or POST)
      */
     public static void processEvent(String event, EventState es) {
         LinkedList<ReactiveMethod> list = eventMethods.get(event);
@@ -266,10 +254,14 @@ public abstract class Module {
                 if (es.equals(requestedES))
                     m.method.invoke(modules.get(m.method.getDeclaringClass().getSimpleName()));
             } catch (Exception e) {
-                System.err.println("\nError processing event from class: " + m.method.getDeclaringClass().getSimpleName());
-                System.out.println("Error processing \"" + event + "\"");
-                e.printStackTrace();
+                System.err.println("\nError processing event from: " + m.method.getDeclaringClass().getSimpleName());
+                System.err.println("Error processing \"" + event + "\"");
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return moduleName;
     }
 }

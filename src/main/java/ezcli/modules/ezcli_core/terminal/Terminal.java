@@ -11,18 +11,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
- * Terminal module. Used to interact with system, as if you were running commands on your system terminal.
+ * Terminal module. Interfaces directly with bash, so it is as if you were running a normal terminal session.
  */
 public class Terminal extends Module {
 
     // Input handler for this module
     public TermInputProcessor inputProcessor;
 
+    // Hard cap on lines in history file. If more are added after this, the oldest ones are deleted
     private final static int maxLinesInHistory = 10000;
 
     private boolean exit;
@@ -60,6 +59,10 @@ public class Terminal extends Module {
         for (String command : split) {
             command = command.trim();
 
+            /*
+             * cd command has to be interpreted separately, since once the JVM runs any cd commands do not take effect
+             * inside the program, nor once it exists.
+             */
             if (command.startsWith("cd ")) {
                 changeDir(command);
                 continue;
@@ -92,6 +95,8 @@ public class Terminal extends Module {
 
             Ezcli.currDir = System.getProperty("user.dir") + "/";
         }
+
+        Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
     }
 
     public void help() {
@@ -127,6 +132,11 @@ public class Terminal extends Module {
         Ezcli.sleep(5);
     }
 
+    /**
+     * Reads ezcli history file and stores all the previous commands in the commandHistory list.
+     * <p>
+     * If for some reason this fails, it will try to read the ~/.bash_history file
+     */
     private void importEzcliHistory() {
         try {
             List<String> history = Files.readAllLines(Paths.get(Ezcli.USER_HOME_DIR + ".ezcli_history"));
@@ -143,6 +153,9 @@ public class Terminal extends Module {
         importBashHistory();
     }
 
+    /**
+     * Reads bash history file and stores all command listed in the commandHistory list.
+     */
     private void importBashHistory() {
         System.out.println("You currently have an empty or non-existent history file, importing bash history...");
         try {
@@ -155,6 +168,10 @@ public class Terminal extends Module {
         }
     }
 
+    /**
+     * Writes the commandHistory list to the ~/.ezcli_history file. If this file does not exist, it will
+     * be created.
+     */
     private void writeCommandsToFile() {
         File historyFile = new File(Ezcli.USER_HOME_DIR + ".ezcli_history");
 
@@ -200,7 +217,7 @@ public class Terminal extends Module {
      * Changes the terminals directory, since the system does not interpret chdir commands.
      * Attempts to emulate the "cd" command.
      *
-     * @param command chdir command to parse
+     * @param command cd command to parse
      */
     public void changeDir(String command) {
         String[] chdirSplit = command.split(" ");
@@ -247,7 +264,7 @@ public class Terminal extends Module {
                 Ezcli.currDir = f.getAbsolutePath() + "/";
                 Ezcli.prompt = Ezcli.currDir + " >> ";
             } else {
-                Ezcli.ezcliOutput.println("Please enter a valid directory to change to.", "info");
+                Ezcli.ezcliOutput.println("Please enter a valid directory to change to", "info");
             }
         }
     }

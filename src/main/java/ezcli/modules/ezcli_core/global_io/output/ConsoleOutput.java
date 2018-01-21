@@ -1,7 +1,9 @@
 package ezcli.modules.ezcli_core.global_io.output;
 
-import ezcli.modules.ezcli_core.Ezcli;
-
+/**
+ * Standard output for ezcli, passes all output on to by displayed by
+ * System.out.
+ */
 public class ConsoleOutput implements Output {
     @Override
     public void print(char c, String type) {

@@ -1,17 +1,19 @@
 package ezcli.modules.ezcli_core.terminal;
 
 import ezcli.modules.ezcli_core.Ezcli;
-import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
-import ezcli.modules.ezcli_core.util.Util;
+import ezcli.modules.ezcli_core.global_io.handlers.ArrowKeyHandler;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 
 /**
  * Processes arrow keys for Terminal module.
  *
  * @see Terminal
+ * @see TermInputProcessor
  */
 public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
+    // Input processor owning this class
     private TermInputProcessor inputProcessor;
 
     // Position on prevCommands list (used to iterate through it)
@@ -48,11 +50,11 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
     private void setRArrowBehaviour() {
         rArrEvent = () -> {
             if (inputProcessor.getCursorPos() < inputProcessor.getCommand().length()) {
-                Util.clearLine(inputProcessor.getCommand(), true);
+                InputHandler.clearLine(inputProcessor.getCommand(), true);
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
                 Ezcli.ezcliOutput.print(inputProcessor.getCommand(), "command");
                 inputProcessor.increaseCursorPos();
-//            inputProcessor.moveToCursorPos();
+                inputProcessor.moveToCursorPos();
             }
         };
     }
@@ -73,7 +75,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
     /**
      * Iterates through the prevCommands list. Emulates Unix terminal behaviour when using
-     * vertical arrow keys.
+     * vertical arrow keys in the terminal.
      *
      * @param ak Arrow key to process
      */
@@ -90,7 +92,7 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
             // Move through the list towards first typed command
 
             lastArrowPress = ak;
-            Util.clearLine(inputProcessor.getCommand(), true);
+            InputHandler.clearLine(inputProcessor.getCommand(), true);
 
             if (commandListPosition > inputProcessor.commandHistory.size())
                 commandListPosition = inputProcessor.commandHistory.size();
@@ -104,14 +106,14 @@ public class TermArrowKeyProcessor extends ArrowKeyHandler {
 
             if (commandListPosition < cmdHistorySize) {
                 // Move through list towards last typed element
-                Util.clearLine(inputProcessor.getCommand(), true);
+                InputHandler.clearLine(inputProcessor.getCommand(), true);
 
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
                 Ezcli.ezcliOutput.print(inputProcessor.commandHistory.get(++commandListPosition), "info");
                 inputProcessor.setCommand(inputProcessor.commandHistory.get(commandListPosition));
             } else if (!inputProcessor.getCommand().equals(currCommand)) {
                 // Print command that was stored before iteration through list began
-                Util.clearLine(inputProcessor.getCommand(), true);
+                InputHandler.clearLine(inputProcessor.getCommand(), true);
                 commandListPosition++;
 
                 Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
