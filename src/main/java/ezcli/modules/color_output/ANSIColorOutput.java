@@ -8,14 +8,16 @@ import java.util.HashMap;
 
 public class ANSIColorOutput extends Module implements Output {
 
+    // Hardcoded values used by default
     public final static String DEFAULT_COLOR = (char)27 + "[0m";
     public final static String PROMPT_COLOR = (char)27 + "[38;5;95m";
     public final static String CMD_COLOR = (char)27 + "[38;5;117m";
     public final static String CMD_SUGGESTION_COLOR = (char) 27 + "[38;5;100m";
 
-    // For adding values to the hashmap, ideally do it inside the static body below to prevent coupling issues
+    // Pairs key words to a color, for output in the methods below
     public static HashMap<String, String> textTypes = new HashMap<>();
 
+    // For adding values to the hashmap, ideally do it inside the static body below to prevent coupling issues
     static {
         textTypes.put("prompt", PROMPT_COLOR);
         textTypes.put("command", CMD_COLOR);
@@ -30,10 +32,22 @@ public class ANSIColorOutput extends Module implements Output {
             Ezcli.ezcliOutput = this;
     }
 
+    /**
+     * Used to pair a key word with an ANSI color code, for use in outputting using this class.
+     * Ideally any color code should be added directly in the static initializer of the class,
+     * and not through use of this method.
+     */
+    @Deprecated
     public static void addTextType(String type, String color) {
         textTypes.put(type, color);
     }
 
+    /**
+     * Returns the ANSI code paired to the key word 'type'
+     *
+     * @param type String previously paired to a ANSI color code
+     * @return ANSI color code paired to key word 'type'
+     */
     public static String getANSI(String type) {
         return textTypes.get(type);
     }
@@ -124,8 +138,8 @@ public class ANSIColorOutput extends Module implements Output {
     }
 
     @Override
-    public void run() {}
+    public void run() {/* Nothing to do */}
 
     @Override
-    public void tour() {}
+    public void tour() {/* Nothing to do */}
 }

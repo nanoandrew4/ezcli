@@ -6,24 +6,23 @@ import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.modularity.Module;
 
 /**
- * Interactive module. Entry point for program, and module used to reach all others.
- * When adding a new module, simply add a case clause in the switch inside the parse method
- * which points at the modules run method.
+ * Interactive module. Entry point for program, and module used to reach all proper modules, in other words,
+ * the ones which call the super class init(Module, String) method.
+ * <p>
+ * For more information on how to add your module to the program, see the Module class.
+ *
+ * @see Module
  */
 public class Interactive extends Module {
 
     // Input processor for this module
-    private MainInputProcessor inputProcessor;
+    public MainInputProcessor inputProcessor;
 
     private boolean exit;
 
     public Interactive() {
         super("Interactive");
         inputProcessor = new MainInputProcessor(this);
-    }
-
-    protected MainInputProcessor getInputProcessor() {
-        return inputProcessor;
     }
 
     public void run() {
@@ -37,6 +36,7 @@ public class Interactive extends Module {
     public void parse(String command) {
         this.currentlyActive = true;
         Ezcli.ezcliOutput.println();
+        Module m = null;
 
         switch (command) {
             case "h":
@@ -50,13 +50,10 @@ public class Interactive extends Module {
                 tour();
                 break;
             default: // Pass to hashmap in Module
-                Module m = Module.moduleMap.get(command);
-                if (m == null) {
+                m = Module.moduleMap.get(command);
+                if (m == null)
                     Ezcli.ezcliOutput.println("Module not found", "info");
-                    inputProcessor.setCommand("");
-                    Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
-                    return;
-                } else {
+                else {
                     this.currentlyActive = false;
                     m.run();
                     this.currentlyActive = true;
@@ -64,17 +61,22 @@ public class Interactive extends Module {
         }
 
         inputProcessor.setCommand("");
-        if (!"h".equals(command))
+        if (!"h".equals(command) && m != null)
             Ezcli.ezcliOutput.println("Back in interactive module", "info");
         Ezcli.ezcliOutput.print(Ezcli.prompt, "prompt");
     }
 
     private void help() {
         Ezcli.ezcliOutput.println("ezcli version: " + Ezcli.VERSION + "\n", "info");
-        Ezcli.ezcliOutput.println("Enter \"t\" to enter terminal mode", "info");
         Ezcli.ezcliOutput.println("Enter \"h\" to display this menu", "info");
         Ezcli.ezcliOutput.println("Enter \"o\" to get a guided tour of the program", "info");
         Ezcli.ezcliOutput.println("Enter \"b\" to exit the program", "info");
+        Ezcli.ezcliOutput.println("List of modules: ", "info");
+
+        Object[] keyMaps = Module.moduleMap.keySet().toArray();
+        Object[] modules = Module.moduleMap.values().toArray();
+        for (int i = 0; i < Module.moduleMap.size(); i++)
+            System.out.println("Module \"" + modules[i].toString() + "\" mapped to key \"" + keyMaps[i] + "\"");
     }
 
     @Override

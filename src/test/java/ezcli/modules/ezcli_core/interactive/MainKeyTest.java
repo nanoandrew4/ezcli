@@ -1,6 +1,7 @@
 package ezcli.modules.ezcli_core.interactive;
 
 import ezcli.modules.ezcli_core.Ezcli;
+import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,13 +22,14 @@ public class MainKeyTest {
         }));
         else
             System.setOut(Ezcli.stdOutput);
+        InputHandler.minWaitTime = -1;
     }
 
     @Test
     public void testInput() {
         Ezcli.setOS();
         Interactive interactive = new Interactive();
-        MainInputProcessor inputProcessor = interactive.getInputProcessor();
+        MainInputProcessor inputProcessor = interactive.inputProcessor;
         MainKeyProcessor keyProcessor = inputProcessor.getKeyProcessor();
 
         keyProcessor.process('a');

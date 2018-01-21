@@ -1,7 +1,11 @@
 package ezcli.modules.ezcli_core.global_io.handlers;
 
-import java.io.IOException;
+import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.input.Input;
+import ezcli.modules.ezcli_core.modularity.EventState;
+import ezcli.modules.ezcli_core.modularity.Module;
+
+import java.io.IOException;
 
 /**
  * Abstract class specifying how input should be handled.
@@ -9,6 +13,7 @@ import ezcli.modules.ezcli_core.global_io.input.Input;
  */
 public abstract class InputHandler {
 
+    // Key handlers for module
     protected ArrowKeyHandler arrowKeyHandler;
     protected KeyHandler keyHandler;
 
@@ -30,13 +35,12 @@ public abstract class InputHandler {
 
     /**
      * Set KeyHandler and ArrowKeyHandler for module.
-     * <br></br>
      * <p>
-     * Classes extending KeyHandler and ArrowKeyHandler should be written, and passed through this function,
+     * Classes extending KeyHandler and ArrowKeyHandler should passed as parameters,
      * so they can be later used to process input for this module.
      *
-     * @param kh key handler to use
-     * @param akh arrow key handler to use
+     * @param kh  Key handler to use
+     * @param akh Arrow key handler to use
      */
     public InputHandler(KeyHandler kh, ArrowKeyHandler akh) {
         this.arrowKeyHandler = akh;
@@ -51,6 +55,7 @@ public abstract class InputHandler {
 
     /**
      * Returns key char value of last key pressed.
+     *
      * @return Char value of key pressed
      */
     public static char getKey() {
@@ -61,5 +66,26 @@ public abstract class InputHandler {
         }
 
         return 0;
+    }
+
+    /**
+     * Clears a line in the console of size line.length().
+     *
+     * @param line        line to be cleared
+     * @param clearPrompt choose to clear prompt along with line (only use true if prompt exists)
+     */
+    public static void clearLine(String line, boolean clearPrompt) {
+        Module.processEvent("clearln", EventState.PRE_EVENT);
+
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
+            System.out.print("\b");
+
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
+            System.out.print(" ");
+
+        for (int i = 0; i < line.length() + (clearPrompt ? Ezcli.prompt.length() : 0); i++)
+            System.out.print("\b");
+
+        Module.processEvent("clearln", EventState.POST_EVENT);
     }
 }

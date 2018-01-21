@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=lambdaExpressions)](https://travis-ci.org/nanoandrew4/ezcli)
+[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=master)](https://travis-ci.org/nanoandrew4/ezcli)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7445f61eb56f4cd9bfcf41cbeab9aae9)](https://www.codacy.com/app/nanoandrew4/ezcli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nanoandrew4/ezcli&amp;utm_campaign=Badge_Grade)
 
 # ezcli
@@ -14,7 +14,7 @@ To get an idea of where the project is at, check out the [roadmap](docs/ROADMAP.
 
 Want to see where the project is currently at? Click the image below to see the latest demo!
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
+[![Demo](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
 
 ## Why use ezcli
 
