@@ -5,7 +5,6 @@ import ezcli.modules.ezcli_core.global_io.Command;
 import ezcli.modules.ezcli_core.global_io.Keys;
 import ezcli.modules.ezcli_core.global_io.handlers.events.CharEvent;
 import ezcli.modules.ezcli_core.global_io.handlers.events.Event;
-import ezcli.modules.ezcli_core.global_io.input.Input;
 import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;
 
@@ -20,19 +19,22 @@ public abstract class KeyHandler {
     // Stores all key integer values and maps them to the values in Keys enum
     private static HashMap<Integer, Keys> keymap = new HashMap<>();
 
-    public static HashMap<Integer, Keys> getKeymap() {
-        return keymap;
-    }
-
     private long lastPress = System.currentTimeMillis();
 
+    // Events to implemented by each class that inherits KeyHandler
     public Event tabEvent;
     public Event newLineEvent;
     public CharEvent charEvent;
     public Event backspaceEvent;
 
+    // Returns a map pairing key values stored as ints to values in Keys enum
+    public static HashMap<Integer, Keys> getKeymap() {
+        return keymap;
+    }
+
     /**
-     * Processes all input by relegating it to abstract methods.
+     * Processes all input by relegating it to the appropriate lambda expression
+     * and triggering events so that other Modules can react appropriately.
      *
      * @param input ASCII key code representing key pressed
      */
@@ -78,7 +80,7 @@ public abstract class KeyHandler {
     }
 
     /**
-     * Loads all integer values of keys to HashMap.
+     * Loads all integer values of keys to keymap.
      */
     public static void initKeysMap() {
         if (Ezcli.IS_WIN) {
@@ -93,9 +95,9 @@ public abstract class KeyHandler {
     }
 
     /**
-     * Returns associated key value from HashMap.
+     * Returns associated key value from keymap.
      *
-     * @param i integer value of key pressed
+     * @param i Integer value of key pressed
      */
     protected static Keys getKey(int i) {
         return keymap.get(i);

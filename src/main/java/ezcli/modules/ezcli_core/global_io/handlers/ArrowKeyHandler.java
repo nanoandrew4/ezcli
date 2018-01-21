@@ -7,7 +7,9 @@ import ezcli.modules.ezcli_core.modularity.Module;
 
 /**
  * Abstract class specifying how arrow keys should be handled.
- * Each module must run its own implementation of this class.
+ * Each module must implement its own set of Events.
+ *
+ * @see Event
  */
 public abstract class ArrowKeyHandler {
 
@@ -16,6 +18,7 @@ public abstract class ArrowKeyHandler {
 
     private long lastPress = System.currentTimeMillis();
 
+    // Events to be implemented by any class that inherits ArrowKeyHandler
     public Event lArrEvent;
     public Event rArrEvent;
     public Event uArrEvent;
@@ -24,8 +27,8 @@ public abstract class ArrowKeyHandler {
     /**
      * Checks if last input was arrow key (only on Windows).
      *
-     * @param i integer value of last key press
-     * @return arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
+     * @param i Integer value of last key press
+     * @return Arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
      */
     public static ArrowKeys arrowKeyCheckWindows(int i) {
         switch (i) {
@@ -44,17 +47,15 @@ public abstract class ArrowKeyHandler {
 
     /**
      * Checks if input was arrow key (only on Unix).
-     * <br></br><br></br>
      * <p>
      * When Unix processes arrow keys, they are read as a sequence of 3 numbers, for example 27 91 65
-     * which means Process is called once for each of the three numbers. The first number will be processed normally,
-     * which can not be prevented, but the other two run 1ms after the previous one, which means those can be filtered out.
-     * Even when holding down a key, the interval between each detection is 30ms +-1ms, which means this approach
-     * causes no problems at all. If char 27 is ignored, then the program will continue to run normally, at the cost of
-     * the escape character in Unix systems.
+     * which means that the implementation of InputHandler owning the implementation of ArrowKeyHandler
+     * must read 3 values, only blocking for the first. That way, if an arrow key is pressed, all three values are
+     * caught, and if not, no input is lost, since the time for catching in non-blocking mode is ~1ms, and keyboard
+     * presses are only detected every ~30ms interval.
      *
-     * @param i integer value of last key press
-     * @return arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
+     * @param i Integer value of last key press
+     * @return Arrow key pressed (or ArrowKeys.NONE if no arrow key was pressed)
      */
     public static ArrowKeys arrowKeyCheckUnix(int... i) {
 
@@ -77,14 +78,14 @@ public abstract class ArrowKeyHandler {
     }
 
     /**
-     * Process an arrow key press. If arrow key handling is simple enough,
-     * can be used by itself to contain all the handling code.
+     * Process an arrow key press.
+     * <p>
+     * Handles sending event status to all Modules, so they can react appropriately, as well
+     * relegating to the appropriate lambda expression.
      *
      * @param ak Arrow key to process
-     * @return Arrow key that was processed
      */
-    public ArrowKeys process(ArrowKeys ak) {
-
+    public void process(ArrowKeys ak) {
         if (ak != ArrowKeys.NONE && System.currentTimeMillis() - lastPress > InputHandler.minWaitTime) {
             lastPress = System.currentTimeMillis();
             switch (ak) {
@@ -108,12 +109,8 @@ public abstract class ArrowKeyHandler {
                     rArrEvent.process();
                     Module.processEvent("rarrow", EventState.POST_EVENT);
                     break;
-                default:
-                    return ak; // Should never run
             }
         }
-
-        return ak;
     }
 }
 

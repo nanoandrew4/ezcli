@@ -1,5 +1,12 @@
 package ezcli.modules.ezcli_core.global_io.output;
 
+/**
+ * Interface for program output. Allows anyone to write their own
+ * output system, and put it to use easily by assigning the implementation
+ * to Ezcli.ezcliOutput, which is the standard output object for the whole program.
+ *
+ * @see ezcli.modules.ezcli_core.Ezcli
+ */
 public interface Output {
 
     void print(char c, String type);

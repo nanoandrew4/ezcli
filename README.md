@@ -14,7 +14,7 @@ To get an idea of where the project is at, check out the [roadmap](docs/ROADMAP.
 
 Want to see where the project is currently at? Click the image below to see the latest demo!
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
+[![Demo](http://img.youtube.com/vi/Je8K4uYT0R8/0.jpg)](https://www.youtube.com/watch?v=Je8K4uYT0R8)
 
 ## Why use ezcli
 
