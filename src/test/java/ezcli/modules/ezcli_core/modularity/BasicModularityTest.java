@@ -4,7 +4,7 @@ import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.ArrowKeys;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
 import ezcli.modules.ezcli_core.terminal.*;
-import ezcli.modules.testmodules.*;
+import ezcli.modules.samples.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

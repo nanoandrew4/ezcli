@@ -1,4 +1,4 @@
-package ezcli.modules.testmodules;
+package ezcli.modules.samples;
 
 import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;

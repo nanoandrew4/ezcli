@@ -16,7 +16,7 @@ import java.io.PrintStream;
  */
 public class Ezcli {
 
-    public static final String VERSION = "0.3.0";
+    public static final String VERSION = "0.4.0-WIP";
 
     public static String currDir = System.getProperty("user.dir") + "/";
     public final static String USER_HOME_DIR = System.getProperty("user.home") + "/";
