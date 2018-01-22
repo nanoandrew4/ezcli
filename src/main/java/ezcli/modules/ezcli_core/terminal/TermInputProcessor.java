@@ -54,11 +54,11 @@ public class TermInputProcessor extends InputHandler {
         this.command = command;
     }
 
-    protected void increaseCursorPos() {
+    public void increaseCursorPos() {
         cursorPos++;
     }
 
-    protected void decreaseCursorPos() {
+    public void decreaseCursorPos() {
         cursorPos--;
     }
 

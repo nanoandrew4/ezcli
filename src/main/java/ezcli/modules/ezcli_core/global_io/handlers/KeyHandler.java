@@ -72,9 +72,9 @@ public abstract class KeyHandler {
     public static Command signalCatch(int input) {
         if (input == 3) // Ctrl+C
             return Command.CTRLC;
-        if (input == 26) { // Ctrl+Z -> force quit program (not really yet...)
+        if (input == 26) { // Ctrl+Z -> force quit program
             System.out.println();
-            return Command.CTRLZ;
+            System.exit(122);
         }
         return Command.NONE;
     }

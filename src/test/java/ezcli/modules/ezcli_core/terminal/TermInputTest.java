@@ -182,8 +182,6 @@ public class TermInputTest {
     @Test
     public void combinedTest() {
 
-        System.out.println("entered");
-
         Terminal terminal = new Terminal();
         TermInputProcessor inputProcessor = terminal.inputProcessor;
 
@@ -265,7 +263,8 @@ public class TermInputTest {
         keyProcessor.process(-1);
 
         for (int i = 0; i < 32; i++)
-            keyProcessor.process(i);
+            if (i != 26) // (char) 26 is Ctrl+Z which calls System.exit() and causes tests to crash
+                keyProcessor.process(i);
 
         assertEquals("", inputProcessor.getCommand());
         StringBuilder expectedCommand = new StringBuilder();
@@ -282,8 +281,10 @@ public class TermInputTest {
         assertEquals("", inputProcessor.getCommand());
         assertEquals(0, inputProcessor.commandHistory.size());
 
-        for (int i = 0; i < 1000; i++)
-            keyProcessor.process(i % 73 + 48);
+        for (int i = 0; i < 1000; i++) {
+            int t = i % 73 + 48;
+            keyProcessor.process(t == 26 ? t + 1 : t); // To avoid crashing due to Ctrl+Z being emulated
+        }
 
         assertFalse("".equals(inputProcessor.getCommand()));
         keyProcessor.newLineEvent.process();
