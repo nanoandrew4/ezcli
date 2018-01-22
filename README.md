@@ -1,0 +1,2 @@
+# ezcli
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7445f61eb56f4cd9bfcf41cbeab9aae9)](https://www.codacy.com/app/nanoandrew4/ezcli?utm_source=github.com&utm_medium=referral&utm_content=nanoandrew4/ezcli&utm_campaign=badger)
