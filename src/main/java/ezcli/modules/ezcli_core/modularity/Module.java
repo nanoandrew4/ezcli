@@ -113,6 +113,7 @@ public abstract class Module {
      * @param whenToRunEach See EventStates. Determines if method will run before or after the specified event
      */
     protected void init(Module module, String[] binds, String[] methodNames, EventState[] whenToRunEach) {
+        modules.put(module.moduleName, module);
 
         if (methodNames.length != binds.length) {
             System.err.println("Methods and ReactiveMethod arrays have unequal size in module \""

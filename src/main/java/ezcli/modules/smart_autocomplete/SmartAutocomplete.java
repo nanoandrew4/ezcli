@@ -31,6 +31,7 @@ public class SmartAutocomplete extends Module {
     public SmartAutocomplete() {
         super("SmartAutocomplete");
         terminal = (Terminal) modules.get("Terminal");
+        Module.modules.put(moduleName, this);
 
         // Overrides events in KeyHandler and ArrowKeyHandler
         overrideCharEvent();
@@ -119,11 +120,15 @@ public class SmartAutocomplete extends Module {
             Ezcli.ezcliOutput.print("\b", "command");
     }
 
+    public MultiCmdComplete getMcc() {
+        return mcc;
+    }
+
     /**
      * Initializes freqCommands list, generalizes the command history to improve smart complete results
      * and sorts list from most used to least used.
      */
-    private void initModule() {
+    public void initModule() {
         long start = System.currentTimeMillis();
 
         List<String> commands = terminal.inputProcessor.commandHistory;
@@ -135,6 +140,8 @@ public class SmartAutocomplete extends Module {
             store(s);
 
         sort(0, freqCommands.size() - 1, freqCommands);
+
+        mcc = new MultiCmdComplete(commands);
 
         initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
         System.out.println("Init time for SmartAutocomplete was: " + initTime);
@@ -155,7 +162,7 @@ public class SmartAutocomplete extends Module {
      * @param command Command to suggest a guess for
      * @return Best guess at what the user will enter based command history
      */
-    private String getMatchingCommand(String command) {
+    public String getMatchingCommand(String command) {
         if (command.length() < 2)
             return "";
 

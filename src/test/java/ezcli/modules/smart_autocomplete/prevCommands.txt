@@ -1,0 +1,86 @@
+exit
+sudo wifi-menu
+startx
+sudo shutdown -P now
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar 
+java -jar IdeaProjects/JTerm/target/jterm-0.6.1-jar-with-dependencies.jar 
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+dir ls && dir cd ..
+dir cd .. && dir ls && dir cd ..
+ls
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+cp -R IdeaProjects/JTerm/src/ GitHub/Projects/JTerm/
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+clear
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless
+java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar
+exit
+cd JTerm/
+cd GitHub/Projects/
+cd JTerm/
+ls
+mvn test
+mvn test
+mvn test
+mvn test
+mvn test
+mvn test
+mvn package
+mvn package
+mvn test
+cp -R IdeaProjects/ezcli/src/ GitHub/Projects/ezcli/
+./ezcli
+./ezcli
+cd GitHub/Projects/ezcli/
+git status
+git add -A
+git status
+git commit -m "This is just for testing"
+git stash
+git stash drop
+git add -A
+git status
+git commit -m "More testing"
+git push origin smart_autocomplete
+mvn compile
+cd /
+cd IdeaProjects/ezcli/
+mvn test
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+mvn test
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+echo "Test"
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+help
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar
+mvn package
+java -jar target/ezcli-0.3.0-jar-with-dependencies.jar

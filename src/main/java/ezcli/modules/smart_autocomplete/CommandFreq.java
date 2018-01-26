@@ -75,7 +75,7 @@ public class CommandFreq {
     protected String getCommandSequence() {
         StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < commandSeq.size(); i++)
-            sb.append(commandSeq.get(i)).append((i < commandSeq.size() - 1) ? " && " : " ");
+            sb.append(commandSeq.get(i)).append((i < commandSeq.size() - 1) ? " && " : "");
 
         return sb.toString();
     }

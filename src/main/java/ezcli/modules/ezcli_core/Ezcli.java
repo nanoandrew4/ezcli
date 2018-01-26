@@ -30,8 +30,8 @@ public class Ezcli {
     public static boolean displayTestOutput = true;
     public static boolean displayTermTestOutput = false;
     public static boolean displayCoreTestOutput = false;
-    public static boolean displaySmartAutocompleteOutput = false;
-    public static boolean displayModularityTestOutput = true;
+    public static boolean displaySmartAutocompleteOutput = true;
+    public static boolean displayModularityTestOutput = false;
 
     // Copy of standard output stream so test classes can print if they need to
     public static PrintStream stdOutput = System.out;
