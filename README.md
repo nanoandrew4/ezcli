@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=master)](https://travis-ci.org/nanoandrew4/ezcli)
+[![Build Status](https://travis-ci.org/nanoandrew4/ezcli.svg?branch=smart_autocomplete)](https://travis-ci.org/nanoandrew4/ezcli)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7445f61eb56f4cd9bfcf41cbeab9aae9)](https://www.codacy.com/app/nanoandrew4/ezcli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nanoandrew4/ezcli&amp;utm_campaign=Badge_Grade)
 
 # ezcli

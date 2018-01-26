@@ -1,8 +1,5 @@
 package ezcli.modules.smart_autocomplete;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,21 +9,15 @@ public class MultiCmdComplete {
     private List<String> commandHistory;
 
     // List containing all command sequences
-    private ArrayList<CommandFreq> commandSequences = new ArrayList<>();
+    private ArrayList<CommandFreq> commandSequences;
 
     /**
      * Init class using command history file.
-     *
-     * @param pathToHistoryFile Path to command history file
      */
-    MultiCmdComplete(String pathToHistoryFile) {
+    MultiCmdComplete(List<String> commandHistory) {
 
-        try {
-            commandHistory = Files.readAllLines(Paths.get(pathToHistoryFile));
-        } catch (IOException e) {
-            System.out.println("Error loading history file to MultiCmdCommand module");
-            return;
-        }
+        this.commandHistory = commandHistory;
+        commandSequences = new ArrayList<>();
 
         populateList(2);
 
@@ -54,9 +45,10 @@ public class MultiCmdComplete {
         if (elementsPerSeq == 2) {
             // Load all pairs of commands to list
             for (int i = 1; i < commandHistory.size(); i++) {
-                this.commandSequences.add(
-                        new CommandFreq(i - 1, commandHistory.get(i - 1), commandHistory.get(i))
-                );
+                if (!commandHistory.get(i - 1).trim().equals(commandHistory.get(i).trim()))
+                    this.commandSequences.add(
+                            new CommandFreq(i - 1, commandHistory.get(i - 1), commandHistory.get(i).trim())
+                    );
             }
         } else {
             /*
@@ -69,7 +61,8 @@ public class MultiCmdComplete {
                     mcfNew.setFreq(1);
                     if (mcfNew.getStartIndex() + elementsPerSeq <= commandHistory.size())
                         for (int i = mcfNew.getStartIndex(); i < mcfNew.getStartIndex() + elementsPerSeq; i++)
-                            mcfNew.getCommandSeq().add(commandHistory.get(i));
+                            if (!mcf.getCommandSeq().contains(commandHistory.get(i).trim()))
+                                mcfNew.getCommandSeq().add(commandHistory.get(i).trim());
                     this.commandSequences.add(mcfNew);
                 }
             }
@@ -114,11 +107,15 @@ public class MultiCmdComplete {
                 commandSequences.remove(mcf);
                 listSize--;
             }
-            else
+            else {
                 mcf.setFreq(freq);
+            }
         }
 
         this.commandSequences = new ArrayList<>(commandSequences);
+
+        for (CommandFreq cf : this.commandSequences)
+            System.out.println(cf.getCommandSequence() + ": " + cf.getFreq());
 
         return INIT_SIZE != commandSequences.size();
     }
