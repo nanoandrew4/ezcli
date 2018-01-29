@@ -48,6 +48,8 @@ public class SmartAutocompleteTest {
         for (CommandFreq cf : smartAutocomplete.getMcc().getCommandSequences())
             System.out.println(cf.getCommandSequence());
 
+        System.out.println("\n\n");
+
         assertEquals("n package && java -jar target/ezcli-0.3.0-jar-with-dependencies.jar",
                 smartAutocomplete.getMatchingCommand("mv"));
         assertEquals("JTerm/", smartAutocomplete.getMatchingCommand("cd "));

@@ -16,6 +16,8 @@ public class CommandFreq {
     // Frequency of this command or sequence of commands in commandHistory list
     private int freq = -1;
 
+    private boolean recurring = false;
+
     CommandFreq(String command) {
         this.command = command;
         freq = 1;
@@ -48,6 +50,14 @@ public class CommandFreq {
 
     protected LinkedList<String> getCommandSeq() {
         return commandSeq;
+    }
+
+    public void setRecurring() {
+        recurring = true;
+    }
+
+    public boolean isRecurring() {
+        return recurring;
     }
 
     /**
