@@ -39,7 +39,6 @@ public class MultiCmdComplete {
      *
      * @param elementsPerSeq Elements per sequence (e.g. command pair, etc...)
      */
-
     private void populateList(int elementsPerSeq) {
         ArrayList<CommandFreq> commandSequences = new ArrayList<>(this.commandSequences);
         if (elementsPerSeq == 2) {
@@ -97,25 +96,27 @@ public class MultiCmdComplete {
             CommandFreq mcf = commandSequences.get(i);
 
             // Skip sequences that do not contain the same number of strings
-            if (mcf.getCommandSeq().size() != elementsPerSeq)
+            if (mcf.getCommandSeq().size() != elementsPerSeq && !mcf.isRecurring()) {
+                commandSequences.remove(mcf);
+                listSize--;
+                continue;
+            } else if (mcf.getCommandSeq().size() != elementsPerSeq)
                 continue;
 
             freq = removeDuplicatesOf(mcf, commandSequences, listSize);
             listSize = commandSequences.size();
 
-            if (freq < 5) {
-                commandSequences.remove(mcf);
-                listSize--;
+            if (freq > 4) {
+                mcf.setFreq(freq);
+                mcf.setRecurring();
             }
             else {
-                mcf.setFreq(freq);
+                commandSequences.remove(mcf);
+                listSize--;
             }
         }
 
         this.commandSequences = new ArrayList<>(commandSequences);
-
-        for (CommandFreq cf : this.commandSequences)
-            System.out.println(cf.getCommandSequence() + ": " + cf.getFreq());
 
         return INIT_SIZE != commandSequences.size();
     }
