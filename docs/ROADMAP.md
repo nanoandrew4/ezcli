@@ -13,7 +13,6 @@ Completion of any top level element on this list warrants a new minor release. F
 
 ---
 
- 
 *Goals for v1.0.0 (in no particular order):*
 * [x] Key parser.
   * [x] Perform specific actions depending on program module currently active (file explorer, text edit, reuse, etc)
@@ -21,20 +20,15 @@ Completion of any top level element on this list warrants a new minor release. F
   * [x] Allow user to return to "interactive" mode for continued use of the program.
   * [x] Print help for each module that is developed.
 * [x] Modular framework for all modules to operate under.
+* [ ] Startup logger for modules, indicating status at vrious stages and how they modify the main program. 
 * [ ] Text based file explorer.
   * [ ] Rename, create and delete files.
   * [ ] Open files with default program assigned by OS, or with an included module such as the text editor.
   * [ ] Execute files with the press of a single button.
   * [ ] Iterate through all files and folders using arrow keys for easy access.
-* [ ] Text editor.
-  * [ ] Edit or create text files.
-  * [ ] Find and highlight words.
-* [ ] Reuse most accessed directories.
-  * [ ] Print list of x most accessed directories, and allow user to move through and select one.
-  * [ ] Print error at startup if override is invalid directory.
-* [ ] Reuse most input command(s).
-  * [ ] Track frequency and patterns of commands run while in command mode.
-  * [ ] Generate most frequent commands for reuse.
+* [x] Reuse most input command(s).
+  * [x] Track frequency and patterns of commands run while in command mode.
+  * [x] Generate most frequent commands for reuse.
 * [ ] Configuration files for customizing program functions.
   * [ ] Generate default file if no configuration is detected.
   * [ ] Implement most accessed directories overriding(to make shortcuts to user specified directories).
