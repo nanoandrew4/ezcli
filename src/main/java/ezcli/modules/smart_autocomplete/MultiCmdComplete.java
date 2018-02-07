@@ -9,7 +9,7 @@ public class MultiCmdComplete {
     private List<String> commandHistory;
 
     // List containing all command sequences
-    private ArrayList<CommandFreq> commandSequences;
+    private ArrayList<CommandSeq> commandSequences;
 
     /**
      * Init class using command history file.
@@ -24,7 +24,7 @@ public class MultiCmdComplete {
         SmartAutocomplete.sort(0, commandSequences.size() - 1, commandSequences);
     }
 
-    public ArrayList<CommandFreq> getCommandSequences() {
+    public ArrayList<CommandSeq> getCommandSequences() {
         return commandSequences;
     }
 
@@ -40,13 +40,13 @@ public class MultiCmdComplete {
      * @param elementsPerSeq Elements per sequence (e.g. command pair, etc...)
      */
     private void populateList(int elementsPerSeq) {
-        ArrayList<CommandFreq> commandSequences = new ArrayList<>(this.commandSequences);
+        ArrayList<CommandSeq> commandSequences = new ArrayList<>(this.commandSequences);
         if (elementsPerSeq == 2) {
             // Load all pairs of commands to list
             for (int i = 1; i < commandHistory.size(); i++) {
                 if (!commandHistory.get(i - 1).trim().equals(commandHistory.get(i).trim()))
                     this.commandSequences.add(
-                            new CommandFreq(i - 1, commandHistory.get(i - 1), commandHistory.get(i).trim())
+                            new CommandSeq(i - 1, commandHistory.get(i - 1), commandHistory.get(i).trim())
                     );
             }
         } else {
@@ -54,15 +54,29 @@ public class MultiCmdComplete {
              * For all command sequences not deleted in removeNonDuplicates call, increment
              * sequence by one and attempt to find sequences that match it.
              */
-            for (CommandFreq mcf : commandSequences) {
-                if (mcf.getCommandSeq().size() + 1 == elementsPerSeq) {
-                    CommandFreq mcfNew = new CommandFreq(mcf.getStartIndex());
-                    mcfNew.setFreq(1);
-                    if (mcfNew.getStartIndex() + elementsPerSeq <= commandHistory.size())
-                        for (int i = mcfNew.getStartIndex(); i < mcfNew.getStartIndex() + elementsPerSeq; i++)
-                            if (!mcf.getCommandSeq().contains(commandHistory.get(i).trim()))
-                                mcfNew.getCommandSeq().add(commandHistory.get(i).trim());
-                    this.commandSequences.add(mcfNew);
+            boolean match;
+            String[] cmd;
+
+            for (CommandSeq mcf : commandSequences) {
+                cmd = mcf.getCommand().split(" && ");
+                if (mcf.size() + 1 == elementsPerSeq) {
+                    for (int cmdHisIndex = 0; cmdHisIndex < commandHistory.size(); cmdHisIndex++) {
+                        if (cmdHisIndex + mcf.size() >= commandHistory.size())
+                            continue;
+
+                        match = true;
+                        for (int a = 0; a < mcf.size(); a++) {
+                            if (!cmd[a].trim().equals(commandHistory.get(cmdHisIndex + a).trim()))
+                                match = false;
+                        }
+
+                        if (match) {
+                            CommandSeq mcfNew = new CommandSeq(cmdHisIndex);
+                            for (int i = cmdHisIndex; i < cmdHisIndex + elementsPerSeq; i++)
+                                mcfNew.add(commandHistory.get(i));
+                            this.commandSequences.add(mcfNew);
+                        }
+                    }
                 }
             }
         }
@@ -80,7 +94,7 @@ public class MultiCmdComplete {
      */
     private boolean removeNonDuplicates(int elementsPerSeq) {
 
-        ArrayList<CommandFreq> commandSequences = new ArrayList<>(this.commandSequences);
+        ArrayList<CommandSeq> commandSequences = new ArrayList<>(this.commandSequences);
 
         // Initial size of commandSequences list, used to determine if any objects were removed at the end
         final int INIT_SIZE = commandSequences.size();
@@ -89,18 +103,18 @@ public class MultiCmdComplete {
         int listSize = commandSequences.size();
 
         // Frequency of a sequence of strings in commandSequences
-        int freq = -2;
+        int freq = 0;
 
         // Only increase counter if no object was removed, otherwise skipping one each time
         for (int i = 0; i < listSize; i += (freq == 1 ? 0 : 1)) {
-            CommandFreq mcf = commandSequences.get(i);
+            CommandSeq mcf = commandSequences.get(i);
 
             // Skip sequences that do not contain the same number of strings
-            if (mcf.getCommandSeq().size() != elementsPerSeq && !mcf.isRecurring()) {
+            if (mcf.size() != elementsPerSeq && !mcf.isRecurring()) {
                 commandSequences.remove(mcf);
                 listSize--;
                 continue;
-            } else if (mcf.getCommandSeq().size() != elementsPerSeq)
+            } else if (mcf.size() != elementsPerSeq)
                 continue;
 
             freq = removeDuplicatesOf(mcf, commandSequences, listSize);
@@ -109,8 +123,7 @@ public class MultiCmdComplete {
             if (freq > 4) {
                 mcf.setFreq(freq);
                 mcf.setRecurring();
-            }
-            else {
+            } else {
                 commandSequences.remove(mcf);
                 listSize--;
             }
@@ -122,21 +135,21 @@ public class MultiCmdComplete {
     }
 
     /**
-     * Removes duplicates of a CommandFreq object, and keeps tabs on how many instances it has found.
+     * Removes duplicates of a CommandSeq object, and keeps tabs on how many instances it has found.
      *
-     * @param mcf CommandFreq object to remove duplicates of
-     * @param commandSequences List to remove CommandFreq objects from
-     * @param listSize Current size of commandSequences list
-     * @return Number of instances of CommandFreq command in commandSequences list
+     * @param mcf              CommandSeq object to remove duplicates of
+     * @param commandSequences List to remove CommandSeq objects from
+     * @param listSize         Current size of commandSequences list
+     * @return Number of instances of CommandSeq command in commandSequences list
      */
-    private int removeDuplicatesOf(CommandFreq mcf, ArrayList<CommandFreq> commandSequences, int listSize) {
+    private int removeDuplicatesOf(CommandSeq mcf, ArrayList<CommandSeq> commandSequences, int listSize) {
         boolean deletedLast;
 
         int freq = 1;
 
         // Only increase counter if no object was removed, otherwise skipping one each time
         for (int a = 0; a < listSize; a += (deletedLast ? 0 : 1)) {
-            CommandFreq mcf1 = commandSequences.get(a);
+            CommandSeq mcf1 = commandSequences.get(a);
 
             deletedLast = false;
 
