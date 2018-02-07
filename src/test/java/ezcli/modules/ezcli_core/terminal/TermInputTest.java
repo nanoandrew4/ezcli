@@ -194,12 +194,12 @@ public class TermInputTest {
 
         inputProcessor.getKeyProcessor().process('h'); 
         inputProcessor.getKeyProcessor().process('e'); 
-        inputProcessor.getKeyProcessor().process('l'); 
-        inputProcessor.getKeyProcessor().process('p'); 
+        inputProcessor.getKeyProcessor().process('p');
+        inputProcessor.getKeyProcessor().process('l');
         inputProcessor.getKeyProcessor().newLineEvent.process();  // simulate newline
 
         assertEquals(1, inputProcessor.commandHistory.size()); 
-        assertEquals("help", inputProcessor.commandHistory.get(0)); 
+        assertEquals("hepl", inputProcessor.commandHistory.get(0));
         assertEquals("", inputProcessor.getCommand()); 
 
         inputProcessor.getKeyProcessor().backspaceEvent.process(); // simulate backspace
@@ -223,9 +223,9 @@ public class TermInputTest {
         inputProcessor.getArrowKeyProcessor().lArrEvent.process();
         assertEquals("tess", inputProcessor.getCommand()); // no movement, so same as last time
         inputProcessor.getArrowKeyProcessor().uArrEvent.process();
-        assertEquals("help", inputProcessor.getCommand()); // moved up one, so second last input
+        assertEquals("hepl", inputProcessor.getCommand()); // moved up one, so second last input
         inputProcessor.getArrowKeyProcessor().uArrEvent.process();
-        assertEquals("help", inputProcessor.getCommand()); // moved up but at top of list, so same as before
+        assertEquals("hepl", inputProcessor.getCommand()); // moved up but at top of list, so same as before
         inputProcessor.getArrowKeyProcessor().dArrEvent.process();
         assertEquals("tess", inputProcessor.getCommand()); // moved down to last input
         inputProcessor.getArrowKeyProcessor().dArrEvent.process();
@@ -243,7 +243,7 @@ public class TermInputTest {
         assertEquals(3, inputProcessor.commandHistory.size());
         assertEquals("ts", inputProcessor.commandHistory.get(2));
         assertEquals("tess", inputProcessor.commandHistory.get(1));
-        assertEquals("help", inputProcessor.commandHistory.get(0));
+        assertEquals("hepl", inputProcessor.commandHistory.get(0));
     }
 
     /*

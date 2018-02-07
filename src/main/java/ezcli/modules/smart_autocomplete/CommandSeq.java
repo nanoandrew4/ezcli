@@ -3,9 +3,7 @@ package ezcli.modules.smart_autocomplete;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class CommandFreq {
-
-    private String command;
+public class CommandSeq {
 
     // Sequence of commands this class represents (only used by MultiCmdComplete class)
     private LinkedList<String> commandSeq;
@@ -18,18 +16,15 @@ public class CommandFreq {
 
     private boolean recurring = false;
 
-    CommandFreq(String command) {
-        this.command = command;
+    CommandSeq(String command) {
+        commandSeq = new LinkedList<>();
+        commandSeq.add(command);
         freq = 1;
     }
 
-    CommandFreq(int startIndex, String... commands) {
+    CommandSeq(int startIndex, String... commands) {
         commandSeq = new LinkedList<>(Arrays.asList(commands));
         this.startIndex = startIndex;
-    }
-
-    public String getCommand() {
-        return command;
     }
 
     protected void incrementFreq() {
@@ -48,8 +43,12 @@ public class CommandFreq {
         return startIndex;
     }
 
-    protected LinkedList<String> getCommandSeq() {
-        return commandSeq;
+    public void add(String cmd) {
+        commandSeq.add(cmd);
+    }
+
+    public int size() {
+        return commandSeq.size();
     }
 
     public void setRecurring() {
@@ -66,10 +65,10 @@ public class CommandFreq {
      * @param mcf MultiCmdFreq object to compare this object to
      * @return True if both objects represent the same sequence of strings
      */
-    protected boolean isSameAs(CommandFreq mcf) {
+    protected boolean isSameAs(CommandSeq mcf) {
         if (this.commandSeq.size() == mcf.commandSeq.size()) {
             for (int i = 0; i < this.commandSeq.size(); i++)
-                if (!this.commandSeq.get(i).equals(mcf.commandSeq.get(i)))
+                if (!this.commandSeq.get(i).trim().equals(mcf.commandSeq.get(i).trim()))
                     return false;
         } else
             return false;
@@ -82,7 +81,7 @@ public class CommandFreq {
      *
      * @return Sequence of strings represented by this object with double ampersands between each string
      */
-    protected String getCommandSequence() {
+    protected String getCommand() {
         StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < commandSeq.size(); i++)
             sb.append(commandSeq.get(i)).append((i < commandSeq.size() - 1) ? " && " : "");

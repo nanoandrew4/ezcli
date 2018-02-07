@@ -45,8 +45,8 @@ public class SmartAutocompleteTest {
 
         SmartAutocomplete smartAutocomplete = new SmartAutocomplete();
 
-        for (CommandFreq cf : smartAutocomplete.getMcc().getCommandSequences())
-            System.out.println(cf.getCommandSequence());
+        for (CommandSeq cf : smartAutocomplete.getMcc().getCommandSequences())
+            System.out.println(cf.getCommand());
 
         System.out.println("\n\n");
 
@@ -59,6 +59,7 @@ public class SmartAutocompleteTest {
                 smartAutocomplete.getMatchingCommand("cl"));
         assertEquals("arget/ezcli-0.3.0-jar-with-dependencies.jar && mvn package",
                 smartAutocomplete.getMatchingCommand("java -jar t"));
-        assertEquals("est",  smartAutocomplete.getMatchingCommand("mvn t"));
+        assertEquals("est", smartAutocomplete.getMatchingCommand("mvn t"));
+        assertEquals(" && is && a && test", smartAutocomplete.getMatchingCommand("this"));
     }
 }

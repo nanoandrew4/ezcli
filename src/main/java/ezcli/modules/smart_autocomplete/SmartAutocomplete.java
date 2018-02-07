@@ -2,10 +2,8 @@ package ezcli.modules.smart_autocomplete;
 
 import ezcli.modules.ezcli_core.Ezcli;
 import ezcli.modules.ezcli_core.global_io.handlers.InputHandler;
-import ezcli.modules.ezcli_core.modularity.EventState;
 import ezcli.modules.ezcli_core.modularity.Module;
 import ezcli.modules.ezcli_core.terminal.TermInputProcessor;
-import ezcli.modules.ezcli_core.terminal.TermKeyProcessor;
 import ezcli.modules.ezcli_core.terminal.Terminal;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class SmartAutocomplete extends Module {
     private MultiCmdComplete mcc = null;
 
     // Sorted list of most used commands and generalizations derived from users prior input
-    private ArrayList<CommandFreq> freqCommands = new ArrayList<>();
+    private ArrayList<CommandSeq> freqCommands = new ArrayList<>();
 
     private double initTime = 0;
 
@@ -43,7 +41,7 @@ public class SmartAutocomplete extends Module {
 
     private void overrideCharEvent() {
         TermInputProcessor inputProcessor = terminal.inputProcessor;
-        inputProcessor.getKeyProcessor().charEvent = (char input)-> {
+        inputProcessor.getKeyProcessor().charEvent = (char input) -> {
             String command = inputProcessor.getCommand();
             int cursorPos = inputProcessor.getCursorPos();
 
@@ -143,16 +141,16 @@ public class SmartAutocomplete extends Module {
 
         mcc = new MultiCmdComplete(commands);
 
-        initTime = ((double)(System.currentTimeMillis() - start) / 1000d);
+        initTime = ((double) (System.currentTimeMillis() - start) / 1000d);
         System.out.println("Init time for SmartAutocomplete was: " + initTime);
     }
 
     /**
      * Returns the list of frequently used commands.
      *
-     * @return List storing CommandFreq objects containing info of frequently used commands
+     * @return List storing CommandSeq objects containing info of frequently used commands
      */
-    public ArrayList<CommandFreq> getFreqCommands() {
+    public ArrayList<CommandSeq> getFreqCommands() {
         return freqCommands;
     }
 
@@ -167,12 +165,12 @@ public class SmartAutocomplete extends Module {
             return "";
 
         if (mcc != null) {
-            for (CommandFreq c : mcc.getCommandSequences())
-                if (c.getCommandSequence().startsWith(command))
-                    return c.getCommandSequence().substring(command.length());
+            for (CommandSeq c : mcc.getCommandSequences())
+                if (c.getCommand().startsWith(command))
+                    return c.getCommand().substring(command.length());
         }
 
-        for (CommandFreq c : freqCommands)
+        for (CommandSeq c : freqCommands)
             if (c.getCommand().startsWith(command))
                 return c.getCommand().substring(command.length());
 
@@ -187,7 +185,7 @@ public class SmartAutocomplete extends Module {
      */
     public void store(String command) {
         boolean stored = false;
-        for (CommandFreq cf : freqCommands) {
+        for (CommandSeq cf : freqCommands) {
             if (cf.getCommand().equals(command)) {
                 cf.incrementFreq();
                 stored = true;
@@ -196,7 +194,7 @@ public class SmartAutocomplete extends Module {
         }
 
         if (!stored)
-            freqCommands.add(new CommandFreq(command));
+            freqCommands.add(new CommandSeq(command));
     }
 
     /**
@@ -216,12 +214,12 @@ public class SmartAutocomplete extends Module {
     }
 
     /**
-     * Sorts a CommandFreq list using quicksort.
+     * Sorts a CommandSeq list using quicksort.
      *
      * @param lPiv Leftmost chunk of list to sort
      * @param rPiv Rightmost chunk of list to sort
      */
-    protected static void sort(int lPiv, int rPiv, ArrayList<CommandFreq> freqCommands) {
+    protected static void sort(int lPiv, int rPiv, ArrayList<CommandSeq> freqCommands) {
         if (freqCommands.size() == 0)
             return;
 
@@ -234,7 +232,7 @@ public class SmartAutocomplete extends Module {
             while (freqCommands.get(b).getFreq() < cPiv)
                 b--;
             if (a <= b) {
-                CommandFreq cfTmp = freqCommands.get(a);
+                CommandSeq cfTmp = freqCommands.get(a);
                 freqCommands.set(a, freqCommands.get(b));
                 freqCommands.set(b, cfTmp);
                 a++;
