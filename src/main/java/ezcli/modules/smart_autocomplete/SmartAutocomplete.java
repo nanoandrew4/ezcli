@@ -165,7 +165,7 @@ public class SmartAutocomplete extends Module {
             return "";
 
         if (mcc != null) {
-            for (CommandSeq c : mcc.getCommandSequences())
+            for (CommandSeq c : mcc.getFreqCommandCombos())
                 if (c.getCommand().startsWith(command))
                     return c.getCommand().substring(command.length());
         }

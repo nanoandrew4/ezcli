@@ -45,7 +45,7 @@ public class SmartAutocompleteTest {
 
         SmartAutocomplete smartAutocomplete = new SmartAutocomplete();
 
-        for (CommandSeq cf : smartAutocomplete.getMcc().getCommandSequences())
+        for (CommandSeq cf : smartAutocomplete.getMcc().getFreqCommandCombos())
             System.out.println(cf.getCommand());
 
         System.out.println("\n\n");

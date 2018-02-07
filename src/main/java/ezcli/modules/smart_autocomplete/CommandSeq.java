@@ -14,6 +14,11 @@ public class CommandSeq {
     // Frequency of this command or sequence of commands in commandHistory list
     private int freq = -1;
 
+    /*
+     * Flag to prevent previously found combinations to be deleted. Since every combination is kept on one list,
+     * the old "good" combinations are smaller in size than the next iteration of command combinations. Combinations
+     * with sizes unequal to the current iteration size get removed, and this flag when set to true prevents that.
+     */
     private boolean recurring = false;
 
     CommandSeq(String command) {
