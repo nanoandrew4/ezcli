@@ -36,7 +36,9 @@ public class SmartAutocomplete extends Module {
         overrideBackspaceEvent();
         overrideRArrEvent();
 
-        initModule();
+        Runnable run = this::initModule;
+        Thread t = new Thread(run);
+        t.start();
     }
 
     private void overrideCharEvent() {
@@ -112,7 +114,7 @@ public class SmartAutocomplete extends Module {
         };
     }
 
-    public void moveToCursorPos() {
+    private void moveToCursorPos() {
         TermInputProcessor iP = terminal.inputProcessor;
         for (int i = iP.getCommand().length() + currentSuggestion.length(); i > iP.getCursorPos(); i--)
             Ezcli.ezcliOutput.print("\b", "command");
@@ -126,13 +128,13 @@ public class SmartAutocomplete extends Module {
      * Initializes freqCommands list, generalizes the command history to improve smart complete results
      * and sorts list from most used to least used.
      */
-    public void initModule() {
-        long start = System.currentTimeMillis();
+    private void initModule() {
+//        long start = System.currentTimeMillis();
 
         List<String> commands = terminal.inputProcessor.commandHistory;
 
         for (int i = 0; i < commands.size(); i++)
-            commands.set(i, removeAllAfterQuotes(commands.get(i)));
+            commands.set(i, removeAllBetweenQuotes(commands.get(i)));
 
         for (String s : commands)
             store(s);
@@ -141,8 +143,8 @@ public class SmartAutocomplete extends Module {
 
         mcc = new MultiCmdComplete(commands);
 
-        initTime = ((double) (System.currentTimeMillis() - start) / 1000d);
-        System.out.println("Init time for SmartAutocomplete was: " + initTime);
+//        initTime = ((double) (System.currentTimeMillis() - start) / 1000d);
+//        System.out.println("Init time for SmartAutocomplete was: " + initTime);
     }
 
     /**
@@ -204,13 +206,14 @@ public class SmartAutocomplete extends Module {
      * @param rawCommand Command to parse
      * @return Command with anything after the quotes removed
      */
-    private String removeAllAfterQuotes(String rawCommand) {
-        int pos = 0;
-        for (; pos < rawCommand.length(); pos++)
-            if (rawCommand.charAt(pos) == '\"')
-                return rawCommand.substring(0, pos - 1);
+    public String removeAllBetweenQuotes(String rawCommand) {
+        String[] split = rawCommand.split("\"");
+        StringBuilder command = new StringBuilder(rawCommand.length());
 
-        return rawCommand;
+        for (int i = 0; i < split.length; i+=2)
+            command.append(split[i]).append(i < split.length - 1 ? "\"\"" : "");
+
+        return command.toString();
     }
 
     /**
