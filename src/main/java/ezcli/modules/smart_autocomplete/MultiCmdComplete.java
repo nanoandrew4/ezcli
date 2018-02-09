@@ -6,7 +6,7 @@ import java.util.List;
 public class MultiCmdComplete {
 
     // List containing all previously typed commands
-    private List<String> commandHistory;
+    private ArrayList<String> commandHistory;
 
     private final static int COMMAND_COMBO_LIMIT = 5;
     private final static int MIN_COMMAND_FREQ = 4;
@@ -19,14 +19,13 @@ public class MultiCmdComplete {
      */
     MultiCmdComplete(List<String> commandHistory) {
 
-        this.commandHistory = commandHistory;
+        this.commandHistory = new ArrayList<>(commandHistory);
         freqCommandCombos = new ArrayList<>();
 
         populateList(2);
-
         SmartAutocomplete.sort(0, freqCommandCombos.size() - 1, freqCommandCombos);
     }
-    
+
     public ArrayList<CommandSeq> getFreqCommandCombos() {
         return freqCommandCombos;
     }
@@ -143,9 +142,9 @@ public class MultiCmdComplete {
     /**
      * Removes duplicates of a CommandSeq object, and keeps tabs on how many instances it has found.
      *
-     * @param mcf              CommandSeq object to remove duplicates of
+     * @param mcf               CommandSeq object to remove duplicates of
      * @param freqCommandCombos List to remove CommandSeq objects from
-     * @param listSize         Current size of freqCommandCombos list
+     * @param listSize          Current size of freqCommandCombos list
      * @return Number of instances of CommandSeq command in freqCommandCombos list
      */
     private int removeDuplicatesOf(CommandSeq mcf, ArrayList<CommandSeq> freqCommandCombos, int listSize) {
@@ -153,7 +152,7 @@ public class MultiCmdComplete {
         int freq = 1;
 
         // Only increase counter if no object was removed, otherwise skipping one each time
-        for (int i = 0; i < listSize;) {
+        for (int i = 0; i < listSize; ) {
             CommandSeq mcf1 = freqCommandCombos.get(i);
 
             // Removes all duplicates of mcf

@@ -45,6 +45,12 @@ public class SmartAutocompleteTest {
 
         SmartAutocomplete smartAutocomplete = new SmartAutocomplete();
 
+        try {
+            Thread.sleep(1200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         for (CommandSeq cf : smartAutocomplete.getMcc().getFreqCommandCombos())
             System.out.println(cf.getCommand());
 
@@ -61,5 +67,19 @@ public class SmartAutocompleteTest {
                 smartAutocomplete.getMatchingCommand("java -jar t"));
         assertEquals("est", smartAutocomplete.getMatchingCommand("mvn t"));
         assertEquals(" && is && a && test", smartAutocomplete.getMatchingCommand("this"));
+    }
+
+    @Test
+    public void testRemoveBetweenQuotes() {
+        Module.modules.clear();
+        Terminal t = new Terminal();
+
+        SmartAutocomplete s = new SmartAutocomplete();
+
+        assertEquals("test \"\"", s.removeAllBetweenQuotes("test \"in quotes\""));
+        assertEquals("testing \"\" all \"\"",
+                s.removeAllBetweenQuotes("testing \"more quotes\" all \"the quotes\""));
+        assertEquals("git commit -m \"\"",
+                s.removeAllBetweenQuotes("git commit -m \"test commit\""));
     }
 }
