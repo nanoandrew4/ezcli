@@ -8,28 +8,42 @@ public class CommandSeq {
     // Sequence of commands this class represents (only used by MultiCmdComplete class)
     private LinkedList<String> commandSeq;
 
-    // Starting index of sequence of commands in commandHistory list (for MultiCmdComplete class)
-    private int startIndex = -1;
+    private LinkedList<Integer> locations;
 
     // Frequency of this command or sequence of commands in commandHistory list
-    private int freq = -1;
+    private int freq;
 
-    /*
-     * Flag to prevent previously found combinations to be deleted. Since every combination is kept on one list,
-     * the old "good" combinations are smaller in size than the next iteration of command combinations. Combinations
-     * with sizes unequal to the current iteration size get removed, and this flag when set to true prevents that.
-     */
-    private boolean recurring = false;
-
-    CommandSeq(String command) {
+    CommandSeq(int startIndex, String command) {
         commandSeq = new LinkedList<>();
+        locations = new LinkedList<>();
+
         commandSeq.add(command);
+        locations.add(startIndex);
         freq = 1;
     }
 
     CommandSeq(int startIndex, String... commands) {
         commandSeq = new LinkedList<>(Arrays.asList(commands));
-        this.startIndex = startIndex;
+        locations = new LinkedList<>();
+
+        locations.add(startIndex);
+        freq = 1;
+    }
+
+    protected LinkedList<String> getCommandSeq() {
+        return commandSeq;
+    }
+
+    public LinkedList<Integer> getLocations() {
+        return locations;
+    }
+
+    public Integer getLocation(int position) {
+        return locations.get(position);
+    }
+
+    public void add(String cmd) {
+        commandSeq.add(cmd);
     }
 
     protected void incrementFreq() {
@@ -44,41 +58,8 @@ public class CommandSeq {
         this.freq = freq;
     }
 
-    protected int getStartIndex() {
-        return startIndex;
-    }
-
-    public void add(String cmd) {
-        commandSeq.add(cmd);
-    }
-
-    public int size() {
+    public int getSize() {
         return commandSeq.size();
-    }
-
-    public void setRecurring() {
-        recurring = true;
-    }
-
-    public boolean isRecurring() {
-        return recurring;
-    }
-
-    /**
-     * Compares two MultiCmdFreq objects.
-     *
-     * @param mcf MultiCmdFreq object to compare this object to
-     * @return True if both objects represent the same sequence of strings
-     */
-    protected boolean isSameAs(CommandSeq mcf) {
-        if (this.commandSeq.size() == mcf.commandSeq.size()) {
-            for (int i = 0; i < this.commandSeq.size(); i++)
-                if (!this.commandSeq.get(i).trim().equals(mcf.commandSeq.get(i).trim()))
-                    return false;
-        } else
-            return false;
-
-        return true;
     }
 
     /**
@@ -92,5 +73,31 @@ public class CommandSeq {
             sb.append(commandSeq.get(i)).append((i < commandSeq.size() - 1) ? " && " : "");
 
         return sb.toString();
+    }
+
+    /**
+     * Compares two CommandSeq objects.
+     *
+     * @param cs MultiCmdFreq object to compare this object to
+     * @return True if both objects represent the same sequence of strings
+     */
+    protected boolean isSameAs(CommandSeq cs) {
+        if (this.commandSeq.size() != cs.commandSeq.size())
+            return false;
+
+        for (int i = 0; i < this.commandSeq.size(); i++)
+            if (!this.commandSeq.get(i).trim().equals(cs.commandSeq.get(i).trim()))
+                return false;
+        return true;
+    }
+
+    protected boolean isSameAs(String[] cs) {
+        if (this.commandSeq.size() != cs.length)
+            return false;
+
+        for (int i = 0; i < this.commandSeq.size(); i++)
+            if (!this.commandSeq.get(i).trim().equals(cs[i].trim()))
+                return false;
+        return true;
     }
 }

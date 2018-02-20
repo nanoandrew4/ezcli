@@ -116,7 +116,7 @@ public abstract class Module {
         modules.put(module.moduleName, module);
 
         if (methodNames.length != binds.length) {
-            System.err.println("Methods and ReactiveMethod arrays have unequal size in module \""
+            System.err.println("Methods and ReactiveMethod arrays have unequal getSize in module \""
                     + module.getClass().getSimpleName() + "\" (each method must be bound to something)");
             return;
         }

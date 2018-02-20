@@ -46,40 +46,30 @@ public class SmartAutocompleteTest {
         SmartAutocomplete smartAutocomplete = new SmartAutocomplete();
 
         try {
-            Thread.sleep(1200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        for (CommandSeq cf : smartAutocomplete.getMcc().getFreqCommandCombos())
-            System.out.println(cf.getCommand());
-
-        System.out.println("\n\n");
-
-        assertEquals("n package && java -jar target/ezcli-0.3.0-jar-with-dependencies.jar",
-                smartAutocomplete.getMatchingCommand("mv"));
+        assertEquals("java -jar target/ezcli-0.3.0-jar-with-dependencies.jar",
+                smartAutocomplete.getMatchingCommand("mvn package && "));
         assertEquals("JTerm/", smartAutocomplete.getMatchingCommand("cd "));
-        assertEquals(" -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless && clear",
+        assertEquals(" -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless",
                 smartAutocomplete.getMatchingCommand("java"));
-        assertEquals("ear && java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless",
-                smartAutocomplete.getMatchingCommand("cl"));
-        assertEquals("arget/ezcli-0.3.0-jar-with-dependencies.jar && mvn package",
-                smartAutocomplete.getMatchingCommand("java -jar t"));
+        assertEquals("java -jar IdeaProjects/JTerm/target/jterm-0.6.2-jar-with-dependencies.jar headless",
+                smartAutocomplete.getMatchingCommand("clear && "));
+        assertEquals("mvn package",
+                smartAutocomplete.getMatchingCommand("java -jar target/ezcli-0.3.0-jar-with-dependencies.jar && "));
         assertEquals("est", smartAutocomplete.getMatchingCommand("mvn t"));
-        assertEquals(" && is && a && test", smartAutocomplete.getMatchingCommand("this"));
+        assertEquals("is && a && test", smartAutocomplete.getMatchingCommand("this && "));
     }
 
     @Test
     public void testRemoveBetweenQuotes() {
-        Module.modules.clear();
-        Terminal t = new Terminal();
-
-        SmartAutocomplete s = new SmartAutocomplete();
-
-        assertEquals("test \"\"", s.removeAllBetweenQuotes("test \"in quotes\""));
+        assertEquals("test \"\"", SmartAutocomplete.removeAllBetweenQuotes("test \"in quotes\""));
         assertEquals("testing \"\" all \"\"",
-                s.removeAllBetweenQuotes("testing \"more quotes\" all \"the quotes\""));
+                SmartAutocomplete.removeAllBetweenQuotes("testing \"more quotes\" all \"the quotes\""));
         assertEquals("git commit -m \"\"",
-                s.removeAllBetweenQuotes("git commit -m \"test commit\""));
+                SmartAutocomplete.removeAllBetweenQuotes("git commit -m \"test commit\""));
     }
 }

@@ -22,8 +22,6 @@ public class SmartAutocomplete extends Module {
     // Sorted list of most used commands and generalizations derived from users prior input
     private ArrayList<CommandSeq> freqCommands = new ArrayList<>();
 
-    private double initTime = 0;
-
     private String currentSuggestion = "";
 
     public SmartAutocomplete() {
@@ -129,8 +127,6 @@ public class SmartAutocomplete extends Module {
      * and sorts list from most used to least used.
      */
     private void initModule() {
-//        long start = System.currentTimeMillis();
-
         List<String> commands = terminal.inputProcessor.commandHistory;
 
         for (int i = 0; i < commands.size(); i++)
@@ -143,8 +139,6 @@ public class SmartAutocomplete extends Module {
 
         mcc = new MultiCmdComplete(commands);
 
-//        initTime = ((double) (System.currentTimeMillis() - start) / 1000d);
-//        System.out.println("Init time for SmartAutocomplete was: " + initTime);
     }
 
     /**
@@ -166,15 +160,15 @@ public class SmartAutocomplete extends Module {
         if (command.length() < 2)
             return "";
 
-        if (mcc != null) {
-            for (CommandSeq c : mcc.getFreqCommandCombos())
-                if (c.getCommand().startsWith(command))
-                    return c.getCommand().substring(command.length());
-        }
-
         for (CommandSeq c : freqCommands)
             if (c.getCommand().startsWith(command))
                 return c.getCommand().substring(command.length());
+
+        if (mcc != null) {
+            for (CommandSeq cs : mcc.getFreqCmdSeqs())
+                if (cs.getCommand().startsWith(command))
+                    return cs.getCommand().substring(command.length());
+        }
 
         return "";
     }
@@ -196,7 +190,7 @@ public class SmartAutocomplete extends Module {
         }
 
         if (!stored)
-            freqCommands.add(new CommandSeq(command));
+            freqCommands.add(new CommandSeq(-1, command));
     }
 
     /**
@@ -206,11 +200,11 @@ public class SmartAutocomplete extends Module {
      * @param rawCommand Command to parse
      * @return Command with anything after the quotes removed
      */
-    public String removeAllBetweenQuotes(String rawCommand) {
+    public static String removeAllBetweenQuotes(String rawCommand) {
         String[] split = rawCommand.split("\"");
         StringBuilder command = new StringBuilder(rawCommand.length());
 
-        for (int i = 0; i < split.length; i+=2)
+        for (int i = 0; i < split.length; i += 2)
             command.append(split[i]).append(i < split.length - 1 ? "\"\"" : "");
 
         return command.toString();
