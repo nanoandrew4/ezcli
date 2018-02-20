@@ -5,13 +5,22 @@ import java.util.LinkedList;
 
 public class CommandSeq {
 
-    // Sequence of commands this class represents (only used by MultiCmdComplete class)
+    /*
+     * List of commands that make up this sequence
+     */
     private LinkedList<String> commandSeq;
 
+    /*
+     * List of locations this sequence can be found at in the commandHistory file (in MultiCmcComplete,
+     * SmartAutocomplete has no need for the locations)
+     * These locations are used to generate longer sequences of commands in MultiCmdComplete. In order to simplify
+     * analysis, all occurrences of the same sequence in the commandHistory list are condensed and the positions stored
+     * here.
+     */
     private LinkedList<Integer> locations;
 
     // Frequency of this command or sequence of commands in commandHistory list
-    private int freq;
+    private int freq = 1;
 
     CommandSeq(int startIndex, String command) {
         commandSeq = new LinkedList<>();
@@ -19,7 +28,6 @@ public class CommandSeq {
 
         commandSeq.add(command);
         locations.add(startIndex);
-        freq = 1;
     }
 
     CommandSeq(int startIndex, String... commands) {
@@ -27,7 +35,6 @@ public class CommandSeq {
         locations = new LinkedList<>();
 
         locations.add(startIndex);
-        freq = 1;
     }
 
     protected LinkedList<String> getCommandSeq() {
@@ -42,20 +49,12 @@ public class CommandSeq {
         return locations.get(position);
     }
 
-    public void add(String cmd) {
-        commandSeq.add(cmd);
-    }
-
     protected void incrementFreq() {
         freq++;
     }
 
     public int getFreq() {
         return freq;
-    }
-
-    protected void setFreq(int freq) {
-        this.freq = freq;
     }
 
     public int getSize() {
@@ -91,7 +90,13 @@ public class CommandSeq {
         return true;
     }
 
-    protected boolean isSameAs(String[] cs) {
+    /**
+     * Compares this CommandSeq instance to an array of strings.
+     *
+     * @param cs Array of strings to compare this instance of CommandSeq to
+     * @return True if both this instance and the array represent the same sequence, false otherwise
+     */
+    protected boolean isSameAs(String... cs) {
         if (this.commandSeq.size() != cs.length)
             return false;
 

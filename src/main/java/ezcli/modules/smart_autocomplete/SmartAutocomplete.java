@@ -39,6 +39,10 @@ public class SmartAutocomplete extends Module {
         t.start();
     }
 
+    /*
+     * Overrides the charEvent, to allow for proper command suggestion. Should be temporary, since overriding can only
+     * be done once reliably.
+     */
     private void overrideCharEvent() {
         TermInputProcessor inputProcessor = terminal.inputProcessor;
         inputProcessor.getKeyProcessor().charEvent = (char input) -> {
@@ -65,6 +69,10 @@ public class SmartAutocomplete extends Module {
         };
     }
 
+    /*
+     * Overrides the backspaceEvent, to allow for proper command suggestion. Should be temporary, since overriding can
+     * only be done once reliably.
+     */
     private void overrideBackspaceEvent() {
         TermInputProcessor inputProcessor = terminal.inputProcessor;
         inputProcessor.getKeyProcessor().backspaceEvent = () -> {
@@ -87,6 +95,10 @@ public class SmartAutocomplete extends Module {
         };
     }
 
+    /*
+     * Overrides right arrow key event, to allow for proper command suggestion. Should be temporary, since overriding
+     * can only be done once reliably.
+     */
     private void overrideRArrEvent() {
         TermInputProcessor inputProcessor = terminal.inputProcessor;
         inputProcessor.getArrowKeyProcessor().rArrEvent = () -> {
@@ -112,12 +124,21 @@ public class SmartAutocomplete extends Module {
         };
     }
 
+    /**
+     * Moves cursor back to where it is supposed to be after deleting the whole line.
+     * Unlike the moveToCursorPos in the terminal module, it accounts for the command suggestion too.
+     */
     private void moveToCursorPos() {
         TermInputProcessor iP = terminal.inputProcessor;
         for (int i = iP.getCommand().length() + currentSuggestion.length(); i > iP.getCursorPos(); i--)
             Ezcli.ezcliOutput.print("\b", "command");
     }
 
+    /**
+     * Retrieves the MultiCmdComplete instance that this class instantiated in initModule().
+     *
+     * @return MultiCmdComplete instance used by this class
+     */
     public MultiCmdComplete getMcc() {
         return mcc;
     }

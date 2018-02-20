@@ -3,12 +3,20 @@ package ezcli.modules.smart_autocomplete;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class generates frequently used command sequences by doing a bruteforce analysis of the commandHistory list.
+ * If a given sequence appears enough times, it is included in the master list (freqCmdSeqs) to be suggested at a later
+ * time.
+ */
 public class MultiCmdComplete {
 
     // List containing all previously typed commands
     private ArrayList<String> commandHistory;
 
+    // Maximum number of commands that can compose a sequence (less means faster init times)
     private final static int COMMAND_SEQ_SIZE_LIMIT = 5;
+
+    // Minimum number of times a given sequence must appear in commandHistory in order to be suggested to the user
     private final static int MIN_COMMAND_FREQ = 4;
 
     // List containing all command sequences
@@ -22,7 +30,7 @@ public class MultiCmdComplete {
         this.commandHistory = new ArrayList<>(commandHistory);
         freqCmdSeqs = new ArrayList<>();
 
-        long start = System.currentTimeMillis();
+//        long start = System.currentTimeMillis();
 
         generateSequences();
         SmartAutocomplete.sort(0, freqCmdSeqs.size() - 1, freqCmdSeqs);
@@ -47,13 +55,13 @@ public class MultiCmdComplete {
      */
     private void generateSequences() {
         /*
-         * Instead of simply adding the commands to one list, they are divided based on how many components their
+         * Instead of simply adding the commands to one list, they are divided based on how many commands their
          * sequences have. This allows for faster comparisons, since elements are frequently checked against
          * the whole list, and the only relevant comparisons are those between elements with the same number of elements
          * in a sequence.
          *
          * Element 0 is an empty list. It holds nothing, since single command frequency is dealt with in
-         * SmartAutocomplete
+         * SmartAutocomplete.
          */
         ArrayList<CommandSeq>[] tmpCmdSeqs = new ArrayList[COMMAND_SEQ_SIZE_LIMIT];
 
@@ -113,7 +121,8 @@ public class MultiCmdComplete {
      */
     private void generateLongerSequences(ArrayList<CommandSeq>[] tmpCmdSeqs, int cmdsInSeq) {
         for (int csIndex = 0; csIndex < tmpCmdSeqs[cmdsInSeq - 1].size(); csIndex++) {
-            // Get the sequence of commands from the previous array index
+
+            // Get the sequence of commands from which to generate the next bunch of sequences
             CommandSeq cs = tmpCmdSeqs[cmdsInSeq - 1].get(csIndex);
 
             // If the frequency of the sequence was not good last time around, it won't be any better this time
@@ -123,10 +132,10 @@ public class MultiCmdComplete {
             /*
              * CommandSeq stores a condensed version of a sequence of commands, that might be appear multiple times
              * in the commandHistory list. The following loop iterates through the various positions of the given
-             * sequence, and adds the command that follows each individual sequence, to a new instance of CommandSeq,
-             * if the new sequence was not found anywhere on the list. If the new sequence was found, simply increase
-             * the frequency counter and add the location of that sequence in the commandHistory list to the list
-             * in the CommandSeq instance.
+             * sequence, and adds the command that follows each individual instance of the sequence,
+             * to a new instance of CommandSeq, if the new sequence was not found anywhere on the list.
+             * If the new sequence was found, simply increase the frequency counter and add the location of that
+             * sequence in the commandHistory list to the locations list in the CommandSeq instance.
              */
             for (int locPos = 0; locPos < cs.getLocations().size()
                     && cs.getLocation(locPos) + cmdsInSeq < commandHistory.size(); locPos++) {
@@ -137,7 +146,9 @@ public class MultiCmdComplete {
                 for (int i = 0; i < cmdsInSeq; i++)
                     tmpCS[i] = cs.getCommandSeq().get(i);
 
+                // Get command that comes after the sequence, which exists at cs.getLocation(localPos) in commandHistory
                 tmpCS[tmpCS.length - 1] = commandHistory.get(cs.getLocation(locPos) + cs.getSize());
+
                 for (CommandSeq cs1 : tmpCmdSeqs[cmdsInSeq]) {
                     if (cs1.isSameAs(tmpCS)) {
                         masterCS = cs1;
